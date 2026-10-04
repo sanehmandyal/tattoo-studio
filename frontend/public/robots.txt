@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+
+# Host
+Host: https://landofgodtattoos.com
+
+# Sitemaps
+Sitemap: https://landofgodtattoos.com/sitemap.xml

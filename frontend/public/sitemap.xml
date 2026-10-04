@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://landofgodtattoos.com/</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+      <image:title>Land of God Tattoo Studio - Best Tattoo Studio in Una Himachal Pradesh</image:title>
+      <image:caption>Custom Mahadev sacred geometry and realistic tattoo atelier in Friends Colony, Una, HP</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Interactive 3D Placement Studio -->
+  <url>
+    <loc>https://landofgodtattoos.com/interactive-3d</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Portfolio / Gallery Showcase -->
+  <url>
+    <loc>https://landofgodtattoos.com/portfolio</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+      <image:title>Mahadev Trishul Sleeve Tattoo Art Una</image:title>
+    </image:image>
+  </url>
+
+  <!-- About Studio -->
+  <url>
+    <loc>https://landofgodtattoos.com/about</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Aftercare Guide & Sterile Protocols -->
+  <url>
+    <loc>https://landofgodtattoos.com/aftercare</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Sacred Ink Journal & Blog -->
+  <url>
+    <loc>https://landofgodtattoos.com/blog</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Contact & Studio Location -->
+  <url>
+    <loc>https://landofgodtattoos.com/contact</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Direct Consultation & Booking -->
+  <url>
+    <loc>https://landofgodtattoos.com/booking</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>
