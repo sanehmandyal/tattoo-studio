@@ -73,15 +73,36 @@ export const login = async (req, res, next) => {
         $or: [
           { email: 'admin@landofgodtattoos.com' },
           { email: 'admin@landofgod.com' },
-          { phone: '+91 78079 66080' },
           { role: 'admin' }
         ]
       }).select('+password');
+
+      // If no admin exists in DB yet, create one on the fly
+      if (!user) {
+        user = await User.create({
+          name: process.env.ADMIN_NAME || 'Master Sunil (Studio Director)',
+          email: process.env.ADMIN_EMAIL_ALT || 'admin@landofgodtattoos.com',
+          password: process.env.ADMIN_PASSWORD || 'admin123',
+          phone: process.env.ADMIN_PHONE || '+91 78079 66080',
+          role: 'admin',
+        });
+      }
     } else {
       user = await User.findOne({ email: input }).select('+password');
     }
 
-    if (!user || !(await user.matchPassword(password))) {
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+    }
+
+    const isMatch = await user.matchPassword(password);
+    
+    // Auto-heal / sync if .env ADMIN_PASSWORD matches
+    const envAdminPass = process.env.ADMIN_PASSWORD || 'admin123';
+    if (!isMatch && isLandOfGodAdmin && password === envAdminPass) {
+      user.password = envAdminPass;
+      await user.save();
+    } else if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
     }
 

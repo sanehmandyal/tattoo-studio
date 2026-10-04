@@ -49,22 +49,25 @@ const limiter = rateLimit({
   legacyHeaders: false,
   message: { success: false, message: 'Too many requests from this IP, please try again later.' }
 });
-app.use('/api', limiter);
+app.use(limiter);
 
 // Serve static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Health Check API
-app.get('/api/health', (req, res) => {
+// Health Check API (both /api/health and /health)
+const healthHandler = (req, res) => {
   res.json({
     status: 'online',
     timestamp: new Date().toISOString(),
     service: 'LAND OF GOD Tattoo Studio API',
     version: '1.0.0'
   });
-});
+};
+app.get('/api/health', healthHandler);
+app.get('/health', healthHandler);
+app.get('/', healthHandler);
 
-// Mount Routes
+// Mount Routes on /api/* prefix
 app.use('/api/auth', authRoutes);
 app.use('/api/artists', artistRoutes);
 app.use('/api/portfolio', portfolioRoutes);
@@ -77,6 +80,20 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/aftercare', aftercareRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/upload', uploadRoutes);
+
+// Fallback: Also Mount directly on root /* so requests without /api prefix never 404
+app.use('/auth', authRoutes);
+app.use('/artists', artistRoutes);
+app.use('/portfolio', portfolioRoutes);
+app.use('/designs', designRoutes);
+app.use('/bookings', bookingRoutes);
+app.use('/availability', availabilityRoutes);
+app.use('/blogs', blogRoutes);
+app.use('/contact', contactRoutes);
+app.use('/settings', settingsRoutes);
+app.use('/aftercare', aftercareRoutes);
+app.use('/reviews', reviewRoutes);
+app.use('/upload', uploadRoutes);
 
 // Centralized Error Handler
 app.use(errorHandler);
