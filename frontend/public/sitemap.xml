@@ -67,6 +67,22 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Google Verified Reviews (5.0★) -->
+  <url>
+    <loc>https://tattoo-studio-nine.vercel.app/reviews</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Live Studio Calendar & Availability -->
+  <url>
+    <loc>https://tattoo-studio-nine.vercel.app/calendar</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Direct Consultation & Booking -->
   <url>
     <loc>https://tattoo-studio-nine.vercel.app/booking</loc>

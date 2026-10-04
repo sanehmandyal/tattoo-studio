@@ -11,6 +11,8 @@ import { AftercarePage } from './pages/AftercarePage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogDetailPage } from './pages/BlogDetailPage';
 import { ContactPage } from './pages/ContactPage';
+import { ReviewsPage } from './pages/ReviewsPage';
+import { CalendarPage } from './pages/CalendarPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -44,14 +46,24 @@ export const App = () => {
 
       <div className="flex-1 relative z-10">
         <Routes>
-          {/* Public Pages */}
+          {/* Public Pages matching Admin Modules */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/interactive-3d" element={<Interactive3DPage />} />
+          <Route path="/designs" element={<Interactive3DPage />} />
+          <Route path="/3d-designs" element={<Interactive3DPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/gallery" element={<PortfolioPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/testimonials" element={<ReviewsPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/schedule" element={<CalendarPage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/aftercare" element={<AftercarePage />} />
+          <Route path="/aftercare-guide" element={<AftercarePage />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blogs" element={<BlogPage />} />
+          <Route path="/journal" element={<BlogPage />} />
           <Route path="/blog/:slugOrId" element={<BlogDetailPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />

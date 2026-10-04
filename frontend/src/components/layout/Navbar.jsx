@@ -21,12 +21,13 @@ export const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/', hash: '#top' },
-    { name: 'About', path: '/about', hash: '#about' },
-    { name: 'Interactive 3D', path: '/interactive-3d', hash: '#interactive-3d' },
-    { name: 'Portfolio', path: '/portfolio', hash: '#portfolio' },
+    { name: 'Portfolio & Gallery', path: '/portfolio', hash: '#portfolio' },
+    { name: '3D Placement', path: '/interactive-3d', hash: '#interactive-3d' },
+    { name: 'Reviews', path: '/reviews', hash: '#reviews' },
     { name: 'Aftercare', path: '/aftercare', hash: '#aftercare' },
-    { name: 'Booking', path: '/booking', hash: '#booking' },
-    { name: 'Blog', path: '/blog', hash: '#blog' },
+    { name: 'Blogs', path: '/blog', hash: '#blog' },
+    { name: 'Calendar', path: '/calendar', hash: '#booking' },
+    { name: 'About', path: '/about', hash: '#about' },
     { name: 'Contact', path: '/contact', hash: '#contact' },
   ];
 

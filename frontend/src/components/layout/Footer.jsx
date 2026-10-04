@@ -75,11 +75,13 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-2 text-xs">
               <li><Link to="/about" className="hover:text-studio-textMain transition-colors">About Devbhoomi Studio</Link></li>
-              <li><Link to="/interactive-3d" className="hover:text-studio-textMain transition-colors">3D Tattoo Placement Lab</Link></li>
-              <li><Link to="/portfolio" className="hover:text-studio-textMain transition-colors">Curated Portfolio Gallery</Link></li>
+              <li><Link to="/portfolio" className="hover:text-studio-textMain transition-colors">Curated Portfolio &amp; Gallery</Link></li>
+              <li><Link to="/interactive-3d" className="hover:text-studio-textMain transition-colors">3D Placement Designs Lab</Link></li>
+              <li><Link to="/reviews" className="hover:text-studio-textMain transition-colors">Google Verified Reviews (5.0★)</Link></li>
+              <li><Link to="/aftercare" className="hover:text-studio-textMain transition-colors">Sacred Aftercare Guide</Link></li>
+              <li><Link to="/blog" className="hover:text-studio-textMain transition-colors">Sacred Ink Journal &amp; Blogs</Link></li>
+              <li><Link to="/calendar" className="hover:text-studio-textMain transition-colors">Studio Calendar &amp; Slots</Link></li>
               <li><Link to="/booking" className="hover:text-studio-textMain transition-colors">Book Custom Session</Link></li>
-              <li><Link to="/aftercare" className="hover:text-studio-textMain transition-colors">Sterile Aftercare Guide</Link></li>
-              <li><Link to="/blog" className="hover:text-studio-textMain transition-colors">Ink Well Journal & Guides</Link></li>
             </ul>
           </div>
 
