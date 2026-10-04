@@ -68,6 +68,15 @@ Could you please share details, session time, and how to schedule this tattoo at
   return `https://wa.me/${STUDIO_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 
+export const createBookingInquiryUrl = (style = 'Custom', design = 'Custom Concept', date = '', time = '') => {
+  return createBookingWhatsAppUrl({
+    style,
+    design,
+    date,
+    time,
+  });
+};
+
 export const createAftercareHelplineUrl = () => {
   const message = `🔱 *LAND OF GOD TATTOO STUDIO — AFTERCARE HELPLINE*
 ━━━━━━━━━━━━━━━━━━━━
