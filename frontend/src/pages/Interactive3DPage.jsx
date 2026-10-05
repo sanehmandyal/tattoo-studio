@@ -7,12 +7,15 @@ import { Sparkles, ArrowRight, Heart, Sliders, Check, Layers, RotateCcw } from '
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../utils/whatsapp';
 
+import { TATTOO_ARTWORKS_CATALOG } from '../components/tattoo-studio/TattooArtworks';
+import { getFullImageUrl } from '../utils/imageHelper';
+
 export const Interactive3DPage = () => {
   const [selectedBodyArea, setSelectedBodyArea] = useState('Forearm');
   const [selectedStyle, setSelectedStyle] = useState('All');
-  const [selectedDesign, setSelectedDesign] = useState(null);
-  const [designs, setDesigns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [designs, setDesigns] = useState(TATTOO_ARTWORKS_CATALOG);
+  const [selectedDesign, setSelectedDesign] = useState(TATTOO_ARTWORKS_CATALOG[0]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const bodyAreas = [
@@ -27,15 +30,33 @@ export const Interactive3DPage = () => {
     const fetchDesigns = async () => {
       try {
         const res = await designsAPI.getAll();
-        if (res.success && res.designs) {
-          setDesigns(res.designs);
-          const initial = res.designs.find(d => d.bodyAreas.includes('Forearm')) || res.designs[0];
-          setSelectedDesign(initial);
+        if (res.success && res.designs && res.designs.length > 0) {
+          const dbList = res.designs.map((d) => ({
+            id: d._id,
+            _id: d._id,
+            name: d.name,
+            artist: d.artist || 'Master Sunil',
+            style: d.style || 'Custom',
+            description: d.description || '',
+            estTime: `${d.estTimeHours || 2} hrs`,
+            difficulty: d.difficulty || 'Custom',
+            previewImage: d.previewImage,
+            dataUri: d.previewImage || d.transparentOverlay,
+            bodyAreas: d.bodyAreas || ['Forearm'],
+            isFromDB: true,
+          }));
+
+          const merged = [...TATTOO_ARTWORKS_CATALOG];
+          dbList.forEach((dbItem) => {
+            if (!merged.some(m => m.name.toLowerCase() === dbItem.name.toLowerCase())) {
+              merged.push(dbItem);
+            }
+          });
+
+          setDesigns(merged);
         }
       } catch (err) {
         console.error(err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchDesigns();
@@ -43,7 +64,7 @@ export const Interactive3DPage = () => {
 
   const filteredDesigns = designs.filter(d => {
     const matchesStyle = selectedStyle === 'All' || d.style.toLowerCase() === selectedStyle.toLowerCase();
-    const matchesArea = d.bodyAreas.some(area => 
+    const matchesArea = (d.bodyAreas || ['Forearm']).some(area => 
       area.toLowerCase().includes(selectedBodyArea.toLowerCase()) || selectedBodyArea.toLowerCase().includes(area.toLowerCase())
     );
     return matchesStyle && matchesArea;
@@ -165,11 +186,17 @@ export const Interactive3DPage = () => {
                             : 'bg-studio-secondary/60 border-studio-border/30 hover:border-studio-bronze/60'
                         }`}
                       >
-                        <img
-                          src={design.previewImage}
-                          alt={design.name}
-                          className="w-12 h-12 rounded object-cover border border-studio-border/50"
-                        />
+                        <div className="w-12 h-12 rounded bg-studio-darker/90 overflow-hidden border border-studio-border/50 shrink-0 flex items-center justify-center p-1">
+                          {design.svg ? (
+                            design.svg
+                          ) : (
+                            <img
+                              src={getFullImageUrl(design.previewImage || design.dataUri)}
+                              alt={design.name}
+                              className="w-full h-full object-contain"
+                            />
+                          )}
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mt-1">
                             <span className="text-[9px] uppercase font-bold text-studio-bronzeLight bg-studio-card px-1.5 py-0.5 rounded">

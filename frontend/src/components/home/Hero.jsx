@@ -21,7 +21,7 @@ export const Hero = () => {
 
   const stylesList = ['All', 'Minimalist', 'Fine Line', 'Geometric', 'Traditional', 'Script', 'Mandala', 'Realism', 'Blackwork', 'Neo-Traditional', 'Watercolor'];
 
-  // Fetch dynamic designs from Admin database, merge with catalog
+  // Fetch dynamic designs from Admin database, preserving all 11 core vector flash artworks
   useEffect(() => {
     const loadDynamicDesigns = async () => {
       try {
@@ -42,17 +42,16 @@ export const Hero = () => {
             isFromDB: true,
           }));
 
-          // Merge custom database motifs with existing defaults
-          const merged = [...dbList];
-          TATTOO_ARTWORKS_CATALOG.forEach(cat => {
-            if (!merged.some(m => m.name.toLowerCase() === cat.name.toLowerCase())) {
-              merged.push(cat);
+          // Keep all 11 original master vector artworks intact and append new custom admin designs
+          const merged = [...TATTOO_ARTWORKS_CATALOG];
+          dbList.forEach((dbItem) => {
+            const exists = merged.some(m => m.name.toLowerCase() === dbItem.name.toLowerCase());
+            if (!exists) {
+              merged.push(dbItem);
             }
           });
 
           setDesigns(merged);
-          const initial = merged.find(m => (m.bodyAreas || []).some(b => b.toLowerCase().includes('forearm'))) || merged[0];
-          setSelectedDesign(initial);
         }
       } catch (err) {
         console.warn('Using default flash motifs catalog:', err);
