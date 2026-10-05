@@ -67,6 +67,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (profileData) => {
+    try {
+      const res = await authAPI.updateProfile(profileData);
+      if (res.success) {
+        setUser((prev) => ({ ...prev, ...res.user }));
+        toast.success(res.message || 'Profile updated successfully!');
+        return { success: true, user: res.user };
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to update profile');
+      return { success: false, error: err.message };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('ink_carvers_token');
     setToken(null);
@@ -88,7 +102,7 @@ export const AuthProvider = ({ children }) => {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, reloadUser, isAdmin }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, reloadUser, updateProfile, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
