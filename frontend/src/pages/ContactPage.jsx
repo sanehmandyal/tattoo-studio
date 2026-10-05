@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
 
 export const ContactPage = () => {
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
         <title>Contact &amp; Studio Location — LAND OF GOD TATTOO STUDIO (Una, HP)</title>
         <meta

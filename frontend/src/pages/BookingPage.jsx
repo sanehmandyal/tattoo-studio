@@ -5,7 +5,7 @@ import { ShieldCheck, Sparkles, Clock, Calendar } from 'lucide-react';
 
 export const BookingPage = () => {
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
         <title>Reserve Studio Appointment — LAND OF GOD TATTOO STUDIO (Una, HP)</title>
         <meta

@@ -140,7 +140,7 @@ export const ReviewsPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
         <title>Google Verified Client Reviews (5.0★) — LAND OF GOD TATTOO STUDIO (Una, HP)</title>
         <meta

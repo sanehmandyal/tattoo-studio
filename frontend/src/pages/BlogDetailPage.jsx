@@ -53,9 +53,9 @@ export const BlogDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
-        <title>{blog.seoTitle || blog.title} — INK CARVERS Journal</title>
+        <title>{blog.seoTitle || blog.title} — LAND OF GOD TATTOO STUDIO Journal</title>
         <meta name="description" content={blog.seoDescription || blog.excerpt} />
         <meta property="og:title" content={blog.title} />
         <meta property="og:image" content={blog.coverImage} />

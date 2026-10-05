@@ -36,7 +36,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-28 pb-20 bg-studio-bg flex items-center justify-center px-4 lg:pl-12">
+    <div className="min-h-screen pt-28 pb-20 bg-studio-bg flex items-center justify-center px-4">
       <Helmet>
         <title>Master Studio Control Access — LAND OF GOD TATTOO STUDIO</title>
         <meta name="robots" content="noindex, nofollow" />

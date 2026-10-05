@@ -36,9 +36,9 @@ export const ProfilePage = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
-        <title>{user.name}'s Studio Dashboard — INK CARVERS</title>
+        <title>{user.name}'s Studio Dashboard — LAND OF GOD TATTOO STUDIO</title>
       </Helmet>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">

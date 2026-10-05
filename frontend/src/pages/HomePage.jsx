@@ -8,7 +8,6 @@ import { AftercareSection } from '../components/home/AftercareSection';
 import { BlogSection } from '../components/home/BlogSection';
 import { ReviewsSection } from '../components/home/ReviewsSection';
 import { ContactSection } from '../components/home/ContactSection';
-import { LeftVerticalBar } from '../components/layout/LeftVerticalBar';
 
 export const HomePage = () => {
   return (
@@ -23,11 +22,8 @@ export const HomePage = () => {
         <meta property="og:description" content="Your Vision, Sacred Ink. Devbhoomi's premier tattoo studio in Una, HP." />
       </Helmet>
 
-      {/* Iconic Left Vertical Navigation Bar */}
-      <LeftVerticalBar />
-
       {/* Main Sections Stream */}
-      <main className="lg:pl-12">
+      <main>
         <Hero />
         <AboutSection />
         <PortfolioSection />

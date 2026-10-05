@@ -24,7 +24,7 @@ export const ArtistsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
         <title>Resident Master Tattoo Artists — INK CARVERS</title>
         <meta

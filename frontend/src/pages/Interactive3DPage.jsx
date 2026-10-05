@@ -55,7 +55,7 @@ export const Interactive3DPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 pb-16 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-20 pb-16 bg-studio-bg">
       <Helmet>
         <title>Interactive 3D Sacred Tattoo Placement Lab — LAND OF GOD TATTOO STUDIO (Una)</title>
         <meta

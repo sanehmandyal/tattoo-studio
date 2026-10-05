@@ -40,7 +40,7 @@ export const CalendarPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-studio-bg lg:pl-12">
+    <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
       <Helmet>
         <title>Studio Calendar &amp; Live Availability — LAND OF GOD TATTOO STUDIO (Una, HP)</title>
         <meta
