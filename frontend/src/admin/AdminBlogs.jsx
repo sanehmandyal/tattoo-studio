@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { blogsAPI } from '../services/api';
-import { Plus, Edit, Trash2, BookOpen, Clock, Upload } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, Clock, Upload, AlertCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { cleanImageUrl, compressImageFile, getFullImageUrl } from '../utils/imageHelper';
 
 export const AdminBlogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -20,28 +21,25 @@ export const AdminBlogs = () => {
   const [readTimeMinutes, setReadTimeMinutes] = useState(4);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Image size must be less than 10MB');
-      return;
-    }
-
     setUploadingImage(true);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCoverImage(reader.result);
-      toast.success('Article cover photo loaded and ready to save!');
-      setUploadingImage(false);
-    };
-    reader.onerror = () => {
+    try {
+      const compressedDataUrl = await compressImageFile(file, { maxWidth: 1600, maxHeight: 1600, quality: 0.85 });
+      setCoverImage(compressedDataUrl);
+      setImageError(false);
+      toast.success('Article cover photo optimized and ready to save!');
+    } catch (err) {
+      console.error(err);
       toast.error('Failed to process image file');
+    } finally {
       setUploadingImage(false);
-    };
-    reader.readAsDataURL(file);
+      e.target.value = '';
+    }
   };
 
   const loadBlogs = async () => {
@@ -71,6 +69,7 @@ export const AdminBlogs = () => {
     setContent('');
     setTags('Sacred, Devbhoomi, Tattoo');
     setReadTimeMinutes(4);
+    setImageError(false);
     setModalOpen(true);
   };
 
@@ -84,6 +83,7 @@ export const AdminBlogs = () => {
     setContent(blog.content);
     setTags((blog.tags || []).join(', '));
     setReadTimeMinutes(blog.readTimeMinutes || 4);
+    setImageError(false);
     setModalOpen(true);
   };
 
@@ -264,22 +264,29 @@ export const AdminBlogs = () => {
 
               {/* Cover Image Upload / URL */}
               <div className="space-y-2 border border-studio-border/50 bg-studio-secondary/60 p-3 rounded-lg">
-                <label className="block font-bold text-studio-textMuted uppercase">Article Cover Image</label>
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-studio-textMuted uppercase">Article Cover Image</label>
+                  <span className="text-[10px] text-studio-textMuted">File Upload or Public Image URL</span>
+                </div>
                 <div className="flex flex-col sm:flex-row gap-3 items-center">
                   <div className="flex-1 w-full">
                     <input
                       type="text"
                       required
-                      placeholder="Image URL or upload file below"
+                      placeholder="Paste Image URL, Google Drive or Unsplash link..."
                       value={coverImage}
-                      onChange={(e) => setCoverImage(e.target.value)}
-                      className="w-full bg-studio-card border border-studio-border rounded px-3 py-2 text-studio-textMain focus:outline-none focus:border-studio-bronze"
+                      onChange={(e) => {
+                        const cleaned = cleanImageUrl(e.target.value);
+                        setCoverImage(cleaned);
+                        setImageError(false);
+                      }}
+                      className="w-full bg-studio-card border border-studio-border rounded px-3 py-2 text-studio-textMain focus:outline-none focus:border-studio-bronze text-xs"
                     />
                   </div>
                   <div className="shrink-0">
                     <label className="cursor-pointer bg-studio-card border border-studio-border hover:border-studio-gold text-studio-gold px-3 py-2 rounded flex items-center space-x-1.5 text-xs font-semibold">
                       <Upload className="w-3.5 h-3.5" />
-                      <span>{uploadingImage ? 'Loading...' : 'Upload Photo'}</span>
+                      <span>{uploadingImage ? 'Optimizing...' : 'Upload Photo'}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -291,8 +298,36 @@ export const AdminBlogs = () => {
                 </div>
 
                 {coverImage && (
-                  <div className="mt-2 relative w-32 h-20 rounded-lg overflow-hidden border border-studio-gold/40">
-                    <img src={coverImage} alt="Preview" className="w-full h-full object-cover" />
+                  <div className="mt-3 flex items-center space-x-3 p-2 bg-studio-dark/60 rounded-lg border border-studio-border/40">
+                    <div className="relative w-28 h-20 rounded-lg overflow-hidden border border-studio-gold/40 bg-black shrink-0 flex items-center justify-center">
+                      {imageError ? (
+                        <div className="flex flex-col items-center justify-center text-center p-2 text-red-400 text-[10px]">
+                          <AlertCircle className="w-5 h-5 mb-1 opacity-80" />
+                          <span>Link error</span>
+                        </div>
+                      ) : (
+                        <img
+                          src={getFullImageUrl(coverImage)}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                          onError={() => setImageError(true)}
+                        />
+                      )}
+                    </div>
+                    <div className="text-[11px] text-studio-textMuted space-y-1 overflow-hidden">
+                      <p className="font-semibold text-studio-gold flex items-center space-x-1">
+                        <Sparkles className="w-3 h-3" />
+                        <span>{imageError ? 'Image Load Warning' : 'Cover Image Active'}</span>
+                      </p>
+                      <p className="line-clamp-2 break-all text-[10px]">
+                        {coverImage.startsWith('data:') ? '✓ High-Resolution Local Upload' : coverImage}
+                      </p>
+                      {imageError && (
+                        <p className="text-red-400 text-[10px]">
+                          Tip: Use 'Upload Photo' or ensure the URL points to a public image.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
