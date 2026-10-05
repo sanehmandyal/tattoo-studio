@@ -8,12 +8,13 @@ export const connectDB = async () => {
   
   try {
     const conn = await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 15000,
+      maxPoolSize: 10,
     });
-    console.log(`[Database] MongoDB Connected: ${conn.connection.host}`);
+    console.log(`[Database] MongoDB Connected: ${conn.connection.host} (Persistent Cloud Atlas DB)`);
     return conn;
   } catch (error) {
-    console.warn(`[Database] Standard MongoDB connection failed (${error.message}). Initializing In-Memory MongoDB Server for uninterrupted high-performance operation...`);
+    console.warn(`[Database] Standard MongoDB connection failed (${error.message}). Initializing In-Memory MongoDB Server for fallback operation...`);
     
     try {
       mongoMemoryServer = await MongoMemoryServer.create({

@@ -54,10 +54,14 @@ app.use(limiter);
 // Serve static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+import mongoose from 'mongoose';
+
 // Health Check API (both /api/health and /health)
 const healthHandler = (req, res) => {
   res.json({
     status: 'online',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    dbHost: mongoose.connection.host || 'unknown',
     timestamp: new Date().toISOString(),
     service: 'LAND OF GOD Tattoo Studio API',
     version: '1.0.0'
