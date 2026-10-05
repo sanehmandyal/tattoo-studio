@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { portfolioAPI } from '../../services/api';
 import { ArrowRight, Eye, Heart, Maximize2, X } from 'lucide-react';
 import { createPortfolioInquiryUrl } from '../../utils/whatsapp';
+import { getFullImageUrl } from '../../utils/imageHelper';
 
 const DEFAULT_PORTFOLIO = [
   {
@@ -111,8 +112,12 @@ export const PortfolioSection = () => {
               {/* Image Container */}
               <div className="relative h-80 overflow-hidden bg-studio-secondary">
                 <img
-                  src={item.coverImage || item.images?.[0]}
+                  src={getFullImageUrl(item.coverImage || item.images?.[0])}
                   alt={item.title}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80';
+                  }}
                   className="w-full h-full object-cover filter contrast-110 brightness-95 group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111517] via-transparent to-transparent opacity-85 group-hover:opacity-65 transition-opacity" />

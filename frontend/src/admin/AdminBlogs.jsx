@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { blogsAPI } from '../services/api';
-import { Plus, Edit, Trash2, BookOpen, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, Clock, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AdminBlogs = () => {
@@ -19,6 +19,30 @@ export const AdminBlogs = () => {
   const [tags, setTags] = useState('Sacred, Devbhoomi, Tattoo');
   const [readTimeMinutes, setReadTimeMinutes] = useState(4);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Image size must be less than 10MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCoverImage(reader.result);
+      toast.success('Article cover photo loaded and ready to save!');
+      setUploadingImage(false);
+    };
+    reader.onerror = () => {
+      toast.error('Failed to process image file');
+      setUploadingImage(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const loadBlogs = async () => {
     setLoading(true);
@@ -238,16 +262,39 @@ export const AdminBlogs = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-studio-textMuted uppercase mb-1">Cover Image URL</label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://images.unsplash.com/..."
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  className="w-full bg-studio-secondary border border-studio-border rounded px-3 py-2 text-studio-textMain focus:outline-none focus:border-studio-bronze"
-                />
+              {/* Cover Image Upload / URL */}
+              <div className="space-y-2 border border-studio-border/50 bg-studio-secondary/60 p-3 rounded-lg">
+                <label className="block font-bold text-studio-textMuted uppercase">Article Cover Image</label>
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                  <div className="flex-1 w-full">
+                    <input
+                      type="text"
+                      required
+                      placeholder="Image URL or upload file below"
+                      value={coverImage}
+                      onChange={(e) => setCoverImage(e.target.value)}
+                      className="w-full bg-studio-card border border-studio-border rounded px-3 py-2 text-studio-textMain focus:outline-none focus:border-studio-bronze"
+                    />
+                  </div>
+                  <div className="shrink-0">
+                    <label className="cursor-pointer bg-studio-card border border-studio-border hover:border-studio-gold text-studio-gold px-3 py-2 rounded flex items-center space-x-1.5 text-xs font-semibold">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{uploadingImage ? 'Loading...' : 'Upload Photo'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {coverImage && (
+                  <div className="mt-2 relative w-32 h-20 rounded-lg overflow-hidden border border-studio-gold/40">
+                    <img src={coverImage} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
               </div>
 
               <div>

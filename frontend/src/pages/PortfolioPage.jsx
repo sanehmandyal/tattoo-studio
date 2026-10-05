@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { portfolioAPI, artistsAPI } from '../services/api';
 import { Search, Filter, Heart, Eye, Maximize2, X } from 'lucide-react';
 import { createPortfolioInquiryUrl } from '../utils/whatsapp';
+import { getFullImageUrl } from '../utils/imageHelper';
 
 export const PortfolioPage = () => {
   const [portfolio, setPortfolio] = useState([]);
@@ -147,8 +148,12 @@ export const PortfolioPage = () => {
               >
                 <div className="relative h-80 overflow-hidden bg-studio-secondary">
                   <img
-                    src={item.coverImage || item.images?.[0]}
+                    src={getFullImageUrl(item.coverImage || item.images?.[0])}
                     alt={item.title}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80';
+                    }}
                     className="w-full h-full object-cover filter contrast-105 group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-studio-darker/90 via-transparent to-transparent opacity-80" />
@@ -218,8 +223,12 @@ export const PortfolioPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2">
               <div className="h-[480px] bg-black flex items-center justify-center p-2">
                 <img
-                  src={lightbox.coverImage || lightbox.images?.[0]}
+                  src={getFullImageUrl(lightbox.coverImage || lightbox.images?.[0])}
                   alt={lightbox.title}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80';
+                  }}
                   className="w-full h-full object-contain"
                 />
               </div>

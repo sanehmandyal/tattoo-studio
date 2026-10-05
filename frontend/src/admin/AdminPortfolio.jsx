@@ -38,26 +38,27 @@ export const AdminPortfolio = () => {
     loadData();
   }, []);
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setUploadingImage(true);
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-      const res = await uploadAPI.uploadImage(formData);
-      if (res.success && res.fileUrl) {
-        setCoverImage(res.fileUrl);
-        toast.success('Image uploaded successfully!');
-      } else {
-        toast.error('Image upload failed');
-      }
-    } catch (err) {
-      toast.error(err.message || 'Failed to upload image');
-    } finally {
-      setUploadingImage(false);
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Image size must be less than 10MB');
+      return;
     }
+
+    setUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCoverImage(reader.result);
+      toast.success('Tattoo photo loaded and ready to save!');
+      setUploadingImage(false);
+    };
+    reader.onerror = () => {
+      toast.error('Failed to process image file');
+      setUploadingImage(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const openCreateModal = () => {
