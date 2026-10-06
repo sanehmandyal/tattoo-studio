@@ -130,10 +130,16 @@ export const reviewsAPI = {
 };
 
 // Upload Endpoints
+// Upload Endpoints
 export const uploadAPI = {
   uploadImage: (formData) => api.post('/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+};
+
+// System Health Endpoints
+export const systemAPI = {
+  getHealth: () => api.get('/health'),
 };
 
 export default api;
