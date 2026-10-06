@@ -2,7 +2,7 @@ import TattooDesign from '../models/TattooDesign.js';
 
 export const getDesigns = async (req, res, next) => {
   try {
-    const { bodyArea, style, featured } = req.query;
+    const { bodyArea, style, featured, referenceOnly } = req.query;
     const query = { isActive: true };
 
     if (bodyArea && bodyArea !== 'All') {
@@ -14,8 +14,11 @@ export const getDesigns = async (req, res, next) => {
     if (featured === 'true') {
       query.isFeatured = true;
     }
+    if (referenceOnly === 'true') {
+      query.isReferenceTattoo = true;
+    }
 
-    const designs = await TattooDesign.find(query).sort({ isFeatured: -1, likes: -1, createdAt: -1 });
+    const designs = await TattooDesign.find(query).sort({ isDefaultReference: -1, isFeatured: -1, priority: -1, likes: -1, createdAt: -1 });
     res.json({ success: true, count: designs.length, designs });
   } catch (error) {
     next(error);
@@ -36,20 +39,49 @@ export const getDesignById = async (req, res, next) => {
 
 export const createDesign = async (req, res, next) => {
   try {
-    const { name, style, bodyAreas, description, previewImage, transparentOverlay, difficulty, estTimeHours, estPriceRange, isFeatured } = req.body;
+    const {
+      name,
+      style,
+      bodyAreas,
+      description,
+      previewImage,
+      transparentOverlay,
+      difficulty,
+      estTimeHours,
+      estPriceRange,
+      isFeatured,
+      isDefaultReference,
+      isReferenceTattoo,
+      priority
+    } = req.body;
+
+    const formattedAreas = Array.isArray(bodyAreas) 
+      ? bodyAreas 
+      : (bodyAreas ? bodyAreas.split(',').map(b => b.trim()).filter(Boolean) : ['Forearm']);
+
+    // If marked as default reference for these body areas, update other designs for the same areas
+    if (isDefaultReference) {
+      await TattooDesign.updateMany(
+        { bodyAreas: { $in: formattedAreas } },
+        { $set: { isDefaultReference: false } }
+      );
+    }
 
     const design = await TattooDesign.create({
       name,
       slug: name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-      style,
-      bodyAreas: Array.isArray(bodyAreas) ? bodyAreas : (bodyAreas ? bodyAreas.split(',').map(b => b.trim()) : ['Forearm']),
+      style: style || 'Geometric',
+      bodyAreas: formattedAreas,
       description,
       previewImage,
-      transparentOverlay: transparentOverlay || '',
+      transparentOverlay: transparentOverlay || previewImage || '',
       difficulty: difficulty || 'Intermediate',
-      estTimeHours: estTimeHours || 3,
-      estPriceRange: estPriceRange || '$250 - $450',
+      estTimeHours: Number(estTimeHours) || 3,
+      estPriceRange: estPriceRange || '₹3,500 - ₹6,500',
       isFeatured: Boolean(isFeatured),
+      isDefaultReference: Boolean(isDefaultReference),
+      isReferenceTattoo: isReferenceTattoo !== undefined ? Boolean(isReferenceTattoo) : true,
+      priority: Number(priority) || 0,
     });
 
     res.status(201).json({ success: true, design });
@@ -66,7 +98,14 @@ export const updateDesign = async (req, res, next) => {
     }
 
     if (typeof req.body.bodyAreas === 'string') {
-      req.body.bodyAreas = req.body.bodyAreas.split(',').map(b => b.trim());
+      req.body.bodyAreas = req.body.bodyAreas.split(',').map(b => b.trim()).filter(Boolean);
+    }
+
+    if (req.body.isDefaultReference && req.body.bodyAreas && req.body.bodyAreas.length > 0) {
+      await TattooDesign.updateMany(
+        { _id: { $ne: design._id }, bodyAreas: { $in: req.body.bodyAreas } },
+        { $set: { isDefaultReference: false } }
+      );
     }
 
     design = await TattooDesign.findByIdAndUpdate(req.params.id, req.body, {

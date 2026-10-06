@@ -12,6 +12,8 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Delicate crescent moon woven with celestial stardust and single-needle wild flora.',
     estTime: '2.0 hrs',
     difficulty: 'Delicate',
+    bodyAreas: ['Forearm', 'Wrist', 'Ankle'],
+    isDefaultReference: true,
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1.5" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M 50 18 A 32 32 0 1 0 78 68 A 26 26 0 1 1 50 18 Z" fill="#B28854" stroke="currentColor" />
@@ -33,6 +35,7 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Signature single-needle serpentine silhouette coiled around blooming micro peony petals.',
     estTime: '3.0 hrs',
     difficulty: 'Intermediate',
+    bodyAreas: ['Forearm', 'Upper Arm', 'Spine'],
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1.5" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M 50 14 Q 32 30 50 46 Q 68 62 50 78 Q 38 88 50 94" stroke="#966F43" strokeWidth="2.5" />
@@ -54,6 +57,7 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Custom calligraphic Sanskrit shloka with sacred geometry accents and weightless flourishing.',
     estTime: '1.5 hrs',
     difficulty: 'Delicate',
+    bodyAreas: ['Forearm', 'Ribs', 'Wrist', 'Collarbone'],
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-2">
         <text x="50" y="42" textAnchor="middle" fill="currentColor" fontFamily="Cinzel, cursive, serif" fontWeight="bold" fontSize="22" fontStyle="italic" letterSpacing="1">
@@ -78,6 +82,7 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Clean balanced micro-lotus bloom with vertical chakra alignment geometry.',
     estTime: '2.0 hrs',
     difficulty: 'Delicate',
+    bodyAreas: ['Spine', 'Neck', 'Upper Arm', 'Back'],
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1.5" fill="none" stroke="currentColor" strokeWidth="1.8">
         <line x1="50" y1="10" x2="50" y2="90" stroke="#966F43" strokeWidth="1.5" strokeDasharray="2,2" />
@@ -100,6 +105,8 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Low-poly royal Himalayan lion head with sacred geometry line accents.',
     estTime: '3.5 hrs',
     difficulty: 'Complex',
+    bodyAreas: ['Chest', 'Upper Arm', 'Back', 'Shoulder'],
+    isDefaultReference: true,
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polygon points="50,15 35,28 65,28" stroke="currentColor" fill="none" />
@@ -128,6 +135,8 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Hypnotic radial sacred geometry with fine dotwork pointillism.',
     estTime: '4.5 hrs',
     difficulty: 'Masterpiece',
+    bodyAreas: ['Back', 'Shoulder', 'Chest', 'Thigh'],
+    isDefaultReference: true,
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="50" cy="50" r="44" stroke="#966F43" strokeWidth="1.5" strokeDasharray="3,3" />
@@ -153,6 +162,7 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Traditional blooming crimson rose with emerald leaves and bold structural outlines.',
     estTime: '2.5 hrs',
     difficulty: 'Intermediate',
+    bodyAreas: ['Shoulder', 'Forearm', 'Ankle', 'Wrist'],
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1">
         <path d="M 25 70 C 15 65 15 45 35 48 C 30 65 25 70 25 70 Z" fill="#2d6a4f" stroke="#14171A" strokeWidth="2" />
@@ -174,6 +184,8 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Heavy contrast dark art skull with filigree ornamentation and bold depth.',
     estTime: '4.0 hrs',
     difficulty: 'Complex',
+    bodyAreas: ['Upper Arm', 'Chest', 'Back', 'Calf'],
+    isDefaultReference: true,
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M 28 45 C 28 25 72 25 72 45 C 72 58 66 65 64 78 L 36 78 C 34 65 28 58 28 45 Z" stroke="currentColor" fill="#966F43" fillOpacity="0.2" />
@@ -197,6 +209,8 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Jeweled ornate dagger piercing sacred heart with banner shading and sacred geometry.',
     estTime: '3.5 hrs',
     difficulty: 'Intermediate',
+    bodyAreas: ['Forearm', 'Calf', 'Spine', 'Ribs'],
+    isDefaultReference: true,
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M 50 10 L 50 90" stroke="#966F43" strokeWidth="3" />
@@ -218,6 +232,8 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Eastern dragon weaving through storm clouds and flames with divine protection.',
     estTime: '6.0 hrs',
     difficulty: 'Masterpiece',
+    bodyAreas: ['Back', 'Thigh', 'Upper Arm', 'Ribs'],
+    isDefaultReference: true,
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M 20 80 Q 30 40 50 50 Q 70 60 75 30 Q 80 15 65 20 Q 50 25 55 35" stroke="#966F43" strokeWidth="3" />
@@ -238,6 +254,7 @@ export const TATTOO_ARTWORKS_CATALOG = [
     description: 'Vibrant celestial wings with crimson and amber wash transitions.',
     estTime: '4.5 hrs',
     difficulty: 'Masterpiece',
+    bodyAreas: ['Back', 'Shoulder', 'Ribs', 'Thigh'],
     svg: (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1" fill="none">
         <path d="M 50 75 Q 30 40 20 20 Q 45 35 50 50 Q 55 35 80 20 Q 70 40 50 75 Z" fill="#e11d48" opacity="0.8" />

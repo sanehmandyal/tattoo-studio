@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Interactive3DStudio } from '../components/tattoo-studio/Interactive3DStudio';
 import { designsAPI } from '../services/api';
-import { Sparkles, ArrowRight, Heart, Sliders, Check, Layers, RotateCcw } from 'lucide-react';
+import { Sparkles, ArrowRight, Star, Sliders, Check, Layers, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../utils/whatsapp';
 
@@ -19,12 +19,31 @@ export const Interactive3DPage = () => {
   const navigate = useNavigate();
 
   const bodyAreas = [
-    'Forearm', 'Upper Arm', 'Chest', 'Back', 'Shoulder', 'Neck', 'Wrist', 'Thigh', 'Calf', 'Ankle', 'Ribs'
+    'Forearm', 'Upper Arm', 'Chest', 'Back', 'Shoulder', 'Neck', 'Wrist', 'Thigh', 'Calf', 'Ankle', 'Ribs', 'Spine'
   ];
 
   const styles = [
-    'All', 'Geometric', 'Traditional', 'Realism', 'Fine Line', 'Mandala', 'Blackwork', 'Japanese', 'Script'
+    'All', 'Geometric', 'Sacred Devbhoomi', 'Traditional', 'Realism', 'Fine Line', 'Mandala', 'Blackwork', 'Japanese', 'Script', 'Watercolor'
   ];
+
+  // Helper to find best admin reference tattoo for a body area
+  const findReferenceTattooForArea = useCallback((area, allDesigns) => {
+    if (!area || !allDesigns || allDesigns.length === 0) return null;
+    const lowerArea = area.toLowerCase();
+
+    // 1. Look for admin default reference explicitly assigned to this body area
+    const defaultRef = allDesigns.find(d => 
+      Boolean(d.isDefaultReference) &&
+      (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
+    );
+    if (defaultRef) return defaultRef;
+
+    // 2. Look for any design tagged with this body area (DB designs first, then default catalog)
+    const matching = allDesigns.find(d => 
+      (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
+    );
+    return matching || allDesigns[0];
+  }, []);
 
   useEffect(() => {
     const fetchDesigns = async () => {
@@ -43,24 +62,44 @@ export const Interactive3DPage = () => {
             previewImage: d.previewImage,
             dataUri: d.previewImage || d.transparentOverlay,
             bodyAreas: d.bodyAreas || ['Forearm'],
+            isDefaultReference: Boolean(d.isDefaultReference),
             isFromDB: true,
           }));
 
           const merged = [...TATTOO_ARTWORKS_CATALOG];
           dbList.forEach((dbItem) => {
-            if (!merged.some(m => m.name.toLowerCase() === dbItem.name.toLowerCase())) {
+            const existingIdx = merged.findIndex(m => m.name.toLowerCase() === dbItem.name.toLowerCase());
+            if (existingIdx >= 0) {
+              merged[existingIdx] = { ...merged[existingIdx], ...dbItem };
+            } else {
               merged.push(dbItem);
             }
           });
 
           setDesigns(merged);
+
+          // Auto-select reference tattoo for current body area
+          const refTattoo = findReferenceTattooForArea(selectedBodyArea, merged);
+          if (refTattoo) {
+            setSelectedDesign(refTattoo);
+          }
         }
       } catch (err) {
         console.error(err);
       }
     };
     fetchDesigns();
-  }, []);
+  }, [findReferenceTattooForArea]);
+
+  // When body area is changed, auto-switch to admin reference tattoo for that body area
+  const handleSelectBodyArea = (area) => {
+    setSelectedBodyArea(area);
+    const ref = findReferenceTattooForArea(area, designs);
+    if (ref) {
+      setSelectedDesign(ref);
+      toast.success(`Selected ${area}! Loaded admin reference tattoo: "${ref.name}"`);
+    }
+  };
 
   const filteredDesigns = designs.filter(d => {
     const matchesStyle = selectedStyle === 'All' || d.style.toLowerCase() === selectedStyle.toLowerCase();
@@ -94,39 +133,58 @@ export const Interactive3DPage = () => {
             <span>INTERACTIVE ATELIER LAB</span>
           </span>
           <h1 className="font-condensed font-black text-4xl sm:text-5xl uppercase tracking-tight text-studio-textMain">
-            3D Body Placement &amp; Design Studio
+            3D Body Placement &amp; Reference Studio
           </h1>
           <p className="text-xs sm:text-sm text-studio-textMuted">
-            Select an anatomical zone, test suggested artworks with dynamic scale &amp; opacity, and preview placement before sitting in the chair.
+            Touch or select any anatomical body part below to view and test the reference tattoo assigned by the studio master.
           </p>
         </div>
 
         {/* Anatomical Zone Filter Pills */}
         <div className="flex items-center justify-center flex-wrap gap-2 mb-8">
           <span className="text-xs text-studio-textMuted uppercase font-bold mr-2">Body Zone:</span>
-          {bodyAreas.map(area => (
-            <button
-              key={area}
-              onClick={() => setSelectedBodyArea(area)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                selectedBodyArea === area
-                  ? 'bg-sky-600 dark:bg-studio-glowCyan text-white dark:text-gray-950 font-bold shadow-md'
-                  : 'bg-studio-card/80 text-studio-textMuted hover:text-studio-textMain border border-studio-border/30'
-              }`}
-            >
-              {area}
-            </button>
-          ))}
+          {bodyAreas.map(area => {
+            const isSelected = selectedBodyArea.toLowerCase() === area.toLowerCase();
+            return (
+              <button
+                key={area}
+                onClick={() => handleSelectBodyArea(area)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center space-x-1.5 ${
+                  isSelected
+                    ? 'bg-sky-600 dark:bg-studio-glowCyan text-white dark:text-gray-950 font-black shadow-cyan-glow scale-105'
+                    : 'bg-studio-card/80 text-studio-textMuted hover:text-studio-textMain border border-studio-border/30 hover:border-studio-bronze/60'
+                }`}
+              >
+                <span>{area}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Studio Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* CENTER 3D MANNEQUIN CANVAS */}
-          <div className="lg:col-span-8 glass-panel-dark rounded-2xl p-4 border border-studio-border/60 shadow-2xl relative min-h-[580px] flex items-center justify-center">
+          <div className="lg:col-span-8 glass-panel-dark rounded-2xl p-4 border border-studio-border/60 shadow-2xl relative min-h-[580px] flex flex-col items-center justify-center">
+            
+            {/* Active Reference Notification Banner */}
+            <div className="w-full mb-3 flex items-center justify-between bg-studio-darker/90 border border-studio-border/60 px-4 py-2 rounded-xl text-xs">
+              <div className="flex items-center space-x-2">
+                <span className="text-amber-400 font-black flex items-center space-x-1">
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <span className="uppercase tracking-wider">Active Reference:</span>
+                </span>
+                <span className="font-bold text-studio-textMain">{selectedDesign?.name || 'Selected Motif'}</span>
+                <span className="text-studio-textMuted hidden sm:inline">for {selectedBodyArea}</span>
+              </div>
+              <span className="text-[11px] text-studio-glowCyan font-semibold bg-studio-glowCyan/10 px-2 py-0.5 rounded border border-studio-glowCyan/30">
+                Set by Studio Admin
+              </span>
+            </div>
+
             <Interactive3DStudio
               selectedBodyArea={selectedBodyArea}
-              onSelectBodyArea={setSelectedBodyArea}
+              onSelectBodyArea={handleSelectBodyArea}
               selectedDesign={selectedDesign}
               onSelectDesign={setSelectedDesign}
             />
@@ -161,14 +219,14 @@ export const Interactive3DPage = () => {
             <div className="glass-panel p-4 rounded-xl border border-studio-border/50 space-y-3">
               <div className="flex items-center justify-between border-b border-studio-border/30 pb-2">
                 <span className="text-xs font-bold uppercase text-studio-textMain">
-                  {selectedBodyArea} Artwork Library
+                  {selectedBodyArea} Tattoo References
                 </span>
                 <span className="text-[10px] text-studio-textMuted">
                   {filteredDesigns.length} designs available
                 </span>
               </div>
 
-              <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
                 {filteredDesigns.length === 0 ? (
                   <div className="py-8 text-center text-xs text-studio-textMuted">
                     No custom designs tagged for {selectedBodyArea} with style {selectedStyle}. Try selecting 'All'.
@@ -176,17 +234,19 @@ export const Interactive3DPage = () => {
                 ) : (
                   filteredDesigns.map(design => {
                     const isSelected = selectedDesign?._id === design._id;
+                    const isDefaultRef = Boolean(design.isDefaultReference);
+
                     return (
                       <div
                         key={design._id}
                         onClick={() => setSelectedDesign(design)}
-                        className={`flex items-center space-x-3 p-2.5 rounded-lg cursor-pointer transition-all border ${
+                        className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all border ${
                           isSelected
                             ? 'bg-studio-card border-studio-glowCyan shadow-cyan-glow'
                             : 'bg-studio-secondary/60 border-studio-border/30 hover:border-studio-bronze/60'
                         }`}
                       >
-                        <div className="w-12 h-12 rounded bg-studio-darker/90 overflow-hidden border border-studio-border/50 shrink-0 flex items-center justify-center p-1">
+                        <div className="w-14 h-14 rounded-lg bg-studio-darker/90 overflow-hidden border border-studio-border/50 shrink-0 flex items-center justify-center p-1.5">
                           {design.svg ? (
                             design.svg
                           ) : (
@@ -197,10 +257,21 @@ export const Interactive3DPage = () => {
                             />
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mt-1">
-                            <span className="text-[9px] uppercase font-bold text-studio-bronzeLight bg-studio-card px-1.5 py-0.5 rounded">
-                              {design.difficulty} • ~{design.estTimeHours}h
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-condensed font-bold text-sm text-studio-textMain uppercase truncate">
+                              {design.name}
+                            </h4>
+                            {isDefaultRef && (
+                              <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[9px] font-black uppercase px-1.5 py-0.2 rounded shrink-0">
+                                ⭐ Primary Ref
+                              </span>
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center justify-between text-[10px] text-studio-textMuted">
+                            <span className="uppercase font-bold text-studio-bronzeLight">
+                              {design.style} • {design.difficulty}
                             </span>
                             <button
                               type="button"

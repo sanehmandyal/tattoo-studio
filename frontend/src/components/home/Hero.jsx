@@ -21,6 +21,25 @@ export const Hero = () => {
 
   const stylesList = ['All', 'Minimalist', 'Fine Line', 'Geometric', 'Traditional', 'Script', 'Mandala', 'Realism', 'Blackwork', 'Neo-Traditional', 'Watercolor'];
 
+  // Helper to find best admin reference tattoo for a body area
+  const findReferenceTattooForArea = (area, allDesigns) => {
+    if (!area || !allDesigns || allDesigns.length === 0) return null;
+    const lowerArea = area.toLowerCase();
+
+    // 1. Look for admin default reference explicitly assigned to this body area
+    const defaultRef = allDesigns.find(d => 
+      Boolean(d.isDefaultReference) &&
+      (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
+    );
+    if (defaultRef) return defaultRef;
+
+    // 2. Look for any design tagged with this body area
+    const matching = allDesigns.find(d => 
+      (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
+    );
+    return matching || allDesigns[0];
+  };
+
   // Fetch dynamic designs from Admin database, preserving all 11 core vector flash artworks
   useEffect(() => {
     const loadDynamicDesigns = async () => {
@@ -39,19 +58,26 @@ export const Hero = () => {
             previewImage: d.previewImage,
             dataUri: d.previewImage || d.transparentOverlay,
             bodyAreas: d.bodyAreas || ['Forearm'],
+            isDefaultReference: Boolean(d.isDefaultReference),
             isFromDB: true,
           }));
 
-          // Keep all 11 original master vector artworks intact and append new custom admin designs
+          // Merge without losing original artworks
           const merged = [...TATTOO_ARTWORKS_CATALOG];
           dbList.forEach((dbItem) => {
-            const exists = merged.some(m => m.name.toLowerCase() === dbItem.name.toLowerCase());
-            if (!exists) {
+            const existingIdx = merged.findIndex(m => m.name.toLowerCase() === dbItem.name.toLowerCase());
+            if (existingIdx >= 0) {
+              merged[existingIdx] = { ...merged[existingIdx], ...dbItem };
+            } else {
               merged.push(dbItem);
             }
           });
 
           setDesigns(merged);
+
+          // Auto-select reference for initial body area (Forearm)
+          const ref = findReferenceTattooForArea('Forearm', merged);
+          if (ref) setSelectedDesign(ref);
         }
       } catch (err) {
         console.warn('Using default flash motifs catalog:', err);
@@ -70,7 +96,13 @@ export const Hero = () => {
 
   const handleSelectBodyPart = (areaName) => {
     setSelectedBodyArea(areaName);
-    toast.success(`Touched ${areaName}! Previewing "${selectedDesign.name}" on your ${areaName}`);
+    const ref = findReferenceTattooForArea(areaName, designs);
+    if (ref) {
+      setSelectedDesign(ref);
+      toast.success(`Touched ${areaName}! Loaded admin reference: "${ref.name}"`);
+    } else {
+      toast.success(`Touched ${areaName}! Previewing on your ${areaName}`);
+    }
   };
 
   const handleSelectDesign = (design) => {

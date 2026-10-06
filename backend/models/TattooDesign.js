@@ -14,42 +14,10 @@ const tattooDesignSchema = new mongoose.Schema({
   style: {
     type: String,
     required: true,
-    enum: [
-      'Geometric',
-      'Traditional',
-      'Neo-Traditional',
-      'Realism',
-      'Fine Line',
-      'Minimalist',
-      'Script',
-      'Mandala',
-      'Tribal',
-      'Japanese',
-      'Blackwork',
-      'Watercolor',
-      'Sleeve'
-    ],
   },
   bodyAreas: [{
     type: String,
     required: true,
-    enum: [
-      'Forearm',
-      'Upper Arm',
-      'Shoulder',
-      'Chest',
-      'Back',
-      'Neck',
-      'Wrist',
-      'Calf',
-      'Thigh',
-      'Ankle',
-      'Ribs',
-      'Hand',
-      'Collarbone',
-      'Spine',
-      'Sleeve'
-    ]
   }],
   description: {
     type: String,
@@ -65,7 +33,6 @@ const tattooDesignSchema = new mongoose.Schema({
   },
   difficulty: {
     type: String,
-    enum: ['Simple', 'Intermediate', 'Complex', 'Masterpiece'],
     default: 'Intermediate'
   },
   estTimeHours: {
@@ -74,7 +41,19 @@ const tattooDesignSchema = new mongoose.Schema({
   },
   estPriceRange: {
     type: String,
-    default: '$250 - $450',
+    default: '₹3,500 - ₹6,500',
+  },
+  isDefaultReference: {
+    type: Boolean,
+    default: false,
+  },
+  isReferenceTattoo: {
+    type: Boolean,
+    default: true,
+  },
+  priority: {
+    type: Number,
+    default: 0,
   },
   isFeatured: {
     type: Boolean,
