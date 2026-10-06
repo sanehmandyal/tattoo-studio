@@ -467,9 +467,9 @@ export const Interactive3DStudio = ({
                   maxWidth: activePartConfig.tattooPos.maxWidth,
                   maxHeight: activePartConfig.tattooPos.maxHeight,
                   opacity: tattooOpacity * Math.min(1, tattooCylinderCos + 0.3),
-                  mixBlendMode: blendMode,
+                  mixBlendMode: blendMode === 'multiply' ? 'multiply' : blendMode === 'screen' ? 'screen' : 'normal',
                   filter: featherEdge
-                    ? 'drop-shadow(0 0 1.5px rgba(0,0,0,0.65)) contrast(110%)'
+                    ? 'drop-shadow(0 0 2px rgba(0,0,0,0.8))'
                     : 'none',
                   transition: 'opacity 0.15s ease-out, transform 0.05s ease-out',
                 }}
@@ -482,7 +482,7 @@ export const Interactive3DStudio = ({
                   <img
                     src={imageSrc}
                     alt={selectedDesign.name}
-                    className="w-full h-full object-contain filter contrast-125"
+                    className="w-full h-full object-contain pointer-events-none"
                   />
                 ) : (
                   <div className="text-[10px] text-amber-300 font-bold uppercase tracking-wider text-center bg-black/60 px-2 py-1 rounded">
@@ -551,8 +551,8 @@ export const Interactive3DStudio = ({
               <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">Scale</span>
               <input
                 type="range"
-                min="0.5"
-                max="1.8"
+                min="0.4"
+                max="2.2"
                 step="0.05"
                 value={tattooScale}
                 onChange={(e) => setTattooScale(parseFloat(e.target.value))}
@@ -566,7 +566,7 @@ export const Interactive3DStudio = ({
               <span className="text-[10px] uppercase tracking-wider font-bold text-cyan-400">Ink</span>
               <input
                 type="range"
-                min="0.3"
+                min="0.2"
                 max="1.0"
                 step="0.05"
                 value={tattooOpacity}
@@ -574,6 +574,25 @@ export const Interactive3DStudio = ({
                 className="w-16 sm:w-20 accent-cyan-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <span className="text-[10px] font-mono text-zinc-400">{Math.round(tattooOpacity * 100)}%</span>
+            </div>
+
+            {/* Blend Mode Switcher */}
+            <div className="flex items-center space-x-1 hidden sm:flex text-[9px]">
+              <span className="text-zinc-500 uppercase font-bold">Blend:</span>
+              <button
+                type="button"
+                onClick={() => setBlendMode('normal')}
+                className={`px-1.5 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'normal' ? 'bg-cyan-500 text-black' : 'text-zinc-400 hover:text-white'}`}
+              >
+                Direct
+              </button>
+              <button
+                type="button"
+                onClick={() => setBlendMode('multiply')}
+                className={`px-1.5 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'multiply' ? 'bg-cyan-500 text-black' : 'text-zinc-400 hover:text-white'}`}
+              >
+                Ink
+              </button>
             </div>
           </div>
 
@@ -590,14 +609,14 @@ export const Interactive3DStudio = ({
           </div>
         </div>
 
-        {/* In-Viewport Tattoo Selection Carousel */}
+        {/* In-Viewport Tattoo Selection Carousel - Shows ALL Admin Tattoos */}
         {designs && designs.length > 0 && (
           <div className="bg-black/90 backdrop-blur-xl border border-studio-border/70 p-1.5 rounded-xl shadow-2xl">
             <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-thin">
               <span className="text-[9px] uppercase tracking-widest font-black text-studio-glowCyan px-1 shrink-0">
-                Tattoos:
+                Admin Designs ({designs.length}):
               </span>
-              {designs.slice(0, 10).map((design) => {
+              {designs.map((design) => {
                 const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
                 const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
 
@@ -607,7 +626,7 @@ export const Interactive3DStudio = ({
                     type="button"
                     onClick={() => {
                       if (onSelectDesign) onSelectDesign(design);
-                      toast.success(`Selected "${design.name}" on 3D Body!`);
+                      toast.success(`Testing "${design.name}" on 3D Body!`);
                     }}
                     className={`relative shrink-0 flex items-center space-x-1.5 px-2 py-1 rounded-lg transition-all border ${
                       isSelected
@@ -615,23 +634,23 @@ export const Interactive3DStudio = ({
                         : 'bg-zinc-900/80 border-white/10 hover:border-amber-500/40 text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <div className="w-7 h-7 rounded bg-black/70 p-0.5 overflow-hidden flex items-center justify-center border border-white/10">
+                    <div className="w-8 h-8 rounded bg-black/90 p-0.5 overflow-hidden flex items-center justify-center border border-white/10">
                       {design.svg ? (
                         design.svg
                       ) : (
                         <img
                           src={imgSrc}
                           alt={design.name}
-                          className="w-full h-full object-contain filter invert dark:invert-0"
+                          className="w-full h-full object-contain"
                         />
                       )}
                     </div>
                     <div className="text-left">
-                      <div className="text-[10px] font-bold text-zinc-200 uppercase truncate max-w-[75px]">
+                      <div className="text-[10px] font-bold text-zinc-200 uppercase truncate max-w-[85px]">
                         {design.name}
                       </div>
                       <div className="text-[8px] text-amber-400/80 font-mono">
-                        {design.style || 'Custom'}
+                        {design.style || 'Admin Tattoo'}
                       </div>
                     </div>
                   </button>

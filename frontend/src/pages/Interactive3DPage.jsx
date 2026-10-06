@@ -68,10 +68,9 @@ export const Interactive3DPage = () => {
 
           setDesigns(dbList);
 
-          // If no design selected yet, select the first design
-          if (!selectedDesign && dbList.length > 0) {
-            setSelectedDesign(dbList[0]);
-          }
+          // Find the admin's assigned tattoo for the current body area
+          const initialDesign = findReferenceTattooForArea(selectedBodyArea, dbList) || dbList[0];
+          setSelectedDesign(initialDesign);
         } else {
           setDesigns(TATTOO_ARTWORKS_CATALOG);
           if (!selectedDesign) {
@@ -84,16 +83,17 @@ export const Interactive3DPage = () => {
       }
     };
     fetchDesigns();
-  }, []);
+  }, [findReferenceTattooForArea, selectedBodyArea]);
 
-  // When body area is clicked, keep the currently selected tattoo locked and preview it on that body part!
+  // When body area is clicked, load the admin's designated reference tattoo or preview current tattoo on that body part
   const handleSelectBodyArea = (area) => {
     setSelectedBodyArea(area);
-    if (selectedDesign) {
+    const matchingAdminDesign = findReferenceTattooForArea(area, designs);
+    if (matchingAdminDesign) {
+      setSelectedDesign(matchingAdminDesign);
+      toast.success(`Testing "${matchingAdminDesign.name}" on ${area}!`);
+    } else if (selectedDesign) {
       toast.success(`Testing "${selectedDesign.name}" on ${area}!`);
-    } else if (designs.length > 0) {
-      setSelectedDesign(designs[0]);
-      toast.success(`Testing "${designs[0].name}" on ${area}!`);
     }
   };
 
