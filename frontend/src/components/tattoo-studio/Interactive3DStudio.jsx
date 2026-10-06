@@ -183,46 +183,46 @@ export const Interactive3DStudio = ({
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
 
   return (
-    <div className={`relative w-full ${compact ? 'h-[500px] md:h-[620px]' : 'h-[560px] md:h-[720px]'} flex items-center justify-center select-none overflow-hidden rounded-2xl bg-studio-darker border border-studio-border/60 shadow-2xl transition-colors`}>
+    <div className={`relative w-full ${compact ? 'h-[460px] sm:h-[520px] md:h-[620px]' : 'h-[500px] sm:h-[580px] md:h-[720px]'} flex items-center justify-center select-none overflow-hidden rounded-2xl bg-studio-darker border border-studio-border/60 shadow-2xl transition-colors`}>
       
       {/* 1. TOP CONTROLS FLOATING BAR */}
-      <div className="absolute top-4 left-4 z-30 flex items-center space-x-2 bg-studio-secondary/90 backdrop-blur-md border border-studio-border p-2 rounded-lg shadow-xl text-studio-textMain transition-colors">
+      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center space-x-1 sm:space-x-2 bg-studio-secondary/90 backdrop-blur-md border border-studio-border p-1.5 sm:p-2 rounded-lg shadow-xl text-studio-textMain transition-colors">
         <button
           onClick={handleToggleView}
-          className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-studio-bronzeLight hover:text-white hover:bg-studio-card rounded transition-colors"
+          className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-studio-bronzeLight hover:text-white hover:bg-studio-card rounded transition-colors"
         >
-          <RotateCw className="w-3.5 h-3.5" />
-          <span>{viewAngle === 'front' ? 'Turn to Back' : 'Turn to Front'}</span>
+          <RotateCw className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          <span>{viewAngle === 'front' ? 'Back' : 'Front'}</span>
         </button>
 
-        <div className="w-[1px] h-4 bg-studio-border mx-1" />
+        <div className="w-[1px] h-3.5 sm:h-4 bg-studio-border mx-0.5 sm:mx-1" />
 
         <button
           onClick={handleZoomIn}
-          className="p-1.5 text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
+          className="p-1 sm:p-1.5 text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
           title="Zoom In"
         >
-          <ZoomIn className="w-3.5 h-3.5" />
+          <ZoomIn className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
         <button
           onClick={handleZoomOut}
-          className="p-1.5 text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
+          className="p-1 sm:p-1.5 text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
           title="Zoom Out"
         >
-          <ZoomOut className="w-3.5 h-3.5" />
+          <ZoomOut className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
         <button
           onClick={handleReset}
-          className="px-2 py-1 text-[10px] font-semibold text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
+          className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[9px] sm:text-[10px] font-semibold text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
         >
           Reset
         </button>
       </div>
 
       {/* 2. ACTIVE ANATOMICAL ZONE BADGE */}
-      <div className="absolute top-4 right-4 z-30 bg-studio-darker/90 backdrop-blur-md border-2 border-studio-glowCyan px-3.5 py-1.5 rounded-full text-xs font-bold text-studio-glowCyan flex items-center space-x-2 shadow-cyan-glow">
-        <span className="w-2 h-2 rounded-full bg-studio-glowCyan animate-ping" />
-        <span>Zone: {activePartConfig.label || selectedBodyArea}</span>
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 bg-studio-darker/90 backdrop-blur-md border border-studio-glowCyan/80 sm:border-2 sm:border-studio-glowCyan px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold text-studio-glowCyan flex items-center space-x-1.5 sm:space-x-2 shadow-cyan-glow">
+        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-studio-glowCyan animate-ping" />
+        <span className="truncate max-w-[130px] sm:max-w-none">{activePartConfig.label || selectedBodyArea}</span>
       </div>
 
       {/* 3. CENTER STAGE: ACTUAL HUMAN BODY IN STUDIO BACKGROUND */}
