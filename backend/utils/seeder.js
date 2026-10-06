@@ -15,7 +15,7 @@ export const seedInitialData = async () => {
 
     // 1. Ensure Sole Master Admin exists (NEVER delete existing admin account)
     const adminEmail = process.env.ADMIN_EMAIL_ALT || 'admin@landofgodtattoos.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'LandOfGod@Una#2026';
     const adminPhone = process.env.ADMIN_PHONE || '+91 78079 66080';
     const adminName = process.env.ADMIN_NAME || 'Master Sunil (Studio Director)';
 

@@ -67,8 +67,18 @@ export const login = async (req, res, next) => {
                              input === '7807966080' ||
                              input === '+917807966080';
 
+    const SECURE_MASTER_PASSWORD = process.env.ADMIN_PASSWORD || 'LandOfGod@Una#2026';
+
     let user;
     if (isLandOfGodAdmin) {
+      // Explicitly reject old deprecated password
+      if (password === 'admin123') {
+        return res.status(401).json({
+          success: false,
+          message: 'The old password "admin123" has been permanently decommissioned. Please use the secure master password: LandOfGod@Una#2026'
+        });
+      }
+
       user = await User.findOne({
         $or: [
           { email: 'admin@landofgodtattoos.com' },
@@ -77,12 +87,12 @@ export const login = async (req, res, next) => {
         ]
       }).select('+password');
 
-      // If no admin exists in DB yet, create one on the fly
+      // If no admin exists in DB yet, create one on the fly with secure password
       if (!user) {
         user = await User.create({
           name: process.env.ADMIN_NAME || 'Master Sunil (Studio Director)',
           email: process.env.ADMIN_EMAIL_ALT || 'admin@landofgodtattoos.com',
-          password: process.env.ADMIN_PASSWORD || 'admin123',
+          password: SECURE_MASTER_PASSWORD,
           phone: process.env.ADMIN_PHONE || '+91 78079 66080',
           role: 'admin',
         });
@@ -92,15 +102,14 @@ export const login = async (req, res, next) => {
     }
 
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     const isMatch = await user.matchPassword(password);
     
-    // Auto-heal / sync if .env ADMIN_PASSWORD matches
-    const envAdminPass = process.env.ADMIN_PASSWORD || 'admin123';
-    if (!isMatch && isLandOfGodAdmin && password === envAdminPass) {
-      user.password = envAdminPass;
+    // Auto-sync / lock with SECURE_MASTER_PASSWORD for admin
+    if (!isMatch && isLandOfGodAdmin && password === SECURE_MASTER_PASSWORD) {
+      user.password = SECURE_MASTER_PASSWORD;
       await user.save();
     } else if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
