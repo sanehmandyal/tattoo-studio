@@ -157,21 +157,21 @@ export const Interactive3DPage = () => {
         {/* Studio Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* CENTER 3D MANNEQUIN CANVAS */}
-          <div className="lg:col-span-8 glass-panel-dark rounded-2xl p-4 border border-studio-border/60 shadow-2xl relative min-h-[580px] flex flex-col items-center justify-center">
+          {/* CENTER 3D WEBGL MANNEQUIN ATELIER STAGE */}
+          <div className="lg:col-span-8 relative flex flex-col items-center justify-center">
             
             {/* Active Reference Notification Banner */}
-            <div className="w-full mb-3 flex items-center justify-between bg-studio-darker/90 border border-studio-border/60 px-4 py-2 rounded-xl text-xs">
+            <div className="w-full mb-3 flex items-center justify-between bg-black/70 backdrop-blur-md border border-studio-border/60 px-4 py-2 rounded-xl text-xs">
               <div className="flex items-center space-x-2">
                 <span className="text-amber-400 font-black flex items-center space-x-1">
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <span className="uppercase tracking-wider">Active Reference:</span>
+                  <span className="uppercase tracking-wider">Active Tattoo:</span>
                 </span>
                 <span className="font-bold text-studio-textMain">{selectedDesign?.name || 'Selected Motif'}</span>
-                <span className="text-studio-textMuted hidden sm:inline">for {selectedBodyArea}</span>
+                <span className="text-studio-textMuted hidden sm:inline">on {selectedBodyArea}</span>
               </div>
-              <span className="text-[11px] text-studio-glowCyan font-semibold bg-studio-glowCyan/10 px-2 py-0.5 rounded border border-studio-glowCyan/30">
-                Set by Studio Admin
+              <span className="text-[11px] text-studio-glowCyan font-semibold bg-studio-glowCyan/10 px-2.5 py-0.5 rounded-full border border-studio-glowCyan/30">
+                Studio Master Reference
               </span>
             </div>
 
