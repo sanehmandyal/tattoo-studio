@@ -180,6 +180,7 @@ export const Interactive3DPage = () => {
               onSelectBodyArea={handleSelectBodyArea}
               selectedDesign={selectedDesign}
               onSelectDesign={setSelectedDesign}
+              designs={filteredDesigns}
             />
           </div>
 

@@ -135,6 +135,7 @@ export const Interactive3DStudio = ({
   onSelectBodyArea,
   selectedDesign,
   onSelectDesign,
+  designs = [],
   compact = false,
 }) => {
   const [viewAngle, setViewAngle] = useState('front'); // 'front' or 'back'
@@ -145,6 +146,8 @@ export const Interactive3DStudio = ({
   const [blendMode, setBlendMode] = useState('multiply'); // 'multiply' | 'darken' | 'color-burn' | 'normal'
   const [featherEdge, setFeatherEdge] = useState(true);
   const [showHotspotBorders, setShowHotspotBorders] = useState(true);
+  const [showTattooTray, setShowTattooTray] = useState(true);
+  const [showControlsModal, setShowControlsModal] = useState(false);
 
   // Automatically adjust view angle when a specific back or front area is chosen
   useEffect(() => {
@@ -183,51 +186,46 @@ export const Interactive3DStudio = ({
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
 
   return (
-    <div className={`relative w-full ${compact ? 'h-[460px] sm:h-[520px] md:h-[620px]' : 'h-[500px] sm:h-[580px] md:h-[720px]'} flex items-center justify-center select-none overflow-hidden rounded-2xl bg-studio-darker border border-studio-border/60 shadow-2xl transition-colors`}>
+    <div className={`relative w-full ${compact ? 'h-[520px] sm:h-[580px] md:h-[640px]' : 'h-[580px] sm:h-[640px] md:h-[740px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-studio-darker border border-studio-border/60 shadow-2xl transition-colors`}>
       
-      {/* 1. TOP CONTROLS FLOATING BAR */}
-      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center space-x-1 sm:space-x-2 bg-studio-secondary/90 backdrop-blur-md border border-studio-border p-1.5 sm:p-2 rounded-lg shadow-xl text-studio-textMain transition-colors">
-        <button
-          onClick={handleToggleView}
-          className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-studio-bronzeLight hover:text-white hover:bg-studio-card rounded transition-colors"
-        >
-          <RotateCw className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-          <span>{viewAngle === 'front' ? 'Back' : 'Front'}</span>
-        </button>
+      {/* 1. UNIFIED TOP BAR: PREVENTS OVERLAP ON MOBILE & TABLET */}
+      <div className="absolute top-2.5 left-2.5 right-2.5 z-30 flex items-center justify-between gap-2 pointer-events-auto">
+        {/* Left Actions: Rotation & Zoom */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 bg-black/80 backdrop-blur-md border border-amber-500/30 p-1 sm:p-1.5 rounded-full shadow-xl">
+          <button
+            onClick={handleToggleView}
+            className="flex items-center space-x-1 px-2.5 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-300 hover:text-amber-200 bg-amber-950/60 border border-amber-500/40 rounded-full transition-colors"
+          >
+            <RotateCw className="w-3 h-3" />
+            <span>{viewAngle === 'front' ? 'Turn Back' : 'Turn Front'}</span>
+          </button>
 
-        <div className="w-[1px] h-3.5 sm:h-4 bg-studio-border mx-0.5 sm:mx-1" />
+          <button
+            onClick={handleZoomIn}
+            className="p-1 text-studio-textMuted hover:text-white rounded-full transition-colors"
+            title="Zoom In"
+          >
+            <ZoomIn className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          </button>
+          <button
+            onClick={handleZoomOut}
+            className="p-1 text-studio-textMuted hover:text-white rounded-full transition-colors"
+            title="Zoom Out"
+          >
+            <ZoomOut className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          </button>
+        </div>
 
-        <button
-          onClick={handleZoomIn}
-          className="p-1 sm:p-1.5 text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
-          title="Zoom In"
-        >
-          <ZoomIn className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-        </button>
-        <button
-          onClick={handleZoomOut}
-          className="p-1 sm:p-1.5 text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
-          title="Zoom Out"
-        >
-          <ZoomOut className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-        </button>
-        <button
-          onClick={handleReset}
-          className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[9px] sm:text-[10px] font-semibold text-studio-textMuted hover:text-studio-textMain hover:bg-studio-card rounded transition-colors"
-        >
-          Reset
-        </button>
+        {/* Right Action: Clean Zone Badge */}
+        <div className="bg-black/80 backdrop-blur-md border border-cyan-400/60 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-cyan-300 flex items-center space-x-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)] shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping shrink-0" />
+          <span className="truncate max-w-[120px] sm:max-w-none">{activePartConfig.label || selectedBodyArea}</span>
+        </div>
       </div>
 
-      {/* 2. ACTIVE ANATOMICAL ZONE BADGE */}
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 bg-studio-darker/90 backdrop-blur-md border border-studio-glowCyan/80 sm:border-2 sm:border-studio-glowCyan px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold text-studio-glowCyan flex items-center space-x-1.5 sm:space-x-2 shadow-cyan-glow">
-        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-studio-glowCyan animate-ping" />
-        <span className="truncate max-w-[130px] sm:max-w-none">{activePartConfig.label || selectedBodyArea}</span>
-      </div>
-
-      {/* 3. CENTER STAGE: ACTUAL HUMAN BODY IN STUDIO BACKGROUND */}
+      {/* 2. CENTER STAGE: ACTUAL HUMAN BODY IN STUDIO BACKGROUND */}
       <div
-        className="relative w-full h-full flex items-center justify-center transition-transform duration-200 ease-out transform-gpu will-change-transform"
+        className="relative w-full h-full flex items-center justify-center transition-transform duration-200 ease-out transform-gpu will-change-transform pt-10 pb-20"
         style={{ transform: `scale(${zoomLevel})` }}
       >
         {/* Soft studio lighting */}
@@ -338,87 +336,137 @@ export const Interactive3DStudio = ({
         </div>
       </div>
 
-      {/* 4. BOTTOM TATTOO SKIN BLEND & ADJUSTMENT CONTROLS */}
-      {selectedDesign && (
-        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-30 flex items-center space-x-3 bg-studio-darker/95 backdrop-blur-md border border-studio-border/60 px-4 py-2 rounded-full text-xs shadow-2xl max-w-[95%] overflow-x-auto scrollbar-none">
-          
-          {/* Tattoo Size Slider */}
-          <div className="flex items-center space-x-1.5 shrink-0">
-            <span className="text-studio-textMuted text-[10px] uppercase font-bold">Size:</span>
-            <input
-              type="range"
-              min="0.6"
-              max="1.7"
-              step="0.05"
-              value={tattooScale}
-              onChange={(e) => setTattooScale(parseFloat(e.target.value))}
-              className="w-14 accent-studio-bronze cursor-pointer h-1.5 bg-studio-card rounded-lg"
-              title="Tattoo Scale"
-            />
-          </div>
+      {/* 4. INSTANT TATTOO SELECTOR & ADJUSTMENT DOCK DIRECTLY ON PRESENCE OF BODY */}
+      <div className="absolute bottom-2.5 left-2.5 right-2.5 z-30 flex flex-col gap-1.5 pointer-events-auto">
+        
+        {/* Collapsible Tuning Controls Bar */}
+        {showControlsModal && selectedDesign && (
+          <div className="bg-black/95 backdrop-blur-xl border border-amber-500/40 p-2.5 rounded-xl shadow-2xl flex items-center justify-between gap-2 overflow-x-auto text-[11px] animate-in fade-in slide-in-from-bottom duration-150">
+            {/* Tattoo Size Slider */}
+            <div className="flex items-center space-x-1.5 shrink-0">
+              <span className="text-amber-400 text-[10px] uppercase font-bold">Size:</span>
+              <input
+                type="range"
+                min="0.5"
+                max="1.8"
+                step="0.05"
+                value={tattooScale}
+                onChange={(e) => setTattooScale(parseFloat(e.target.value))}
+                className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                title="Tattoo Scale"
+              />
+            </div>
 
-          <div className="w-[1px] h-3.5 bg-studio-border/50 shrink-0" />
+            <div className="w-px h-3.5 bg-white/10 shrink-0" />
 
-          {/* Ink Density Slider */}
-          <div className="flex items-center space-x-1.5 shrink-0">
-            <span className="text-studio-textMuted text-[10px] uppercase font-bold">Ink Depth:</span>
-            <input
-              type="range"
-              min="0.4"
-              max="1"
-              step="0.05"
-              value={tattooOpacity}
-              onChange={(e) => setTattooOpacity(parseFloat(e.target.value))}
-              className="w-14 accent-studio-bronze cursor-pointer h-1.5 bg-studio-card rounded-lg"
-              title="Ink Density / Opacity"
-            />
-          </div>
+            {/* Ink Density Slider */}
+            <div className="flex items-center space-x-1.5 shrink-0">
+              <span className="text-amber-400 text-[10px] uppercase font-bold">Ink Depth:</span>
+              <input
+                type="range"
+                min="0.4"
+                max="1"
+                step="0.05"
+                value={tattooOpacity}
+                onChange={(e) => setTattooOpacity(parseFloat(e.target.value))}
+                className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                title="Ink Density / Opacity"
+              />
+            </div>
 
-          <div className="w-[1px] h-3.5 bg-studio-border/50 shrink-0" />
+            <div className="w-px h-3.5 bg-white/10 shrink-0" />
 
-          {/* Skin Blend Mode Toggle */}
-          <div className="flex items-center space-x-1 shrink-0">
+            {/* Feather Border Toggle */}
             <button
               type="button"
-              onClick={() => {
-                const modes = ['multiply', 'color-burn', 'darken', 'normal'];
-                const next = modes[(modes.indexOf(blendMode) + 1) % modes.length];
-                setBlendMode(next);
-                toast.info(`Skin Blend Mode: ${next.toUpperCase()}`);
-              }}
-              className="px-2 py-0.5 rounded bg-studio-secondary hover:bg-studio-card border border-studio-border/60 text-[10px] font-bold text-studio-glowCyan flex items-center space-x-1 transition-colors"
-              title="Click to cycle skin blend mode"
+              onClick={() => setFeatherEdge(prev => !prev)}
+              className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 transition-colors ${
+                featherEdge
+                  ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
+                  : 'bg-zinc-800 text-zinc-400 border border-white/10'
+              }`}
             >
-              <Layers className="w-3 h-3" />
-              <span className="uppercase">{blendMode === 'multiply' ? 'Natural Ink' : blendMode}</span>
+              {featherEdge ? '✓ Soft Skin Blend' : 'Sharp Border'}
             </button>
           </div>
+        )}
 
-          <div className="w-[1px] h-3.5 bg-studio-border/50 shrink-0" />
+        {/* Instant Tattoo Horizontal Selector Bar (Zero scroll up/down needed) */}
+        {designs && designs.length > 0 && (
+          <div className="bg-black/90 backdrop-blur-xl border border-amber-500/30 rounded-xl p-2 shadow-2xl space-y-1.5">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center space-x-1.5">
+                <Sparkles className="w-3 h-3 text-amber-400" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-300">
+                  Instant Tattoo Selector
+                </span>
+                <span className="text-[9px] text-zinc-400 font-serif hidden sm:inline">
+                  (Tap to test on {selectedBodyArea})
+                </span>
+              </div>
 
-          {/* Feather Border Toggle */}
-          <button
-            type="button"
-            onClick={() => {
-              setFeatherEdge(prev => !prev);
-              toast.info(featherEdge ? 'Sharp Border' : 'Soft Feathered Skin Border');
-            }}
-            className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 transition-colors ${
-              featherEdge
-                ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
-                : 'bg-studio-secondary text-studio-textMuted border border-studio-border/50'
-            }`}
-            title="Soft feathering dissolves photo borders seamlessly into muscle"
-          >
-            {featherEdge ? '✓ Soft Skin Edge' : 'Box Edge'}
-          </button>
-        </div>
-      )}
+              {/* Adjust Ink Toggle */}
+              {selectedDesign && (
+                <button
+                  type="button"
+                  onClick={() => setShowControlsModal(!showControlsModal)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold flex items-center space-x-1 border transition-colors ${
+                    showControlsModal
+                      ? 'bg-amber-400 text-black border-amber-400'
+                      : 'bg-zinc-900 text-amber-300 border-amber-500/40 hover:border-amber-400'
+                  }`}
+                >
+                  <Sliders className="w-2.5 h-2.5" />
+                  <span>{showControlsModal ? 'Close Adjust' : 'Adjust Ink'}</span>
+                </button>
+              )}
+            </div>
 
-      {/* Hint text bottom left */}
-      <div className="absolute bottom-3 left-4 hidden sm:block text-[10px] text-studio-textMuted/70 pointer-events-none">
-        Touch any body muscle to test skin ink placement
+            {/* Horizontal Scrollable Thumbnails List */}
+            <div className="flex items-center space-x-2 overflow-x-auto py-0.5 px-0.5 no-scrollbar scroll-smooth">
+              {designs.map((item) => {
+                const isSelected = selectedDesign?._id === item._id || selectedDesign?.name === item.name;
+                return (
+                  <button
+                    key={item._id || item.name}
+                    type="button"
+                    onClick={() => {
+                      if (onSelectDesign) onSelectDesign(item);
+                      toast.success(`Testing "${item.name}" on ${selectedBodyArea}!`);
+                    }}
+                    className={`shrink-0 flex items-center space-x-2 p-1 rounded-lg border transition-all duration-200 text-left ${
+                      isSelected
+                        ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.35)] scale-[1.02]'
+                        : 'bg-zinc-900/80 border-white/10 hover:border-amber-400/50 hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-black/80 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 p-0.5">
+                      {item.svg ? (
+                        <div className="w-full h-full text-white">{item.svg}</div>
+                      ) : (
+                        <img
+                          src={getFullImageUrl(item.previewImage || item.dataUri)}
+                          alt={item.name}
+                          className="w-full h-full object-contain filter contrast-125"
+                        />
+                      )}
+                    </div>
+                    <div className="pr-1.5 max-w-[85px] sm:max-w-[110px]">
+                      <p className={`text-[10px] font-bold truncate leading-tight ${isSelected ? 'text-amber-300' : 'text-zinc-200'}`}>
+                        {item.name}
+                      </p>
+                      <p className="text-[8.5px] text-zinc-400 truncate">
+                        {item.style}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
+
     </div>
   );
 };

@@ -189,7 +189,8 @@ export const Hero = () => {
               selectedBodyArea={selectedBodyArea}
               onSelectBodyArea={handleSelectBodyPart}
               selectedDesign={selectedDesign}
-              onSelectDesign={setSelectedDesign}
+              onSelectDesign={handleSelectDesign}
+              designs={designs}
             />
           </div>
 
