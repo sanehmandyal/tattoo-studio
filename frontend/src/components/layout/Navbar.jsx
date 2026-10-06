@@ -28,7 +28,6 @@ export const Navbar = () => {
     { name: 'Blogs', path: '/blog', hash: '#blog' },
     { name: 'Calendar', path: '/calendar', hash: '#booking' },
     { name: 'About', path: '/about', hash: '#about' },
-    { name: 'Contact', path: '/contact', hash: '#contact' },
   ];
 
   const handleNavClick = (link) => {
@@ -42,6 +41,13 @@ export const Navbar = () => {
     }
     navigate(link.path);
   };
+
+  const hasCustomAvatar = Boolean(
+    user?.avatar &&
+    !user.avatar.includes('images.unsplash.com') &&
+    !user.avatar.includes('ui-avatars.com') &&
+    user.avatar.trim() !== ''
+  );
 
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-md' : ''}`}>
@@ -83,50 +89,88 @@ export const Navbar = () => {
         </nav>
 
         {/* Right CTA & Profile / Admin actions */}
-        <div className="hidden lg:flex items-center space-x-4">
+        <div className="hidden lg:flex items-center space-x-3.5">
+          {/* Separated Contact Section Link */}
+          <button
+            onClick={() => handleNavClick({ name: 'Contact', path: '/contact', hash: '#contact' })}
+            className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+              location.pathname === '/contact' || (location.pathname === '/' && location.hash === '#contact')
+                ? 'text-studio-gold border-studio-gold/60 bg-studio-gold/10 shadow-sm'
+                : 'text-studio-textMuted hover:text-studio-textMain border-studio-border/60 hover:border-studio-bronze/60 bg-studio-card/50'
+            }`}
+          >
+            Contact
+          </button>
+
+          <div className="h-4 w-px bg-studio-border/50"></div>
+
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-studio-bronzeLight bg-studio-card/80 border border-studio-border px-3 py-1.5 rounded hover:bg-studio-card"
+                className={`flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded transition-all ${
+                  isAdmin
+                    ? 'text-amber-400 bg-amber-950/40 border border-amber-500/50 hover:bg-amber-950/70 shadow-sm'
+                    : 'text-studio-bronzeLight bg-studio-card/80 border border-studio-border hover:bg-studio-card'
+                }`}
               >
-                <img src={user.avatar} alt={user.name} className="w-5 h-5 rounded-full object-cover border border-studio-bronze" />
-                <span className="truncate max-w-[100px]">{user.name.split(' ')[0]}</span>
+                {hasCustomAvatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-5 h-5 rounded-full object-cover border border-amber-400"
+                  />
+                ) : isAdmin ? (
+                  <div className="w-5 h-5 rounded-full bg-amber-400/20 border border-amber-400/80 flex items-center justify-center text-amber-400">
+                    <Shield className="w-3 h-3" />
+                  </div>
+                ) : (
+                  <div className="w-5 h-5 rounded-full bg-studio-darker border border-studio-border flex items-center justify-center text-studio-bronzeLight">
+                    <UserIcon className="w-3 h-3" />
+                  </div>
+                )}
+                <span className="truncate max-w-[100px] font-bold">
+                  {isAdmin ? 'Admin' : user.name.split(' ')[0]}
+                </span>
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-studio-secondary border border-studio-border rounded-md shadow-2xl py-2 z-50">
-                  <div className="px-4 py-2 border-b border-studio-border text-xs text-studio-textMuted">
-                    Signed in as <p className="font-semibold text-studio-textMain truncate">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-56 bg-studio-secondary border border-studio-border rounded-lg shadow-2xl py-2 z-50 backdrop-blur-lg">
+                  <div className="px-4 py-2.5 border-b border-studio-border/70 text-xs text-studio-textMuted">
+                    Signed in as <p className="font-semibold text-studio-textMain truncate mt-0.5">{user.email}</p>
                   </div>
-                  {isAdmin && (
+                  {isAdmin ? (
+                    /* Admin Portal Only for Admin User */
                     <Link
                       to="/admin"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center space-x-2 px-4 py-2 text-sm text-studio-gold hover:bg-studio-card"
+                      className="flex items-center space-x-2.5 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-amber-400 hover:bg-amber-400/10 hover:text-amber-300 transition-colors"
                     >
-                      <Shield className="w-4 h-4 text-studio-gold" />
+                      <Shield className="w-4 h-4 text-amber-400 shrink-0" />
                       <span>Admin Portal</span>
                     </Link>
+                  ) : (
+                    <Link
+                      to="/profile"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center space-x-2 px-4 py-2 text-sm text-studio-textMain hover:bg-studio-card"
+                    >
+                      <UserIcon className="w-4 h-4 text-studio-bronzeLight" />
+                      <span>My Profile & Inks</span>
+                    </Link>
                   )}
-                  <Link
-                    to="/profile"
-                    onClick={() => setDropdownOpen(false)}
-                    className="flex items-center space-x-2 px-4 py-2 text-sm text-studio-textMain hover:bg-studio-card"
-                  >
-                    <UserIcon className="w-4 h-4 text-studio-bronzeLight" />
-                    <span>My Profile & Inks</span>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setDropdownOpen(false);
-                      logout();
-                    }}
-                    className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-400 hover:bg-studio-card text-left"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
+                  <div className="border-t border-studio-border/50 mt-1 pt-1">
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center space-x-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-950/20 text-left"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -193,27 +237,34 @@ export const Navbar = () => {
                 {link.name}
               </button>
             ))}
+            <button
+              onClick={() => handleNavClick({ name: 'Contact', path: '/contact', hash: '#contact' })}
+              className="text-left text-sm py-2 px-3 rounded bg-studio-gold/10 text-studio-gold font-bold border border-studio-gold/30 hover:bg-studio-gold/20 transition-colors"
+            >
+              Contact Us
+            </button>
           </div>
 
           <div className="pt-2 flex flex-col space-y-3">
             {user ? (
               <>
-                <Link
-                  to="/profile"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center space-x-2 text-sm text-studio-textMain py-2"
-                >
-                  <UserIcon className="w-4 h-4 text-studio-bronzeLight" />
-                  <span>Profile ({user.name})</span>
-                </Link>
-                {isAdmin && (
+                {isAdmin ? (
                   <Link
                     to="/admin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center space-x-2 text-sm text-studio-gold py-2"
+                    className="flex items-center space-x-2 text-sm text-amber-400 font-bold py-2 px-3 rounded bg-amber-950/30 border border-amber-500/40"
                   >
-                    <Shield className="w-4 h-4" />
-                    <span>Admin Dashboard</span>
+                    <Shield className="w-4 h-4 text-amber-400" />
+                    <span>Admin Portal</span>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center space-x-2 text-sm text-studio-textMain py-2"
+                  >
+                    <UserIcon className="w-4 h-4 text-studio-bronzeLight" />
+                    <span>Profile ({user.name})</span>
                   </Link>
                 )}
                 <button

@@ -98,8 +98,14 @@ export const ProfilePage = () => {
 
   if (!user) return null;
 
+  const hasCustomAvatar = Boolean(
+    user.avatar &&
+    !user.avatar.includes('images.unsplash.com') &&
+    !user.avatar.includes('ui-avatars.com') &&
+    user.avatar.trim() !== ''
+  );
   const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Master Sunil')}&background=181512&color=d4a359&size=256&bold=true`;
-  const displayAvatar = user.avatar ? getFullImageUrl(user.avatar) : defaultAvatar;
+  const displayAvatar = hasCustomAvatar ? getFullImageUrl(user.avatar) : defaultAvatar;
 
   return (
     <div className="min-h-screen pt-24 pb-20 bg-studio-bg">
@@ -113,14 +119,20 @@ export const ProfilePage = () => {
         <div className="glass-panel-dark p-6 sm:p-8 rounded-2xl border border-studio-border/60 mb-10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5">
             <div className="relative group shrink-0">
-              <img
-                src={displayAvatar}
-                alt={user.name}
-                className="w-20 h-20 rounded-full object-cover border-2 border-studio-gold shadow-gold bg-studio-darker"
-                onError={(e) => {
-                  e.target.src = defaultAvatar;
-                }}
-              />
+              {hasCustomAvatar ? (
+                <img
+                  src={displayAvatar}
+                  alt={user.name}
+                  className="w-20 h-20 rounded-full object-cover border-2 border-studio-gold shadow-gold bg-studio-darker"
+                  onError={(e) => {
+                    e.target.src = defaultAvatar;
+                  }}
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500/20 to-black border-2 border-studio-gold shadow-gold flex items-center justify-center text-amber-400">
+                  <Shield className="w-9 h-9" />
+                </div>
+              )}
               <button
                 onClick={openEditModal}
                 title="Change Profile Picture"

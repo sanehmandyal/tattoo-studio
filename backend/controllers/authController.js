@@ -149,7 +149,7 @@ export const updateProfile = async (req, res, next) => {
 
     if (name) user.name = name;
     if (phone !== undefined) user.phone = phone;
-    if (avatar) user.avatar = avatar;
+    if (avatar !== undefined) user.avatar = avatar;
     if (password) user.password = password;
 
     await user.save();

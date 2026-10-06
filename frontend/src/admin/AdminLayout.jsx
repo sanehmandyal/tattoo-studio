@@ -121,11 +121,17 @@ export const AdminLayout = () => {
 
           <div className="flex items-center justify-between pt-2 border-t border-studio-border/20 px-2">
             <Link to="/profile" className="flex items-center space-x-2.5 max-w-[190px] group text-left">
-              <img
-                src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Master Sunil')}&background=181512&color=d4a359&size=128&bold=true`}
-                alt={user.name}
-                className="w-8 h-8 rounded-full object-cover border border-studio-gold shrink-0"
-              />
+              {user?.avatar && !user.avatar.includes('images.unsplash.com') && !user.avatar.includes('ui-avatars.com') && user.avatar.trim() !== '' ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-8 h-8 rounded-full object-cover border border-studio-gold shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-amber-400/20 border border-amber-400/80 flex items-center justify-center text-amber-400 shrink-0 font-black text-xs">
+                  <Shield className="w-4 h-4" />
+                </div>
+              )}
               <div className="truncate">
                 <p className="text-xs font-bold text-studio-textMain truncate group-hover:text-studio-gold transition-colors">{user.name}</p>
                 <p className="text-[10px] text-studio-textMuted truncate">Director / Edit Profile</p>
