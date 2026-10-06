@@ -7,42 +7,124 @@ import { getFullImageUrl } from '../../utils/imageHelper';
 
 const DEFAULT_PORTFOLIO = [
   {
-    _id: 'sleeve-1',
-    title: 'Sacred Sleeve & Geometry',
+    _id: 'port-trishul',
+    title: 'Mahadev Trishul & Sacred Om',
     style: 'Geometric',
     bodyPlacement: 'Full Arm Sleeve',
-    coverImage: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&w=800&q=80',
-    description: 'Bespoke geometric sleeve composition with sacred symmetry and stippling.',
-    likes: 340,
+    coverImage: '/images/tattoos/mahadev_trishul.jpg',
+    description: 'Sacred Trishul emblem entwined with Damru, Crescent Moon, and Om dotwork geometry.',
+    likes: 490,
   },
   {
-    _id: 'realism-2',
-    title: 'Classical Realism Sculpture',
-    style: 'Realism',
-    bodyPlacement: 'Forearm / Bicep',
-    coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80',
-    description: 'Hyper-detailed classical sculpture portrait with smooth tonal gradients.',
-    likes: 410,
+    _id: 'port-peony',
+    title: 'Himalayan Wild Peony & Moon',
+    style: 'Minimalist',
+    bodyPlacement: 'Forearm / Wrist',
+    coverImage: '/images/tattoos/moon_flora.jpg',
+    description: 'Delicate single-needle crescent moon and wild Himalayan peony with celestial stippling.',
+    likes: 540,
   },
   {
-    _id: 'blackwork-3',
-    title: 'Solid Blackwork & Linework',
-    style: 'Blackwork',
-    bodyPlacement: 'Chest & Sternum',
-    coverImage: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=800&q=80',
-    description: 'Deep black saturation with architectural symmetry and sharp contrast.',
-    likes: 290,
-  },
-  {
-    _id: 'fine-line-4',
-    title: 'Fine-Line Sanskrit Calligraphy',
+    _id: 'port-serpent',
+    title: 'Serpent & Peony Fine Line',
     style: 'Fine Line',
-    bodyPlacement: 'Spine & Forearm',
-    coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80',
-    description: 'Single-needle delicate script calligraphy and sacred Himalayan mantras.',
-    likes: 520,
+    bodyPlacement: 'Forearm / Ribs',
+    coverImage: '/images/tattoos/serpent_peony.jpg',
+    description: 'Fluid serpentine contours entwined around wild mountain flora.',
+    likes: 480,
+  },
+  {
+    _id: 'port-lotus',
+    title: 'Sacred Lotus & Unalome',
+    style: 'Spiritual',
+    bodyPlacement: 'Spine & Collarbone',
+    coverImage: '/images/tattoos/sacred_lotus.jpg',
+    description: 'Devbhoomi sacred unalome lotus bloom with dotwork chakra alignment.',
+    likes: 510,
+  },
+  {
+    _id: 'port-lion',
+    title: 'Geometric Himalayan Lion',
+    style: 'Geometric',
+    bodyPlacement: 'Chest & Sternum',
+    coverImage: '/images/tattoos/geometric_lion.jpg',
+    description: 'Polygonal geometric lion head with Himalayan mountain line art.',
+    likes: 380,
+  },
+  {
+    _id: 'port-mandala',
+    title: 'Devbhoomi Sacred Mandala',
+    style: 'Mandala',
+    bodyPlacement: 'Shoulder & Back',
+    coverImage: '/images/tattoos/sacred_mandala.jpg',
+    description: 'Intricate radial sacred geometry mandala with fine pointillism.',
+    likes: 420,
+  },
+  {
+    _id: 'port-rose',
+    title: 'Botanical Sacred Rose',
+    style: 'Botanical',
+    bodyPlacement: 'Forearm / Wrist',
+    coverImage: '/images/tattoos/sacred_rose.jpg',
+    description: 'Classical botanical rose with delicate thorns and layered petals.',
+    likes: 460,
+  },
+  {
+    _id: 'port-skull',
+    title: 'Gothic Blackwork Skull',
+    style: 'Blackwork',
+    bodyPlacement: 'Upper Arm / Calf',
+    coverImage: '/images/tattoos/gothic_skull.jpg',
+    description: 'Detailed anatomical skull with dark baroque ornamentation and heavy blackwork shading.',
+    likes: 390,
+  },
+  {
+    _id: 'port-dagger',
+    title: 'Trishul Dagger & Sacred Heart',
+    style: 'Neo-Traditional',
+    bodyPlacement: 'Forearm / Calf',
+    coverImage: '/images/tattoos/trishul_dagger.jpg',
+    description: 'Ornamental sacred Trishul blade with radiant rays and mystical geometry.',
+    likes: 530,
   },
 ];
+
+const getAuthenticImageForTitle = (title, currentImage) => {
+  if (currentImage && !currentImage.includes('unsplash.com') && !currentImage.includes('placeholder')) {
+    return currentImage;
+  }
+  const t = (title || '').toLowerCase();
+  if (t.includes('trishul') || t.includes('shiva') || t.includes('mahadev')) {
+    if (t.includes('dagger')) return '/images/tattoos/trishul_dagger.jpg';
+    return '/images/tattoos/mahadev_trishul.jpg';
+  }
+  if (t.includes('moon') || t.includes('flora') || t.includes('peony')) {
+    if (t.includes('serpent') || t.includes('snake')) return '/images/tattoos/serpent_peony.jpg';
+    return '/images/tattoos/moon_flora.jpg';
+  }
+  if (t.includes('serpent') || t.includes('snake')) {
+    return '/images/tattoos/serpent_peony.jpg';
+  }
+  if (t.includes('lotus') || t.includes('unalome') || t.includes('watercolor')) {
+    return '/images/tattoos/sacred_lotus.jpg';
+  }
+  if (t.includes('lion')) {
+    return '/images/tattoos/geometric_lion.jpg';
+  }
+  if (t.includes('mandala') || t.includes('yantra')) {
+    return '/images/tattoos/sacred_mandala.jpg';
+  }
+  if (t.includes('rose') || t.includes('botanical')) {
+    return '/images/tattoos/sacred_rose.jpg';
+  }
+  if (t.includes('skull') || t.includes('gothic')) {
+    return '/images/tattoos/gothic_skull.jpg';
+  }
+  if (t.includes('dagger')) {
+    return '/images/tattoos/trishul_dagger.jpg';
+  }
+  return currentImage || '/images/tattoos/mahadev_trishul.jpg';
+};
 
 export const PortfolioSection = () => {
   const [portfolioItems, setPortfolioItems] = useState(DEFAULT_PORTFOLIO);
@@ -54,7 +136,11 @@ export const PortfolioSection = () => {
       try {
         const res = await portfolioAPI.getAll({ limit: 12 });
         if (res.success && res.portfolio?.length > 0) {
-          setPortfolioItems(res.portfolio);
+          const sanitized = res.portfolio.map(item => ({
+            ...item,
+            coverImage: getAuthenticImageForTitle(item.title, item.coverImage)
+          }));
+          setPortfolioItems(sanitized);
         }
       } catch (err) {
         // Fallback to default catalog
@@ -63,11 +149,11 @@ export const PortfolioSection = () => {
     fetchPortfolio();
   }, []);
 
-  const styles = ['All', 'Geometric', 'Realism', 'Fine Line', 'Blackwork', 'Watercolor'];
+  const styles = ['All', 'Geometric', 'Fine Line', 'Botanical', 'Blackwork', 'Neo-Traditional', 'Spiritual', 'Mandala'];
 
   const filteredItems = activeFilter === 'All'
     ? portfolioItems
-    : portfolioItems.filter(p => p.style.toLowerCase() === activeFilter.toLowerCase());
+    : portfolioItems.filter(p => p.style?.toLowerCase() === activeFilter.toLowerCase());
 
   return (
     <section id="portfolio" className="py-20 bg-studio-bg border-t border-b border-white/5 relative">

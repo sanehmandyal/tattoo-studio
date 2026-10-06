@@ -256,21 +256,38 @@ export const seedInitialData = async () => {
         }
       ]);
       console.log('[Seeder] Seeded default 3D tattoo designs.');
+    } else {
+      const legacyDesigns = await TattooDesign.find({ previewImage: { $regex: 'unsplash.com' } });
+      for (const item of legacyDesigns) {
+        const titleLower = item.name.toLowerCase();
+        let correctImage = '/images/tattoos/mahadev_trishul.jpg';
+        if (titleLower.includes('trishul') || titleLower.includes('shiva')) correctImage = titleLower.includes('dagger') ? '/images/tattoos/trishul_dagger.jpg' : '/images/tattoos/mahadev_trishul.jpg';
+        else if (titleLower.includes('moon') || titleLower.includes('peony')) correctImage = '/images/tattoos/moon_flora.jpg';
+        else if (titleLower.includes('serpent') || titleLower.includes('snake')) correctImage = '/images/tattoos/serpent_peony.jpg';
+        else if (titleLower.includes('lotus') || titleLower.includes('watercolor')) correctImage = '/images/tattoos/sacred_lotus.jpg';
+        else if (titleLower.includes('lion')) correctImage = '/images/tattoos/geometric_lion.jpg';
+        else if (titleLower.includes('mandala') || titleLower.includes('yantra')) correctImage = '/images/tattoos/sacred_mandala.jpg';
+        else if (titleLower.includes('rose')) correctImage = '/images/tattoos/sacred_rose.jpg';
+        else if (titleLower.includes('skull')) correctImage = '/images/tattoos/gothic_skull.jpg';
+        else if (titleLower.includes('dagger')) correctImage = '/images/tattoos/trishul_dagger.jpg';
+
+        await TattooDesign.updateOne({ _id: item._id }, { $set: { previewImage: correctImage, transparentOverlay: correctImage } });
+      }
     }
 
-    // 4. Portfolio Showcase — Seed only if empty (PRESERVES ALL ADMIN UPLOADS)
+    // 4. Portfolio Showcase — Seed & update authentic artworks
     const portfolioCount = await Portfolio.countDocuments();
+    const defaultArtistId = artists[0]?._id;
     if (portfolioCount === 0) {
-      const defaultArtistId = artists[0]?._id;
       await Portfolio.create([
         {
           title: 'Mahadev Trishul Sleeve',
           slug: 'mahadev-trishul-sleeve',
           description: 'Full arm sleeve composition incorporating Lord Shiva, Trishul, Damru, and sacred Himalayan geometry.',
-          style: 'Sleeve',
+          style: 'Geometric',
           category: 'Spiritual',
           bodyPlacement: 'Full Arm / Sleeve',
-          coverImage: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&w=800&q=80',
+          coverImage: '/images/tattoos/mahadev_trishul.jpg',
           artist: defaultArtistId,
           sessionHours: 12,
           likes: 490,
@@ -278,27 +295,27 @@ export const seedInitialData = async () => {
           tags: ['Sleeve', 'Mahadev', 'Trishul', 'Sacred Geometry'],
         },
         {
-          title: 'Lord Shiva Meditative Portrait',
-          slug: 'lord-shiva-portrait',
-          description: 'Hyper-detailed photographic realism tattoo with delicate atmospheric shading and high contrast.',
-          style: 'Realism',
-          category: 'Realism',
-          bodyPlacement: 'Forearm / Bicep',
-          coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80',
+          title: 'Trishul Dagger & Sacred Heart',
+          slug: 'trishul-dagger-sacred-heart',
+          description: 'Ornamental sacred Trishul blade with radiant rays and mystical geometry.',
+          style: 'Neo-Traditional',
+          category: 'Neo-Traditional',
+          bodyPlacement: 'Forearm / Calf',
+          coverImage: '/images/tattoos/trishul_dagger.jpg',
           artist: defaultArtistId,
-          sessionHours: 6,
+          sessionHours: 4.5,
           likes: 580,
           isFeatured: true,
-          tags: ['Realism', 'Portrait', 'Shiva', 'Spiritual'],
+          tags: ['Trishul', 'Dagger', 'Neo-Traditional', 'Sacred'],
         },
         {
           title: 'Sacred Mandala & Dotwork Yantra',
           slug: 'sacred-mandala-yantra',
           description: 'Concentric 12-fold sacred geometry yantra with hypnotic stippled dotwork gradients.',
-          style: 'Geometric',
+          style: 'Mandala',
           category: 'Geometric',
           bodyPlacement: 'Upper Back / Shoulder',
-          coverImage: 'https://images.unsplash.com/photo-1550537687-c91072c4792d?auto=format&fit=crop&w=800&q=80',
+          coverImage: '/images/tattoos/sacred_mandala.jpg',
           artist: defaultArtistId,
           sessionHours: 5,
           likes: 420,
@@ -306,49 +323,109 @@ export const seedInitialData = async () => {
           tags: ['Mandala', 'Dotwork', 'Sacred Geometry'],
         },
         {
-          title: 'Single-Needle Wild Peony',
-          slug: 'single-needle-wild-peony',
-          description: 'Delicate fine-line Himalayan botanical floral with micro-shadowing on collarbone.',
-          style: 'Fine Line',
+          title: 'Himalayan Wild Peony & Moon',
+          slug: 'himalayan-wild-peony-moon',
+          description: 'Delicate fine-line Himalayan botanical floral and crescent moon with micro-shadowing on collarbone.',
+          style: 'Minimalist',
           category: 'Fine Line',
           bodyPlacement: 'Collarbone / Wrist',
-          coverImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
+          coverImage: '/images/tattoos/moon_flora.jpg',
           artist: artists[1]?._id || defaultArtistId,
           sessionHours: 2.5,
           likes: 640,
           isFeatured: true,
-          tags: ['Fine Line', 'Botanical', 'Floral'],
+          tags: ['Fine Line', 'Botanical', 'Floral', 'Moon'],
         },
         {
-          title: 'Gothic Mountain Lion Blackwork',
+          title: 'Geometric Himalayan Lion',
           slug: 'mountain-lion-blackwork',
           description: 'Deep saturated black ink composition with intense contrast and sharp needlework.',
-          style: 'Blackwork',
-          category: 'Blackwork',
+          style: 'Geometric',
+          category: 'Geometric',
           bodyPlacement: 'Chest & Sternum',
-          coverImage: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=800&q=80',
+          coverImage: '/images/tattoos/geometric_lion.jpg',
           artist: artists[3]?._id || defaultArtistId,
           sessionHours: 4.5,
           likes: 380,
           isFeatured: true,
-          tags: ['Blackwork', 'Lion', 'Dark Art'],
+          tags: ['Geometric', 'Lion', 'Blackwork'],
         },
         {
-          title: 'Vibrant Himalayan Watercolor Lotus',
-          slug: 'watercolor-lotus',
-          description: 'Vibrant chromatic ink bleeds, teal-to-magenta lotus flower petals.',
-          style: 'Watercolor',
-          category: 'Watercolor',
+          title: 'Sacred Lotus & Unalome',
+          slug: 'sacred-lotus-unalome',
+          description: 'Blooming spiritual lotus rising through sacred unalome pathways. Reflects awakening, pure clarity, and enlightenment.',
+          style: 'Spiritual',
+          category: 'Spiritual',
           bodyPlacement: 'Shoulder & Ribs',
-          coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80',
+          coverImage: '/images/tattoos/sacred_lotus.jpg',
           artist: artists[2]?._id || defaultArtistId,
           sessionHours: 3.5,
           likes: 510,
           isFeatured: true,
-          tags: ['Watercolor', 'Lotus', 'Color'],
+          tags: ['Lotus', 'Unalome', 'Spiritual'],
+        },
+        {
+          title: 'Serpent & Peony Fine Line',
+          slug: 'serpent-peony-fine-line',
+          description: 'Fluid serpentine contours entwined around wild mountain flora.',
+          style: 'Fine Line',
+          category: 'Fine Line',
+          bodyPlacement: 'Forearm / Ribs',
+          coverImage: '/images/tattoos/serpent_peony.jpg',
+          artist: artists[1]?._id || defaultArtistId,
+          sessionHours: 4.0,
+          likes: 475,
+          isFeatured: true,
+          tags: ['Serpent', 'Snake', 'Peony', 'Fine Line'],
+        },
+        {
+          title: 'Botanical Sacred Rose',
+          slug: 'botanical-sacred-rose',
+          description: 'Classical botanical rose with delicate thorns and layered petals.',
+          style: 'Botanical',
+          category: 'Botanical',
+          bodyPlacement: 'Forearm / Wrist',
+          coverImage: '/images/tattoos/sacred_rose.jpg',
+          artist: artists[2]?._id || defaultArtistId,
+          sessionHours: 2.5,
+          likes: 460,
+          isFeatured: true,
+          tags: ['Rose', 'Botanical', 'Floral'],
+        },
+        {
+          title: 'Gothic Blackwork Skull',
+          slug: 'gothic-blackwork-skull',
+          description: 'Detailed anatomical skull with dark baroque ornamentation and heavy blackwork shading.',
+          style: 'Blackwork',
+          category: 'Blackwork',
+          bodyPlacement: 'Upper Arm / Calf',
+          coverImage: '/images/tattoos/gothic_skull.jpg',
+          artist: artists[3]?._id || defaultArtistId,
+          sessionHours: 5.0,
+          likes: 410,
+          isFeatured: true,
+          tags: ['Skull', 'Gothic', 'Blackwork'],
         }
       ]);
       console.log('[Seeder] Seeded default portfolio pieces.');
+    } else {
+      // Auto-update any legacy unsplash URLs to authentic artwork
+      const legacyPortfolios = await Portfolio.find({ coverImage: { $regex: 'unsplash.com' } });
+      for (const item of legacyPortfolios) {
+        const titleLower = item.title.toLowerCase();
+        let correctImage = '/images/tattoos/mahadev_trishul.jpg';
+        if (titleLower.includes('trishul') || titleLower.includes('shiva')) correctImage = titleLower.includes('dagger') ? '/images/tattoos/trishul_dagger.jpg' : '/images/tattoos/mahadev_trishul.jpg';
+        else if (titleLower.includes('moon') || titleLower.includes('peony')) correctImage = '/images/tattoos/moon_flora.jpg';
+        else if (titleLower.includes('serpent') || titleLower.includes('snake')) correctImage = '/images/tattoos/serpent_peony.jpg';
+        else if (titleLower.includes('lotus') || titleLower.includes('watercolor')) correctImage = '/images/tattoos/sacred_lotus.jpg';
+        else if (titleLower.includes('lion')) correctImage = '/images/tattoos/geometric_lion.jpg';
+        else if (titleLower.includes('mandala') || titleLower.includes('yantra')) correctImage = '/images/tattoos/sacred_mandala.jpg';
+        else if (titleLower.includes('rose')) correctImage = '/images/tattoos/sacred_rose.jpg';
+        else if (titleLower.includes('skull')) correctImage = '/images/tattoos/gothic_skull.jpg';
+        else if (titleLower.includes('dagger')) correctImage = '/images/tattoos/trishul_dagger.jpg';
+
+        await Portfolio.updateOne({ _id: item._id }, { $set: { coverImage: correctImage } });
+      }
     }
 
     // 5. Google Verified Customer Reviews — Seed only if empty

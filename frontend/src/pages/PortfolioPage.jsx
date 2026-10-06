@@ -31,6 +31,43 @@ export const PortfolioPage = () => {
     fetchArtists();
   }, []);
 
+const getAuthenticImageForTitle = (title, currentImage) => {
+  if (currentImage && !currentImage.includes('unsplash.com') && !currentImage.includes('placeholder')) {
+    return currentImage;
+  }
+  const t = (title || '').toLowerCase();
+  if (t.includes('trishul') || t.includes('shiva') || t.includes('mahadev')) {
+    if (t.includes('dagger')) return '/images/tattoos/trishul_dagger.jpg';
+    return '/images/tattoos/mahadev_trishul.jpg';
+  }
+  if (t.includes('moon') || t.includes('flora') || t.includes('peony')) {
+    if (t.includes('serpent') || t.includes('snake')) return '/images/tattoos/serpent_peony.jpg';
+    return '/images/tattoos/moon_flora.jpg';
+  }
+  if (t.includes('serpent') || t.includes('snake')) {
+    return '/images/tattoos/serpent_peony.jpg';
+  }
+  if (t.includes('lotus') || t.includes('unalome') || t.includes('watercolor')) {
+    return '/images/tattoos/sacred_lotus.jpg';
+  }
+  if (t.includes('lion')) {
+    return '/images/tattoos/geometric_lion.jpg';
+  }
+  if (t.includes('mandala') || t.includes('yantra')) {
+    return '/images/tattoos/sacred_mandala.jpg';
+  }
+  if (t.includes('rose') || t.includes('botanical')) {
+    return '/images/tattoos/sacred_rose.jpg';
+  }
+  if (t.includes('skull') || t.includes('gothic')) {
+    return '/images/tattoos/gothic_skull.jpg';
+  }
+  if (t.includes('dagger')) {
+    return '/images/tattoos/trishul_dagger.jpg';
+  }
+  return currentImage || '/images/tattoos/mahadev_trishul.jpg';
+};
+
   useEffect(() => {
     const fetchPortfolio = async () => {
       setLoading(true);
@@ -42,7 +79,13 @@ export const PortfolioPage = () => {
         if (search) params.search = search;
 
         const res = await portfolioAPI.getAll(params);
-        if (res.success) setPortfolio(res.portfolio);
+        if (res.success && res.portfolio) {
+          const sanitized = res.portfolio.map(item => ({
+            ...item,
+            coverImage: getAuthenticImageForTitle(item.title, item.coverImage)
+          }));
+          setPortfolio(sanitized);
+        }
       } catch (err) {
         console.error(err);
       } finally {
