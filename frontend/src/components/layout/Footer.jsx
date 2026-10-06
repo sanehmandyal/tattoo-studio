@@ -128,17 +128,25 @@ export const Footer = () => {
         </div>
 
         {/* Bottom copyright & Back to top */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-studio-textMuted/70 space-y-4 sm:space-y-0">
-          <p>© {new Date().getFullYear()} LAND OF GOD TATTOO STUDIO (Una, Himachal Pradesh). All rights reserved. Hospital-grade sterile artistry.</p>
-          <div className="flex items-center space-x-6">
-            <a href="https://share.google/8Ck6bnKVFP2JNuUQT" target="_blank" rel="noreferrer" className="text-studio-bronzeLight hover:underline">Google Business Profile</a>
-            <Link to="/admin" className="text-studio-gold hover:underline">Staff Admin</Link>
+        <div className="pt-8 pb-16 sm:pb-4 flex flex-col md:flex-row items-center justify-between text-xs text-studio-textMuted/70 gap-4 text-center md:text-left">
+          <p className="max-w-xl">
+            © {new Date().getFullYear()} LAND OF GOD TATTOO STUDIO (Friends Colony, Una, HP). All rights reserved. Sterile Hospital-grade hygiene &amp; Sacred Devbhoomi Artistry.
+          </p>
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-5 sm:pr-24">
+            <a href="https://share.google/8Ck6bnKVFP2JNuUQT" target="_blank" rel="noreferrer" className="text-studio-bronzeLight hover:text-studio-gold transition-colors">
+              Google Business Profile
+            </a>
+            <span className="text-white/20 hidden sm:inline">•</span>
+            <Link to="/admin" className="text-studio-gold hover:text-amber-300 transition-colors">
+              Staff Admin
+            </Link>
+            <span className="text-white/20 hidden sm:inline">•</span>
             <button
               onClick={scrollToTop}
               className="flex items-center space-x-1 text-studio-bronzeLight hover:text-studio-textMain transition-colors"
             >
               <span>Back to Top</span>
-              <ArrowUp className="w-4 h-4" />
+              <ArrowUp className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
