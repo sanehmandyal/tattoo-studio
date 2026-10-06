@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass } from 'lucide-react';
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
+
+// 8 Anatomical Perspectives for Full 360° Volumetric Rotation (No flat card effect)
+const ANATOMY_360_FRAMES = [
+  { angle: 0, label: 'Front View (0°)', src: '/images/masculine_front.jpg', flip: false },
+  { angle: 45, label: 'Front-Right 3/4 (45°)', src: '/images/masculine_front_right.jpg', flip: false },
+  { angle: 90, label: 'Right Side Profile (90°)', src: '/images/masculine_right.jpg', flip: false },
+  { angle: 135, label: 'Back-Right 3/4 (135°)', src: '/images/masculine_back_right.jpg', flip: false },
+  { angle: 180, label: 'Full Back View (180°)', src: '/images/masculine_back.jpg', flip: false },
+  { angle: 225, label: 'Back-Left 3/4 (225°)', src: '/images/masculine_back_right.jpg', flip: true },
+  { angle: 270, label: 'Left Side Profile (270°)', src: '/images/masculine_left.jpg', flip: false },
+  { angle: 315, label: 'Front-Left 3/4 (315°)', src: '/images/masculine_front_right.jpg', flip: true },
+];
 
 // Precise anatomical hotspot zones in 360° cylindrical space
 const HUMAN_BODY_360_ZONES = [
@@ -34,7 +46,7 @@ const HUMAN_BODY_360_ZONES = [
     id: 'Forearm',
     name: 'Forearm',
     label: 'Forearm (Right)',
-    theta: 25,
+    theta: 45,
     box: { x: 14, y: 35, width: 10, height: 14 },
     tattooPos: { left: '19%', top: '41.5%', maxWidth: '44px', maxHeight: '72px', rotate: '-14deg', skewY: '2deg' }
   },
@@ -42,7 +54,7 @@ const HUMAN_BODY_360_ZONES = [
     id: 'Upper Arm',
     name: 'Upper Arm',
     label: 'Bicep / Deltoid (Right)',
-    theta: 35,
+    theta: 60,
     box: { x: 20, y: 24, width: 9, height: 12 },
     tattooPos: { left: '24.5%', top: '29%', maxWidth: '48px', maxHeight: '64px', rotate: '-10deg', skewY: '-3deg' }
   },
@@ -50,7 +62,7 @@ const HUMAN_BODY_360_ZONES = [
     id: 'Shoulder',
     name: 'Shoulder',
     label: 'Shoulder / Deltoid (Right)',
-    theta: 45,
+    theta: 70,
     box: { x: 26, y: 16, width: 10, height: 9 },
     tattooPos: { left: '30%', top: '20.5%', maxWidth: '52px', maxHeight: '52px', rotate: '-14deg' }
   },
@@ -58,7 +70,7 @@ const HUMAN_BODY_360_ZONES = [
     id: 'Wrist',
     name: 'Wrist',
     label: 'Wrist & Hand',
-    theta: 20,
+    theta: 35,
     box: { x: 13, y: 47, width: 8, height: 6 },
     tattooPos: { left: '16.5%', top: '50.5%', maxWidth: '30px', maxHeight: '30px', rotate: '-16deg' }
   },
@@ -167,7 +179,14 @@ export const Interactive3DStudio = ({
   const [tattooOpacity, setTattooOpacity] = useState(0.92);
   const [blendMode, setBlendMode] = useState('multiply');
   const [featherEdge, setFeatherEdge] = useState(true);
-  const [showControlsModal, setShowControlsModal] = useState(false);
+
+  // Preload all 360 frame images into browser cache for instant lag-free rotation
+  useEffect(() => {
+    ANATOMY_360_FRAMES.forEach((frame) => {
+      const img = new Image();
+      img.src = frame.src;
+    });
+  }, []);
 
   // Automatically rotate toward chosen body area when clicked
   useEffect(() => {
@@ -224,15 +243,36 @@ export const Interactive3DStudio = ({
     p.name.toLowerCase().includes(selectedBodyArea.toLowerCase())
   ) || HUMAN_BODY_360_ZONES[0];
 
-  // Calculate 360 view angle properties
+  // Normalized 0 to 360 angle
   const normalizedAngle = ((rotationDeg % 360) + 360) % 360;
-  const isBackView = normalizedAngle >= 90 && normalizedAngle <= 270;
-  
-  // Angle relative to front view for visual rotation (-90 to +90)
-  const visualAngle = isBackView ? normalizedAngle - 180 : (normalizedAngle > 270 ? normalizedAngle - 360 : normalizedAngle);
-  
-  // Calculate depth & opacity of tattoo in 360° space
-  const partTheta = activePartConfig?.theta ?? (isBackView ? 180 : 0);
+
+  // Find the exact active 360 frame based on angle (closest of the 8 perspective views)
+  const getClosestFrame = (deg) => {
+    // Distance calculation on a circle
+    let bestFrame = ANATOMY_360_FRAMES[0];
+    let minDiff = 360;
+    for (const frame of ANATOMY_360_FRAMES) {
+      const diff = Math.min(
+        Math.abs(deg - frame.angle),
+        360 - Math.abs(deg - frame.angle)
+      );
+      if (diff < minDiff) {
+        minDiff = diff;
+        bestFrame = frame;
+      }
+    }
+    return bestFrame;
+  };
+
+  const currentFrame = getClosestFrame(normalizedAngle);
+
+  // Sub-angle delta within current view quadrant for smooth subtle perspective shift (-22.5 to +22.5)
+  let subAngle = normalizedAngle - currentFrame.angle;
+  if (subAngle > 180) subAngle -= 360;
+  if (subAngle < -180) subAngle += 360;
+
+  // Calculate 3D tattoo visibility & cylindrical wrap across 360 space
+  const partTheta = activePartConfig?.theta ?? 0;
   const diffAngle = ((partTheta - normalizedAngle + 540) % 360) - 180;
   const isTattooVisibleInAngle = Math.abs(diffAngle) < 95;
   const tattooCylinderCos = Math.max(0.1, Math.cos((diffAngle * Math.PI) / 180));
@@ -254,7 +294,7 @@ export const Interactive3DStudio = ({
 
   return (
     <div
-      className={`relative w-full ${compact ? 'h-[520px] sm:h-[580px] md:h-[640px]' : 'h-[580px] sm:h-[640px] md:h-[740px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-studio-darker border border-studio-border/60 shadow-2xl transition-colors`}
+      className={`relative w-full ${compact ? 'h-[520px] sm:h-[580px] md:h-[640px]' : 'h-[580px] sm:h-[640px] md:h-[740px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#0a0c10] border border-studio-border/60 shadow-2xl transition-colors`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -268,25 +308,25 @@ export const Interactive3DStudio = ({
         <div className="flex items-center space-x-1 sm:space-x-1.5 bg-black/85 backdrop-blur-md border border-amber-500/30 p-1 sm:p-1.5 rounded-full shadow-xl">
           <button
             type="button"
-            onClick={() => setRotationDeg((prev) => (prev + 90) % 360)}
+            onClick={() => setRotationDeg((prev) => (prev + 45) % 360)}
             className="flex items-center space-x-1 px-2.5 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-300 hover:text-amber-200 bg-amber-950/60 border border-amber-500/40 rounded-full transition-colors"
-            title="Rotate +90 degrees"
+            title="Rotate +45 degrees"
           >
-            <RotateCw className="w-3 h-3" />
+            <Compass className="w-3 h-3 text-amber-400" />
             <span>{Math.round(normalizedAngle)}° 360°</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsAutoRotating(!isAutoRotating)}
-            className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${
+            className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${
               isAutoRotating
                 ? 'bg-amber-400 text-black shadow-[0_0_10px_#f59e0b]'
                 : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
             }`}
             title="Auto 360 Orbit"
           >
-            {isAutoRotating ? '⏸ Spin' : '▶ 360°'}
+            {isAutoRotating ? '⏸ Orbit' : '▶ 360° Orbit'}
           </button>
 
           <button
@@ -310,193 +350,205 @@ export const Interactive3DStudio = ({
         {/* Right Action: Clean Zone & Angle Badge */}
         <div className="bg-black/85 backdrop-blur-md border border-cyan-400/60 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-cyan-300 flex items-center space-x-1.5 shadow-[0_0_12px_rgba(6,182,212,0.25)] shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping shrink-0" />
-          <span className="truncate max-w-[110px] sm:max-w-none">
-            {activePartConfig.label || selectedBodyArea} ({isBackView ? 'Back' : 'Front'})
+          <span className="truncate max-w-[140px] sm:max-w-none">
+            {activePartConfig.label || selectedBodyArea} • {currentFrame.label}
           </span>
         </div>
       </div>
 
-      {/* 2. 360° ROTATION ANGLE PRESETS BAR */}
-      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-25 flex items-center space-x-1 bg-black/70 backdrop-blur-sm border border-white/10 px-2 py-0.5 rounded-full text-[9px] text-zinc-300 pointer-events-auto">
+      {/* 2. 360° ROTATION ANGLE PRESETS BAR (All 8 Angles) */}
+      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-25 flex items-center space-x-1 bg-black/80 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded-full text-[9px] text-zinc-300 pointer-events-auto">
         <button
           type="button"
           onClick={() => setRotationDeg(0)}
-          className={`px-1.5 py-0.5 rounded ${normalizedAngle < 45 || normalizedAngle >= 315 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle < 22.5 || normalizedAngle >= 337.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
         >
           0° Front
         </button>
         <span className="text-zinc-600">|</span>
         <button
           type="button"
-          onClick={() => setRotationDeg(90)}
-          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 45 && normalizedAngle < 135 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+          onClick={() => setRotationDeg(45)}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 22.5 && normalizedAngle < 67.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
         >
-          90° Right
+          45°
+        </button>
+        <span className="text-zinc-600">|</span>
+        <button
+          type="button"
+          onClick={() => setRotationDeg(90)}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 67.5 && normalizedAngle < 112.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+        >
+          90° Side
+        </button>
+        <span className="text-zinc-600">|</span>
+        <button
+          type="button"
+          onClick={() => setRotationDeg(135)}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 112.5 && normalizedAngle < 157.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+        >
+          135°
         </button>
         <span className="text-zinc-600">|</span>
         <button
           type="button"
           onClick={() => setRotationDeg(180)}
-          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 135 && normalizedAngle < 225 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 157.5 && normalizedAngle < 202.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
         >
           180° Back
         </button>
         <span className="text-zinc-600">|</span>
         <button
           type="button"
-          onClick={() => setRotationDeg(270)}
-          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 225 && normalizedAngle < 315 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+          onClick={() => setRotationDeg(225)}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 202.5 && normalizedAngle < 247.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
         >
-          270° Left
+          225°
+        </button>
+        <span className="text-zinc-600">|</span>
+        <button
+          type="button"
+          onClick={() => setRotationDeg(270)}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 247.5 && normalizedAngle < 292.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+        >
+          270° Side
+        </button>
+        <span className="text-zinc-600">|</span>
+        <button
+          type="button"
+          onClick={() => setRotationDeg(315)}
+          className={`px-1.5 py-0.5 rounded ${normalizedAngle >= 292.5 && normalizedAngle < 337.5 ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white'}`}
+        >
+          315°
         </button>
       </div>
 
-      {/* 3. CENTER STAGE: 360° 3D HUMAN ANATOMY TURNTABLE */}
+      {/* 3. CENTER STAGE: 360° MULTI-ANGLE VOLUMETRIC HUMAN ANATOMY TURNTABLE */}
       <div
         className="relative w-full h-full flex items-center justify-center transition-transform duration-200 ease-out transform-gpu will-change-transform pt-12 pb-24 cursor-grab active:cursor-grabbing"
         style={{ transform: `scale(${zoomLevel})` }}
       >
-        {/* Soft studio lighting */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/90 via-white to-slate-100/80 dark:from-studio-secondary/80 dark:to-studio-darker pointer-events-none" />
+        {/* Soft radial studio lighting */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-        {/* 3D Turntable Perspective Wrapper */}
-        <div
-          className="relative h-[90%] max-h-[640px] aspect-[2/3] flex items-center justify-center transform-gpu transition-all duration-100"
-          style={{
-            perspective: '1200px',
-          }}
-        >
+        {/* 3D Model Viewport with Real Volumetric Side Depth */}
+        <div className="relative h-[90%] max-h-[640px] aspect-[2/3] flex items-center justify-center transform-gpu transition-all duration-100">
           
-          {/* Rotating Anatomy Plane */}
+          {/* Subtle Dynamic 3D Micro-Perspective */}
           <div
             className="relative w-full h-full flex items-center justify-center transform-gpu will-change-transform"
             style={{
-              transform: `rotateY(${visualAngle}deg)`,
+              transform: `perspective(1000px) rotateY(${subAngle * 0.4}deg)`,
               transformStyle: 'preserve-3d',
-              transition: isDragging || isAutoRotating ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+              transition: isDragging || isAutoRotating ? 'none' : 'transform 0.2s ease-out',
             }}
           >
-            {/* 3D Muscular Anatomy Model Image (Front / Back with 3D Depth) */}
+            {/* Real 3D Full Body Anatomical Model (Changes with full 360° profile) */}
             <img
-              src={isBackView ? '/images/masculine_back.jpg' : '/images/masculine_front.jpg'}
-              alt="3D 360-Degree Muscular Anatomy Model"
-              className="w-full h-full object-contain rounded-xl filter brightness-100 contrast-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.85)] pointer-events-none transform-gpu"
+              key={currentFrame.src + (currentFrame.flip ? '_flip' : '')}
+              src={currentFrame.src}
+              alt="360-Degree Muscular Anatomical Human Model"
+              className="w-full h-full object-contain filter brightness-100 contrast-110 drop-shadow-[0_20px_45px_rgba(0,0,0,0.9)] pointer-events-none transform-gpu transition-opacity duration-150"
               style={{
-                filter: `brightness(${0.9 + Math.cos((visualAngle * Math.PI) / 180) * 0.15}) contrast(110%)`,
+                transform: currentFrame.flip ? 'scaleX(-1)' : 'none',
               }}
             />
 
-            {/* 360° CYLINDRICAL TATTOO PROJECTION (Seamlessly follows 3D curvature) */}
+            {/* 360° CYLINDRICAL TATTOO PROJECTION (Seamlessly wraps around muscle contours) */}
             {selectedDesign && activePartConfig && isTattooVisibleInAngle && (
               <div
                 className="absolute z-20 pointer-events-none flex items-center justify-center transform-gpu will-change-transform"
                 style={{
                   left: activePartConfig.tattooPos.left,
                   top: activePartConfig.tattooPos.top,
-                  transform: `translate3d(-50%, -50%, 0) translate3d(${tattooCylinderSin * 28}px, 0, 0) scaleX(${tattooCylinderCos * tattooScale}) scaleY(${tattooScale}) rotate(${activePartConfig.tattooPos.rotate || '0deg'}) skewY(${activePartConfig.tattooPos.skewY || '0deg'})`,
+                  transform: `translate3d(-50%, -50%, 0) translate3d(${tattooCylinderSin * 26}px, 0, 0) scaleX(${tattooCylinderCos * tattooScale}) scaleY(${tattooScale}) rotate(${activePartConfig.tattooPos.rotate || '0deg'}) skewY(${activePartConfig.tattooPos.skewY || '0deg'})`,
                   width: activePartConfig.tattooPos.maxWidth,
                   height: activePartConfig.tattooPos.maxHeight,
                   maxWidth: activePartConfig.tattooPos.maxWidth,
                   maxHeight: activePartConfig.tattooPos.maxHeight,
+                  opacity: tattooOpacity * Math.min(1, tattooCylinderCos + 0.3),
                   mixBlendMode: blendMode,
-                  opacity: tattooOpacity * tattooCylinderCos,
-                  WebkitMaskImage: featherEdge
-                    ? 'radial-gradient(ellipse at center, rgba(0,0,0,1) 42%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,0) 98%)'
+                  filter: featherEdge
+                    ? 'drop-shadow(0 0 1.5px rgba(0,0,0,0.65)) contrast(110%)'
                     : 'none',
-                  maskImage: featherEdge
-                    ? 'radial-gradient(ellipse at center, rgba(0,0,0,1) 42%, rgba(0,0,0,0.85) 68%, rgba(0,0,0,0) 98%)'
-                    : 'none',
-                  transition: isDragging || isAutoRotating ? 'none' : 'transform 0.3s ease-out, opacity 0.3s ease-out',
+                  transition: 'opacity 0.15s ease-out, transform 0.05s ease-out',
                 }}
               >
                 {selectedDesign.svg ? (
-                  <div className="w-full h-full flex items-center justify-center text-[#101415] filter contrast-200 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] pointer-events-none">
+                  <div className="w-full h-full flex items-center justify-center text-slate-900 dark:text-zinc-950 font-bold">
                     {selectedDesign.svg}
                   </div>
-                ) : (
+                ) : imageSrc ? (
                   <img
                     src={imageSrc}
                     alt={selectedDesign.name}
-                    className="w-full h-full object-contain filter contrast-[180%] brightness-85 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] pointer-events-none"
+                    className="w-full h-full object-contain filter contrast-125"
                   />
+                ) : (
+                  <div className="text-[10px] text-amber-300 font-bold uppercase tracking-wider text-center bg-black/60 px-2 py-1 rounded">
+                    {selectedDesign.name}
+                  </div>
                 )}
               </div>
             )}
 
-            {/* 360° CLICKABLE ANATOMICAL HOTSPOTS */}
-            {HUMAN_BODY_360_ZONES.map((part) => {
-              const partIsBack = part.theta >= 90 && part.theta <= 270;
-              if (partIsBack !== isBackView) return null;
+            {/* Dynamic 360 Hotspot Click Zones */}
+            {HUMAN_BODY_360_ZONES.map((zone) => {
+              const zoneDiff = ((zone.theta - normalizedAngle + 540) % 360) - 180;
+              const isZoneFacingCamera = Math.abs(zoneDiff) < 80;
+              if (!isZoneFacingCamera) return null;
 
-              const isSelected = selectedBodyArea.toLowerCase().includes(part.id.toLowerCase()) || part.id.toLowerCase().includes(selectedBodyArea.toLowerCase());
-              const isHovered = hoveredPart === part.id;
+              const isSelected = selectedBodyArea.toLowerCase() === zone.id.toLowerCase();
+              const isHovered = hoveredPart === zone.id;
 
               return (
                 <div
-                  key={part.id + (partIsBack ? '_back' : '_front')}
+                  key={zone.id}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onSelectBodyArea(part.id);
-                    toast.success(`Selected ${part.label}. Previewing placement!`);
+                    if (onSelectBodyArea) onSelectBodyArea(zone.id);
                   }}
-                  onMouseEnter={() => setHoveredPart(part.id)}
+                  onMouseEnter={() => setHoveredPart(zone.id)}
                   onMouseLeave={() => setHoveredPart(null)}
-                  className={`absolute z-25 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 transition-all duration-150 rounded-2xl ${
+                  className={`absolute z-25 cursor-pointer rounded-lg transition-all border pointer-events-auto ${
                     isSelected
-                      ? 'border-2 border-studio-glowCyan/50 bg-studio-glowCyan/10 shadow-cyan-glow'
+                      ? 'bg-amber-500/25 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
                       : isHovered
-                      ? 'border border-studio-bronzeLight bg-studio-bronzeLight/20 shadow-bronze'
-                      : 'border border-white/10 hover:border-studio-glowCyan/60 hover:bg-studio-glowCyan/10'
+                      ? 'bg-cyan-500/20 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
+                      : 'border-transparent hover:border-white/20'
                   }`}
                   style={{
-                    left: `${part.box.x + part.box.width / 2}%`,
-                    top: `${part.box.y + part.box.height / 2}%`,
-                    width: `${part.box.width}%`,
-                    height: `${part.box.height}%`,
+                    left: `${zone.box.x}%`,
+                    top: `${zone.box.y}%`,
+                    width: `${zone.box.width}%`,
+                    height: `${zone.box.height}%`,
                   }}
-                  title={`Click ${part.label} to view tattoo placement`}
                 >
-                  <div className="absolute top-1 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
-                    <div
-                      className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all ${
-                        isSelected
-                          ? 'bg-studio-glowCyan shadow-[0_0_15px_#00E5FF] scale-110'
-                          : isHovered
-                          ? 'bg-studio-bronzeLight scale-105'
-                          : 'bg-white/40'
-                      }`}
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full bg-studio-darker" />
-                    </div>
-                  </div>
-
                   {(isSelected || isHovered) && (
-                    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap bg-studio-darker/95 backdrop-blur-md border border-studio-border px-2 py-0.5 rounded text-[10px] font-bold text-studio-textMain pointer-events-none shadow-xl">
-                      {part.name}
-                    </div>
+                    <span className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-md text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30">
+                      {zone.name}
+                    </span>
                   )}
                 </div>
               );
             })}
+
           </div>
 
         </div>
+
       </div>
 
-      {/* 360 Drag Instruction Hint */}
-      <div className="absolute bottom-16 sm:bottom-20 left-1/2 transform -translate-x-1/2 z-20 pointer-events-none text-[10px] text-amber-300/80 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">
-        ↔ Drag horizontally across model to spin in 360°
-      </div>
-
-      {/* 4. INSTANT TATTOO SELECTOR & ADJUSTMENT DOCK DIRECTLY ON PRESENCE OF BODY */}
-      <div className="absolute bottom-2.5 left-2.5 right-2.5 z-30 flex flex-col gap-1.5 pointer-events-auto">
+      {/* 4. BOTTOM IN-VIEWPORT CONTROLS & INSTANT TATTOO SELECTION DOCK */}
+      <div className="absolute bottom-2.5 left-2.5 right-2.5 z-30 flex flex-col gap-2 pointer-events-auto">
         
-        {/* Collapsible Tuning Controls Bar */}
-        {showControlsModal && selectedDesign && (
-          <div className="bg-black/95 backdrop-blur-xl border border-amber-500/40 p-2.5 rounded-xl shadow-2xl flex items-center justify-between gap-2 overflow-x-auto text-[11px] animate-in fade-in slide-in-from-bottom duration-150">
-            {/* Tattoo Size Slider */}
-            <div className="flex items-center space-x-1.5 shrink-0">
-              <span className="text-amber-400 text-[10px] uppercase font-bold">Size:</span>
+        {/* Fine-Tuning Mini Bar */}
+        <div className="flex items-center justify-between bg-black/85 backdrop-blur-md border border-studio-border/60 p-1.5 sm:px-3 rounded-xl text-xs text-studio-textMuted shadow-xl">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            
+            {/* Scale Control */}
+            <div className="flex items-center space-x-1.5">
+              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">Scale</span>
               <input
                 type="range"
                 min="0.5"
@@ -504,112 +556,83 @@ export const Interactive3DStudio = ({
                 step="0.05"
                 value={tattooScale}
                 onChange={(e) => setTattooScale(parseFloat(e.target.value))}
-                className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-                title="Tattoo Scale"
+                className="w-16 sm:w-24 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
+              <span className="text-[10px] font-mono text-zinc-400">{tattooScale.toFixed(2)}x</span>
             </div>
 
-            <div className="w-px h-3.5 bg-white/10 shrink-0" />
-
-            {/* Ink Density Slider */}
-            <div className="flex items-center space-x-1.5 shrink-0">
-              <span className="text-amber-400 text-[10px] uppercase font-bold">Ink Depth:</span>
+            {/* Ink Density Control */}
+            <div className="flex items-center space-x-1.5 hidden xs:flex">
+              <span className="text-[10px] uppercase tracking-wider font-bold text-cyan-400">Ink</span>
               <input
                 type="range"
-                min="0.4"
-                max="1"
+                min="0.3"
+                max="1.0"
                 step="0.05"
                 value={tattooOpacity}
                 onChange={(e) => setTattooOpacity(parseFloat(e.target.value))}
-                className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-                title="Ink Density / Opacity"
+                className="w-16 sm:w-20 accent-cyan-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
+              <span className="text-[10px] font-mono text-zinc-400">{Math.round(tattooOpacity * 100)}%</span>
             </div>
+          </div>
 
-            <div className="w-px h-3.5 bg-white/10 shrink-0" />
-
-            {/* Feather Border Toggle */}
+          <div className="flex items-center space-x-1.5">
             <button
               type="button"
-              onClick={() => setFeatherEdge((prev) => !prev)}
-              className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 transition-colors ${
-                featherEdge
-                  ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
-                  : 'bg-zinc-800 text-zinc-400 border border-white/10'
-              }`}
+              onClick={handleReset}
+              className="p-1 text-zinc-400 hover:text-white bg-zinc-900 border border-white/10 rounded-md transition-colors text-[10px] px-2 flex items-center space-x-1"
+              title="Reset 360 View"
             >
-              {featherEdge ? '✓ Soft Skin Blend' : 'Sharp Border'}
+              <RefreshCcw className="w-3 h-3" />
+              <span className="hidden sm:inline">Reset</span>
             </button>
           </div>
-        )}
+        </div>
 
-        {/* Instant Tattoo Horizontal Selector Bar (Zero scroll up/down needed) */}
+        {/* In-Viewport Tattoo Selection Carousel */}
         {designs && designs.length > 0 && (
-          <div className="bg-black/90 backdrop-blur-xl border border-amber-500/30 rounded-xl p-2 shadow-2xl space-y-1.5">
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center space-x-1.5">
-                <Sparkles className="w-3 h-3 text-amber-400" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-300">
-                  Instant Tattoo Selector
-                </span>
-                <span className="text-[9px] text-zinc-400 font-serif hidden sm:inline">
-                  (Tap to test on {selectedBodyArea})
-                </span>
-              </div>
+          <div className="bg-black/90 backdrop-blur-xl border border-studio-border/70 p-1.5 rounded-xl shadow-2xl">
+            <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-thin">
+              <span className="text-[9px] uppercase tracking-widest font-black text-studio-glowCyan px-1 shrink-0">
+                Tattoos:
+              </span>
+              {designs.slice(0, 10).map((design) => {
+                const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
+                const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
 
-              {/* Adjust Ink Toggle */}
-              {selectedDesign && (
-                <button
-                  type="button"
-                  onClick={() => setShowControlsModal(!showControlsModal)}
-                  className={`px-2 py-0.5 rounded text-[10px] font-bold flex items-center space-x-1 border transition-colors ${
-                    showControlsModal
-                      ? 'bg-amber-400 text-black border-amber-400'
-                      : 'bg-zinc-900 text-amber-300 border-amber-500/40 hover:border-amber-400'
-                  }`}
-                >
-                  <Sliders className="w-2.5 h-2.5" />
-                  <span>{showControlsModal ? 'Close Adjust' : 'Adjust Ink'}</span>
-                </button>
-              )}
-            </div>
-
-            {/* Horizontal Scrollable Thumbnails List */}
-            <div className="flex items-center space-x-2 overflow-x-auto py-0.5 px-0.5 no-scrollbar scroll-smooth">
-              {designs.map((item) => {
-                const isSelected = selectedDesign?._id === item._id || selectedDesign?.name === item.name;
                 return (
                   <button
-                    key={item._id || item.name}
+                    key={design._id || design.name}
                     type="button"
                     onClick={() => {
-                      if (onSelectDesign) onSelectDesign(item);
-                      toast.success(`Testing "${item.name}" on ${selectedBodyArea}!`);
+                      if (onSelectDesign) onSelectDesign(design);
+                      toast.success(`Selected "${design.name}" on 3D Body!`);
                     }}
-                    className={`shrink-0 flex items-center space-x-2 p-1 rounded-lg border transition-all duration-200 text-left ${
+                    className={`relative shrink-0 flex items-center space-x-1.5 px-2 py-1 rounded-lg transition-all border ${
                       isSelected
-                        ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.35)] scale-[1.02]'
-                        : 'bg-zinc-900/80 border-white/10 hover:border-amber-400/50 hover:bg-zinc-800'
+                        ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)] scale-105'
+                        : 'bg-zinc-900/80 border-white/10 hover:border-amber-500/40 text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-black/80 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 p-0.5">
-                      {item.svg ? (
-                        <div className="w-full h-full text-white">{item.svg}</div>
+                    <div className="w-7 h-7 rounded bg-black/70 p-0.5 overflow-hidden flex items-center justify-center border border-white/10">
+                      {design.svg ? (
+                        design.svg
                       ) : (
                         <img
-                          src={getFullImageUrl(item.previewImage || item.dataUri)}
-                          alt={item.name}
-                          className="w-full h-full object-contain filter contrast-125"
+                          src={imgSrc}
+                          alt={design.name}
+                          className="w-full h-full object-contain filter invert dark:invert-0"
                         />
                       )}
                     </div>
-                    <div className="pr-1.5 max-w-[85px] sm:max-w-[110px]">
-                      <p className={`text-[10px] font-bold truncate leading-tight ${isSelected ? 'text-amber-300' : 'text-zinc-200'}`}>
-                        {item.name}
-                      </p>
-                      <p className="text-[8.5px] text-zinc-400 truncate">
-                        {item.style}
-                      </p>
+                    <div className="text-left">
+                      <div className="text-[10px] font-bold text-zinc-200 uppercase truncate max-w-[75px]">
+                        {design.name}
+                      </div>
+                      <div className="text-[8px] text-amber-400/80 font-mono">
+                        {design.style || 'Custom'}
+                      </div>
                     </div>
                   </button>
                 );
@@ -617,8 +640,8 @@ export const Interactive3DStudio = ({
             </div>
           </div>
         )}
-      </div>
 
+      </div>
     </div>
   );
 };
