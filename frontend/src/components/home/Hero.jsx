@@ -40,7 +40,7 @@ export const Hero = () => {
     return matching || allDesigns[0];
   };
 
-  // Fetch dynamic designs from Admin database, preserving all 11 core vector flash artworks
+  // Fetch dynamic designs from Admin database (exclusively shows admin designs)
   useEffect(() => {
     const loadDynamicDesigns = async () => {
       try {
@@ -62,26 +62,22 @@ export const Hero = () => {
             isFromDB: true,
           }));
 
-          // Merge without losing original artworks
-          const merged = [...TATTOO_ARTWORKS_CATALOG];
-          dbList.forEach((dbItem) => {
-            const existingIdx = merged.findIndex(m => m.name.toLowerCase() === dbItem.name.toLowerCase());
-            if (existingIdx >= 0) {
-              merged[existingIdx] = { ...merged[existingIdx], ...dbItem };
-            } else {
-              merged.push(dbItem);
-            }
-          });
+          setDesigns(dbList);
 
-          setDesigns(merged);
-
-          // If no design selected yet, select the first
-          if (!selectedDesign && merged.length > 0) {
-            setSelectedDesign(merged[0]);
+          // If no design selected yet, select the first admin design
+          if (!selectedDesign && dbList.length > 0) {
+            setSelectedDesign(dbList[0]);
+          }
+        } else {
+          // If no designs in DB yet, fallback to default template catalog
+          setDesigns(TATTOO_ARTWORKS_CATALOG);
+          if (!selectedDesign) {
+            setSelectedDesign(TATTOO_ARTWORKS_CATALOG[0]);
           }
         }
       } catch (err) {
         console.warn('Using default flash motifs catalog:', err);
+        setDesigns(TATTOO_ARTWORKS_CATALOG);
       } finally {
         setLoadingDesigns(false);
       }

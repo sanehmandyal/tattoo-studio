@@ -66,25 +66,21 @@ export const Interactive3DPage = () => {
             isFromDB: true,
           }));
 
-          const merged = [...TATTOO_ARTWORKS_CATALOG];
-          dbList.forEach((dbItem) => {
-            const existingIdx = merged.findIndex(m => m.name.toLowerCase() === dbItem.name.toLowerCase());
-            if (existingIdx >= 0) {
-              merged[existingIdx] = { ...merged[existingIdx], ...dbItem };
-            } else {
-              merged.push(dbItem);
-            }
-          });
-
-          setDesigns(merged);
+          setDesigns(dbList);
 
           // If no design selected yet, select the first design
-          if (!selectedDesign && merged.length > 0) {
-            setSelectedDesign(merged[0]);
+          if (!selectedDesign && dbList.length > 0) {
+            setSelectedDesign(dbList[0]);
+          }
+        } else {
+          setDesigns(TATTOO_ARTWORKS_CATALOG);
+          if (!selectedDesign) {
+            setSelectedDesign(TATTOO_ARTWORKS_CATALOG[0]);
           }
         }
       } catch (err) {
         console.error(err);
+        setDesigns(TATTOO_ARTWORKS_CATALOG);
       }
     };
     fetchDesigns();
