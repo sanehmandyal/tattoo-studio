@@ -4,7 +4,7 @@ import { Interactive3DStudio } from '../tattoo-studio/Interactive3DStudio';
 import { TATTOO_ARTWORKS_CATALOG } from '../tattoo-studio/TattooArtworks';
 import { designsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { Sparkles, Heart, ArrowRight, Check, Shield, Edit3, Settings } from 'lucide-react';
+import { Sparkles, Heart, ArrowRight, Check, Shield, Settings, MessageSquare, Star, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../../utils/whatsapp';
 import { getFullImageUrl } from '../../utils/imageHelper';
@@ -19,28 +19,9 @@ export const Hero = () => {
   const [loadingDesigns, setLoadingDesigns] = useState(true);
   const navigate = useNavigate();
 
-  const stylesList = ['All', 'Minimalist', 'Fine Line', 'Geometric', 'Traditional', 'Script', 'Mandala', 'Realism', 'Blackwork', 'Neo-Traditional', 'Watercolor'];
+  const stylesList = ['All', 'Minimalist', 'Fine Line', 'Geometric', 'Traditional', 'Script', 'Mandala', 'Realism', 'Blackwork', 'Watercolor'];
 
-  // Helper to find best admin reference tattoo for a body area
-  const findReferenceTattooForArea = (area, allDesigns) => {
-    if (!area || !allDesigns || allDesigns.length === 0) return null;
-    const lowerArea = area.toLowerCase();
-
-    // 1. Look for admin default reference explicitly assigned to this body area
-    const defaultRef = allDesigns.find(d => 
-      Boolean(d.isDefaultReference) &&
-      (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
-    );
-    if (defaultRef) return defaultRef;
-
-    // 2. Look for any design tagged with this body area
-    const matching = allDesigns.find(d => 
-      (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
-    );
-    return matching || allDesigns[0];
-  };
-
-  // Fetch dynamic designs from Admin database (exclusively shows admin designs)
+  // Fetch dynamic designs from Admin database
   useEffect(() => {
     const loadDynamicDesigns = async () => {
       try {
@@ -63,20 +44,16 @@ export const Hero = () => {
           }));
 
           setDesigns(dbList);
-
-          // If no design selected yet, select the first admin design
           if (!selectedDesign && dbList.length > 0) {
             setSelectedDesign(dbList[0]);
           }
         } else {
-          // If no designs in DB yet, fallback to default template catalog
           setDesigns(TATTOO_ARTWORKS_CATALOG);
           if (!selectedDesign) {
             setSelectedDesign(TATTOO_ARTWORKS_CATALOG[0]);
           }
         }
       } catch (err) {
-        console.warn('Using default flash motifs catalog:', err);
         setDesigns(TATTOO_ARTWORKS_CATALOG);
       } finally {
         setLoadingDesigns(false);
@@ -91,7 +68,6 @@ export const Hero = () => {
     return matchesStyle;
   });
 
-  // When body part is clicked, keep the selected tattoo locked and test on that body part!
   const handleSelectBodyPart = (areaName) => {
     setSelectedBodyArea(areaName);
     if (selectedDesign) {
@@ -124,67 +100,66 @@ export const Hero = () => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen pt-20 pb-12 sm:pb-16 bg-studio-bg flex flex-col justify-center overflow-hidden transition-colors">
-      {/* Studio ambient lighting backdrop */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,_rgba(167,131,93,0.12)_0%,_transparent_70%)] pointer-events-none transform-gpu" />
-
-      {/* Main Container */}
+    <section id="hero" className="relative min-h-screen pt-24 pb-16 bg-studio-bg flex flex-col justify-center overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 w-full z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center min-h-[640px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[640px]">
           
-          {/* LEFT COLUMN: HERO HEADLINE & ACTIONS */}
-          <div className="lg:col-span-4 space-y-4 sm:space-y-6 pt-2 lg:pt-0 text-left lg:pl-4">
-            <div className="space-y-3">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 bg-studio-bronze/10 border border-studio-bronze/40 rounded-full">
-                <span className="text-studio-gold text-xs">🔱</span>
-                <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] font-bold text-studio-bronzeLight">
-                  DEVBHOOMI ATELIER • FRIENDS COLONY, UNA
-                </span>
-                <span className="text-studio-gold text-xs">🔱</span>
-              </div>
-              
-              <h1 className="ancient-carved-heading text-3xl sm:text-5xl xl:text-6xl leading-[1.08] tracking-wide text-studio-textMain">
-                YOUR VISION, <br />
-                <span className="ancient-gold-text">SACRED INK.</span>
-              </h1>
+          {/* LEFT COLUMN: HERO VALUE PROPOSITION */}
+          <div className="lg:col-span-4 space-y-6 text-left">
+            
+            {/* Top Badge */}
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span>Premier Tattoo Studio • Friends Colony, Una</span>
             </div>
 
-            <p className="text-xs sm:text-sm md:text-base text-studio-textMuted leading-relaxed max-w-md font-sans border-l-2 border-studio-bronze/40 pl-3 italic">
-              "Where ancient Himalayan spiritual reverence meets eternal needlework." Touch any spot on the human body model to discover sacred designs crafted in Friends Colony, Una.
-            </p>
+            {/* Main Headline */}
+            <div className="space-y-3">
+              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+                Bespoke Tattoo <br />
+                <span className="text-amber-400">Artistry &amp; Precision.</span>
+              </h1>
+              <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-md">
+                Master Sunil and resident artists specialize in fine-line realism, sacred geometry, and bespoke custom tattoos with hospital-grade sterile hygiene.
+              </p>
+            </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <a
-                href="#portfolio"
-                className="bg-gradient-to-r from-studio-bronze via-amber-700 to-studio-bronzeDark hover:from-amber-600 hover:to-studio-bronze text-white font-bold px-5 sm:px-7 py-3 text-[11px] sm:text-xs font-display tracking-[0.2em] uppercase shadow-lg shadow-amber-950/50 transition-all duration-300 transform hover:scale-[1.02] rounded border border-amber-400/30 text-center"
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link
+                to="/booking"
+                className="bg-amber-400 hover:bg-amber-300 text-black font-bold px-6 py-3 text-xs uppercase tracking-wider rounded-lg shadow-lg transition-all transform active:scale-95 text-center"
               >
-                EXPLORE SACRED ART
-              </a>
-              <a
-                href="#booking"
-                className="border border-studio-bronze/60 hover:border-studio-gold text-studio-bronzeLight hover:text-white hover:bg-studio-bronze/20 px-5 sm:px-6 py-3 text-[11px] sm:text-xs font-display tracking-[0.2em] uppercase transition-all duration-300 rounded font-bold backdrop-blur-sm text-center"
+                Book Appointment
+              </Link>
+              <Link
+                to="/portfolio"
+                className="border border-white/20 hover:border-amber-400 text-zinc-200 hover:text-white bg-zinc-900/60 hover:bg-zinc-800 px-6 py-3 text-xs uppercase tracking-wider rounded-lg transition-all text-center"
               >
-                CONSULT WITH MASTERS
-              </a>
+                View Portfolio
+              </Link>
             </div>
 
-            {/* Studio credentials */}
-            <div className="pt-3 sm:pt-4 flex items-center space-x-4 sm:space-x-6 border-t border-studio-border/40 text-xs text-studio-textMuted font-serif">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-studio-gold">❖</span>
-                <span><strong className="text-studio-textMain">100%</strong> Sterile Single-Use</span>
+            {/* Trust Metrics */}
+            <div className="pt-4 grid grid-cols-3 gap-4 border-t border-white/10 text-left">
+              <div>
+                <div className="text-lg font-black text-white">420+</div>
+                <div className="text-[11px] text-zinc-400">5.0★ Google Reviews</div>
               </div>
-              <div className="w-1 h-1 rounded-full bg-studio-bronze/50" />
-              <div className="flex items-center space-x-1.5">
-                <span className="text-studio-gold">★</span>
-                <span><strong className="text-studio-textMain">5.0★</strong> Google Reviews (Una)</span>
+              <div>
+                <div className="text-lg font-black text-amber-400">100%</div>
+                <div className="text-[11px] text-zinc-400">Sterile Single-Use</div>
+              </div>
+              <div>
+                <div className="text-lg font-black text-white">10+ Yrs</div>
+                <div className="text-[11px] text-zinc-400">Master Experience</div>
               </div>
             </div>
+
           </div>
 
-          {/* CENTER COLUMN: ACTUAL HUMAN BODY - TOUCH ANY PART TO SEE TATTOO LOOK */}
-          <div className="lg:col-span-5 relative flex items-center justify-center my-2 lg:my-0">
+          {/* CENTER COLUMN: 360° HUMAN MODEL STUDIO */}
+          <div className="lg:col-span-5 relative flex items-center justify-center">
             <Interactive3DStudio
               selectedBodyArea={selectedBodyArea}
               onSelectBodyArea={handleSelectBodyPart}
@@ -194,68 +169,53 @@ export const Hero = () => {
             />
           </div>
 
-          {/* RIGHT COLUMN: TATTOO OPTIONS & ARTIST FLASH (Ancient Stone Tablet Card) */}
+          {/* RIGHT COLUMN: DESIGN EXPLORER */}
           <div className="lg:col-span-3 w-full">
-            <div className="ancient-stone-card ancient-ornate-corner rounded-xl p-4 sm:p-5 border border-studio-bronze/40 shadow-2xl space-y-3 transition-colors text-left">
+            <div className="bg-zinc-900/90 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4 text-left">
               
-              {/* Card Header with Admin Edit Shortcut */}
-              <div className="border-b border-studio-border/40 pb-2 flex items-center justify-between">
+              {/* Header */}
+              <div className="border-b border-white/10 pb-3 flex items-center justify-between">
                 <div>
-                  <h3 className="ancient-carved-heading text-xs sm:text-sm tracking-widest text-studio-gold flex items-center space-x-1.5">
-                    <span>॥ SACRED DESIGNS ॥</span>
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400 inline" />
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                    Design Catalog
                   </h3>
-                  <p className="text-[10px] sm:text-[11px] text-studio-textMuted mt-0.5 font-serif italic">
-                    Handcrafted by Land of God resident masters.
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Select a motif to test on the body
                   </p>
                 </div>
                 {isAdmin && (
                   <Link
                     to="/admin/designs"
-                    className="shrink-0 bg-amber-400/10 hover:bg-amber-400/20 text-amber-400 border border-amber-400/40 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider flex items-center space-x-1 transition-colors"
-                    title="Manage & Add 3D Suggested Tattoos"
+                    className="bg-amber-400/10 hover:bg-amber-400/20 text-amber-400 border border-amber-400/30 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center space-x-1"
                   >
                     <Settings className="w-3 h-3" />
-                    <span>Manage</span>
+                    <span>Admin</span>
                   </Link>
                 )}
               </div>
 
-              {/* Active Touched Body Spot Indicator */}
-              <div className="flex items-center justify-between text-xs bg-studio-secondary/90 p-2 sm:p-2.5 rounded-lg border border-studio-bronze/40">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#f59e0b]" />
-                  <span className="text-studio-bronzeLight font-bold uppercase text-[10px] sm:text-[11px] font-display tracking-wider">
-                    Spot: {selectedBodyArea.toUpperCase()}
-                  </span>
-                </div>
-                <span className="text-[10px] text-studio-textMuted bg-studio-card/80 px-2 py-0.5 rounded border border-studio-border/40 font-serif">
-                  {filteredTattoos.length} motifs
-                </span>
-              </div>
-
               {/* Style Category Filter Pills */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[10px] uppercase font-bold text-studio-textMuted">
-                  <span>Filter By Sacred Style:</span>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase">
+                  <span>Category:</span>
                   {selectedStyleFilter !== 'All' && (
                     <button
                       onClick={() => setSelectedStyleFilter('All')}
-                      className="text-studio-bronzeLight hover:underline"
+                      className="text-amber-400 hover:underline"
                     >
-                      Reset
+                      All
                     </button>
                   )}
                 </div>
-                <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 text-[10px] no-scrollbar scroll-smooth">
+                <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 text-[11px] scrollbar-thin">
                   {stylesList.map((s) => (
                     <button
                       key={s}
                       onClick={() => setSelectedStyleFilter(s)}
-                      className={`px-2.5 py-1 rounded-full whitespace-nowrap transition-all text-[10px] font-semibold shrink-0 ${
+                      className={`px-2.5 py-1 rounded-md whitespace-nowrap transition-all text-[11px] font-medium shrink-0 ${
                         selectedStyleFilter === s
-                          ? 'bg-studio-bronze text-white font-bold shadow-sm'
-                          : 'bg-studio-secondary/80 text-studio-textMuted hover:text-studio-textMain border border-studio-border/30'
+                          ? 'bg-amber-400 text-black font-bold'
+                          : 'bg-zinc-800 text-zinc-400 hover:text-white border border-white/5'
                       }`}
                     >
                       {s}
@@ -264,8 +224,8 @@ export const Hero = () => {
                 </div>
               </div>
 
-              {/* Tattoo Options List - Responsive Scrolling */}
-              <div className="space-y-2 sm:space-y-2.5 max-h-[260px] sm:max-h-[320px] overflow-y-auto pr-1">
+              {/* Tattoo List */}
+              <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 scrollbar-thin">
                 {filteredTattoos.map((idea) => {
                   const isSelected = selectedDesign?._id === idea._id || selectedDesign?.name === idea.name;
                   const isFavorite = savedFavorites.includes(idea._id);
@@ -274,75 +234,42 @@ export const Hero = () => {
                     <div
                       key={idea._id}
                       onClick={() => handleSelectDesign(idea)}
-                      className={`group relative flex items-center space-x-3 p-2 sm:p-2.5 rounded-lg cursor-pointer transition-all duration-200 border ${
+                      className={`flex items-center space-x-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
                         isSelected
-                          ? 'bg-studio-secondary/95 border-2 border-studio-glowCyan shadow-cyan-glow'
-                          : 'bg-studio-secondary/50 border-studio-border/30 hover:border-studio-bronze/60 hover:bg-studio-secondary/80 shadow-sm'
+                          ? 'bg-zinc-800 border-amber-400 shadow-md'
+                          : 'bg-zinc-950/60 border-white/5 hover:border-white/20 hover:bg-zinc-800/60'
                       }`}
                     >
-                      {/* Thumbnail / Vector Flash or Uploaded Motif Artwork */}
-                      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-md bg-studio-darker/90 overflow-hidden shrink-0 border border-studio-border/60 flex items-center justify-center relative p-1 text-studio-textMain">
+                      {/* Artwork Thumbnail */}
+                      <div className="w-12 h-12 rounded-lg bg-black p-1 overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
                         {idea.svg ? (
                           idea.svg
                         ) : (
                           <img
                             src={getFullImageUrl(idea.previewImage || idea.dataUri)}
                             alt={idea.name}
-                            className="w-full h-full object-contain filter drop-shadow-sm"
+                            className="w-full h-full object-contain"
                           />
-                        )}
-                        {isSelected && (
-                          <div className="absolute inset-0 bg-sky-500/20 backdrop-blur-[1px] flex items-center justify-center">
-                            <Check className="w-4 h-4 text-studio-glowCyan drop-shadow-md" />
-                          </div>
                         )}
                       </div>
 
-                      {/* Info & Description */}
-                      <div className="flex-1 min-w-0 text-left">
+                      {/* Details */}
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className={`text-xs font-bold truncate ${isSelected ? 'text-studio-glowCyan font-extrabold' : 'text-studio-textMain'}`}>
+                          <h4 className={`text-xs font-bold truncate ${isSelected ? 'text-amber-400' : 'text-zinc-200'}`}>
                             {idea.name}
                           </h4>
                           <button
                             onClick={(e) => handleToggleFavorite(idea, e)}
-                            className="p-1 text-studio-textMuted hover:text-red-400 transition-colors"
-                            title="Save design"
+                            className="p-1 text-zinc-500 hover:text-red-400"
                           >
                             <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
                           </button>
                         </div>
                         
-                        <div className="flex items-center space-x-1.5 mt-0.5">
-                          <span className="text-[9px] font-bold text-studio-bronzeLight bg-studio-secondary px-1.5 py-0.2 rounded border border-studio-border/30">
-                            {idea.style}
-                          </span>
-                          <span className="text-[9px] text-studio-textMuted font-mono">
-                            {idea.estTime}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-studio-border/20">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSelectDesign(idea);
-                              const waUrl = createArtworkInquiryUrl(
-                                idea.name,
-                                idea.artist || 'Master Sunil',
-                                selectedBodyArea
-                              );
-                              window.open(waUrl, '_blank');
-                            }}
-                            className="inline-flex items-center space-x-1 text-[10px] font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 px-2 py-0.5 rounded transition-all shadow-sm"
-                            title="Contact Admin on WhatsApp for details"
-                          >
-                            <span>💬 WhatsApp Details</span>
-                          </button>
-                          <span className="text-[9px] text-studio-textMuted font-mono">
-                            ~{idea.estTime}
-                          </span>
+                        <div className="flex items-center justify-between text-[10px] text-zinc-400 mt-1">
+                          <span className="font-semibold text-zinc-300">{idea.style}</span>
+                          <span>{idea.estTime}</span>
                         </div>
                       </div>
                     </div>
@@ -350,17 +277,16 @@ export const Hero = () => {
                 })}
               </div>
 
-              {/* Booking & WhatsApp CTA Buttons with Selected Design */}
-              <div className="pt-2 border-t border-studio-border/40 space-y-2">
+              {/* Booking Actions */}
+              <div className="pt-2 border-t border-white/10 space-y-2">
                 <button
                   onClick={handleBookWithSelected}
-                  className="w-full bg-gradient-to-r from-studio-bronze to-amber-700 hover:from-amber-600 hover:to-studio-bronze text-white font-bold py-2.5 px-4 text-xs font-display tracking-wider uppercase rounded-lg shadow-md flex items-center justify-center space-x-2 transition-all transform hover:scale-[1.01] border border-amber-400/30"
+                  className="w-full bg-amber-400 hover:bg-amber-300 text-black font-bold py-2.5 px-4 text-xs uppercase tracking-wider rounded-lg shadow-sm flex items-center justify-center space-x-2 transition-all"
                 >
-                  <span>Book {selectedDesign?.name}</span>
+                  <span>Book with Selected Design</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
-                {/* WhatsApp Quick Ask */}
                 <button
                   onClick={() => {
                     const waUrl = createArtworkInquiryUrl(
@@ -370,9 +296,9 @@ export const Hero = () => {
                     );
                     window.open(waUrl, '_blank');
                   }}
-                  className="w-full bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/50 hover:border-emerald-400 text-emerald-300 font-display font-bold py-2 px-3 text-[10px] sm:text-[11px] tracking-wider uppercase rounded-lg transition-all flex items-center justify-center space-x-1.5 shadow-sm"
+                  className="w-full bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-semibold py-2 px-3 text-xs rounded-lg transition-all flex items-center justify-center space-x-1.5"
                 >
-                  <span>💬 Inquire This Design on WhatsApp</span>
+                  <span>💬 WhatsApp Inquiry</span>
                 </button>
               </div>
 

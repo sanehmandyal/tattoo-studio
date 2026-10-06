@@ -51,20 +51,20 @@ export const Navbar = () => {
   );
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl shadow-2xl border-b border-amber-500/20' : 'bg-studio-darker/90 backdrop-blur-md border-b border-white/5'}`}>
+    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/95 backdrop-blur-md shadow-xl border-b border-white/10' : 'bg-studio-darker/90 backdrop-blur-sm border-b border-white/5'}`}>
       {/* Top Header Bar */}
-      <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
+      <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-amber-500/30 via-studio-darker to-black p-0.5 border border-amber-500/50 shadow-md group-hover:border-amber-400 group-hover:scale-105 transition-all">
-            <img src="/logo.png" alt="Land of God Tattoo Studio Logo" className="w-full h-full object-cover rounded-full" />
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-black p-0.5 border border-amber-400/40 shadow-sm group-hover:border-amber-400 transition-all flex items-center justify-center">
+            <img src="/logo.png" alt="Land of God Tattoo Studio Logo" className="w-full h-full object-contain rounded-full" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-display font-black text-base md:text-lg tracking-[0.16em] text-studio-textMain uppercase leading-tight">
+          <div className="flex flex-col text-left">
+            <span className="font-extrabold text-sm sm:text-base tracking-wider text-white uppercase leading-tight">
               LAND OF <span className="text-amber-400">GOD</span>
             </span>
-            <span className="text-[8.5px] tracking-[0.22em] text-studio-bronzeLight uppercase font-bold">
-              TATTOO STUDIO • UNA
+            <span className="text-[9px] tracking-wider text-zinc-400 uppercase font-semibold">
+              TATTOO STUDIO • UNA, HP
             </span>
           </div>
         </Link>

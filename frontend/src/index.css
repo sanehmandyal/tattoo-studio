@@ -4,321 +4,140 @@
 
 @layer base {
   :root {
-    /* DARK THEME (Default - Luxury Night Studio Palette from Reference UI) */
-    --studio-bg: #101415;
-    --studio-darker: #0B0D0E;
-    --studio-secondary: #1B2022;
-    --studio-card: #252A2B;
-    --studio-card-hover: #2E3536;
-    --studio-wood: #251A14;
-    --studio-wood-header: #1B2022;
-    --studio-bronze: #A7835D;
-    --studio-bronze-light: #C1A27B;
-    --studio-bronze-hover: #D4B895;
-    --studio-bronze-dark: #755836;
-    --studio-gold: #E5C07B;
-    --studio-text-main: #F5F2ED;
-    --studio-text-muted: #B9B5AF;
-    --studio-border: rgba(193, 162, 123, 0.24);
-    --studio-border-hover: rgba(193, 162, 123, 0.55);
-    --studio-glow-cyan: #00E5FF;
-    --studio-card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    /* DARK THEME (Professional Modern Slate/Gold) */
+    --studio-bg: #090b0e;
+    --studio-darker: #050608;
+    --studio-secondary: #0f131a;
+    --studio-card: #131720;
+    --studio-card-hover: #181d28;
+    --studio-bronze: #d4af37;
+    --studio-bronze-light: #e6c86e;
+    --studio-bronze-hover: #f5d77f;
+    --studio-bronze-dark: #a1801d;
+    --studio-gold: #e6c86e;
+    --studio-text-main: #f8fafc;
+    --studio-text-muted: #94a3b8;
+    --studio-border: rgba(255, 255, 255, 0.09);
+    --studio-border-hover: rgba(212, 175, 55, 0.45);
+    --studio-glow-cyan: #38bdf8;
+    --studio-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
   }
 
   .dark {
-    /* DARK THEME (Explicit) */
-    --studio-bg: #101415;
-    --studio-darker: #0B0D0E;
-    --studio-secondary: #1B2022;
-    --studio-card: #252A2B;
-    --studio-card-hover: #2E3536;
-    --studio-wood: #251A14;
-    --studio-wood-header: #1B2022;
-    --studio-bronze: #A7835D;
-    --studio-bronze-light: #C1A27B;
-    --studio-bronze-hover: #D4B895;
-    --studio-bronze-dark: #755836;
-    --studio-gold: #E5C07B;
-    --studio-text-main: #F5F2ED;
-    --studio-text-muted: #B9B5AF;
-    --studio-border: rgba(193, 162, 123, 0.24);
-    --studio-border-hover: rgba(193, 162, 123, 0.55);
-    --studio-glow-cyan: #00E5FF;
-    --studio-card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    --studio-bg: #090b0e;
+    --studio-darker: #050608;
+    --studio-secondary: #0f131a;
+    --studio-card: #131720;
+    --studio-card-hover: #181d28;
+    --studio-bronze: #d4af37;
+    --studio-bronze-light: #e6c86e;
+    --studio-bronze-hover: #f5d77f;
+    --studio-bronze-dark: #a1801d;
+    --studio-gold: #e6c86e;
+    --studio-text-main: #f8fafc;
+    --studio-text-muted: #94a3b8;
+    --studio-border: rgba(255, 255, 255, 0.09);
+    --studio-border-hover: rgba(212, 175, 55, 0.45);
+    --studio-glow-cyan: #38bdf8;
+    --studio-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
   }
 
   .light {
-    /* LIGHT THEME */
-    --studio-bg: #F8F9FA;
-    --studio-darker: #FFFFFF;
-    --studio-secondary: #FFFFFF;
-    --studio-card: #FFFFFF;
-    --studio-card-hover: #F3F4F6;
-    --studio-wood: #3D291C;
-    --studio-wood-header: #FFFFFF;
-    --studio-bronze: #966F43;
-    --studio-bronze-light: #B28854;
-    --studio-bronze-hover: #A87E50;
-    --studio-bronze-dark: #78532A;
-    --studio-gold: #C28B38;
-    --studio-text-main: #111827;
-    --studio-text-muted: #4B5563;
-    --studio-border: rgba(150, 111, 67, 0.22);
-    --studio-border-hover: rgba(150, 111, 67, 0.55);
-    --studio-glow-cyan: #0284C7;
-    --studio-card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
+    --studio-bg: #f8fafc;
+    --studio-darker: #ffffff;
+    --studio-secondary: #f1f5f9;
+    --studio-card: #ffffff;
+    --studio-card-hover: #f8fafc;
+    --studio-bronze: #b89127;
+    --studio-bronze-light: #d4af37;
+    --studio-bronze-hover: #9c781b;
+    --studio-bronze-dark: #78590c;
+    --studio-gold: #b89127;
+    --studio-text-main: #0f172a;
+    --studio-text-muted: #64748b;
+    --studio-border: rgba(0, 0, 0, 0.08);
+    --studio-border-hover: rgba(184, 145, 39, 0.45);
+    --studio-glow-cyan: #0284c7;
+    --studio-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
   }
 
   body {
     background-color: var(--studio-bg);
     color: var(--studio-text-main);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 0.05em;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.025em;
+    font-weight: 700;
   }
 
-  /* Custom scrollbar */
+  /* Clean scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: var(--studio-bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--studio-bronze);
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--studio-bronze-light);
+    background: var(--studio-bronze);
   }
 }
 
-/* Glassmorphism Classes for Light & Dark */
+/* Professional Clean Panels */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--studio-card);
   border: 1px solid var(--studio-border);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
-}
-
-.dark .glass-panel {
-  background: rgba(37, 42, 43, 0.75);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--studio-card-shadow);
+  border-radius: 0.75rem;
 }
 
 .glass-panel-dark {
-  background: #FFFFFF;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--studio-card);
   border: 1px solid var(--studio-border);
-  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
-}
-
-.dark .glass-panel-dark {
-  background: rgba(16, 20, 21, 0.85);
-  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
+  box-shadow: var(--studio-card-shadow);
+  border-radius: 0.75rem;
 }
 
 .glass-card {
-  background: #FFFFFF;
-  backdrop-filter: blur(8px);
+  background: var(--studio-card);
   border: 1px solid var(--studio-border);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  box-shadow: var(--studio-card-shadow);
+  border-radius: 0.75rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
-  border-color: var(--studio-bronze);
-  box-shadow: 0 16px 36px -6px rgba(150, 111, 67, 0.18);
+  border-color: var(--studio-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.3);
 }
 
-.dark .glass-card {
-  background: linear-gradient(135deg, rgba(37, 42, 43, 0.8) 0%, rgba(27, 32, 34, 0.9) 100%);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
-}
-
-.dark .glass-card:hover {
-  border-color: rgba(193, 162, 123, 0.45);
-  box-shadow: 0 10px 30px -10px rgba(167, 131, 93, 0.3);
-}
-
-/* ==========================================================================
-   ANCIENT DEVBHOOMI & MYSTIC SACRED AESTHETIC STYLING
-   ========================================================================== */
-
-/* Ancient Weathered Parchment / Dark Slate Texture Backdrop */
+/* Smooth background utility */
 .ancient-bg-texture {
-  background-color: #0E1213;
-  background-image: 
-    radial-gradient(circle at 50% 10%, rgba(193, 162, 123, 0.12) 0%, transparent 60%),
-    radial-gradient(circle at 10% 80%, rgba(140, 88, 40, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(226, 183, 125, 0.06) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(14, 18, 19, 0.96) 0%, rgba(8, 11, 12, 0.98) 100%);
-  position: relative;
+  background-color: var(--studio-bg);
 }
 
-/* Ancient Carved Stone Card */
 .ancient-stone-card {
-  background: linear-gradient(145deg, #181E20 0%, #111517 100%);
-  border: 1px solid rgba(193, 162, 123, 0.28);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 230, 190, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.8),
-    0 12px 36px -8px rgba(0, 0, 0, 0.75);
-  position: relative;
+  background: var(--studio-card);
+  border: 1px solid var(--studio-border);
+  box-shadow: var(--studio-card-shadow);
 }
 
-.ancient-stone-card:hover {
-  border-color: rgba(226, 183, 125, 0.55);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 230, 190, 0.15),
-    0 16px 42px -6px rgba(167, 131, 93, 0.25);
-}
-
-/* Ornate Antique Gold Corner Flourishes */
-.ancient-ornate-corner {
-  position: relative;
-}
-
-.ancient-ornate-corner::before,
-.ancient-ornate-corner::after {
-  content: '';
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  border-color: rgba(226, 183, 125, 0.65);
-  transition: all 0.3s ease;
-}
-
-.ancient-ornate-corner::before {
-  top: 4px;
-  left: 4px;
-  border-top: 2px solid;
-  border-left: 2px solid;
-}
-
-.ancient-ornate-corner::after {
-  bottom: 4px;
-  right: 4px;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
-}
-
-.ancient-ornate-corner:hover::before,
-.ancient-ornate-corner:hover::after {
-  border-color: #E2B77D;
-  width: 18px;
-  height: 18px;
-}
-
-/* Antique Gold Foil Text */
 .ancient-gold-text {
-  font-family: 'Cinzel Decorative', 'Cinzel', serif;
-  background: linear-gradient(135deg, #FFF1D6 0%, #E2B77D 40%, #B28854 75%, #845B28 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 25px rgba(226, 183, 125, 0.25);
+  color: var(--studio-gold);
 }
 
-/* Antique Filigree Borders */
-.ancient-filigree-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.ancient-filigree-divider::before,
-.ancient-filigree-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(193, 162, 123, 0.4), transparent);
-}
-
-/* Smooth Hardware-Accelerated Sacred Mandala Animation */
-@keyframes sacredMandalaSpin {
-  from {
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  to {
-    transform: translate3d(0, 0, 0) rotate(360deg);
-  }
-}
-
-.sacred-mandala-spin {
-  animation: sacredMandalaSpin 140s linear infinite;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-}
-
-.sacred-mandala-reverse {
-  animation: sacredMandalaSpin 180s linear infinite reverse;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-}
-
-/* GPU-Accelerated Floating Ember Animation */
-@keyframes floatEmber {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.8);
-    opacity: 0;
-  }
-  25% {
-    opacity: 0.6;
-  }
-  85% {
-    opacity: 0.4;
-  }
-  100% {
-    transform: translate3d(20px, -350px, 0) scale(1.1);
-    opacity: 0;
-  }
-}
-
-.ember-particle {
-  position: absolute;
-  border-radius: 50%;
-  background: #E2B77D;
-  pointer-events: none;
-  will-change: transform, opacity;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-}
-
-/* Antique Carved Chiseled Heading */
 .ancient-carved-heading {
-  font-family: 'Cinzel Decorative', 'Cinzel', serif;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #F5F2ED;
-  text-shadow: 
-    0 1px 1px rgba(255, 240, 210, 0.2),
-    0 -1px 2px rgba(0, 0, 0, 0.9);
-}
-
-/* Smooth Interactive Utilities */
-.contain-strict {
-  contain: strict;
-}
-
-.transform-gpu {
-  transform: translate3d(0, 0, 0);
-}
-
-/* Vertical Text Utility */
-.writing-vertical {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
+  color: var(--studio-text-main);
+  font-weight: 800;
 }

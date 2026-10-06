@@ -1,81 +1,81 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Award, HeartHandshake, ArrowRight, Sparkles } from 'lucide-react';
-import { AncientDivider } from '../common/AncientDivider';
+import { ShieldCheck, Award, HeartHandshake, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const AboutSection = () => {
   return (
-    <section id="about" className="py-20 bg-studio-secondary/80 border-t border-b border-studio-border/30 relative">
+    <section id="about" className="py-20 bg-studio-secondary/50 border-t border-b border-white/5 relative">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* LEFT: TEXT & EDITORIAL STORY */}
-          <div className="lg:col-span-6 space-y-6 lg:pl-4">
+          {/* LEFT: EDITORIAL STORY */}
+          <div className="lg:col-span-6 space-y-6 text-left">
             <div>
-              <span className="ancient-carved-heading text-2xl sm:text-3xl tracking-widest text-studio-gold uppercase block">
-                ॥ २. THE SACRED ATELIER ॥
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                About Our Studio
               </span>
-              <p className="text-studio-bronzeLight text-xs font-serif tracking-widest mt-1 uppercase">
-                Land of God Tattoo Studio • Devbhoomi Roots, Friends Colony, Una
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+                Precision Tattooing with Medical-Grade Hygiene
+              </h2>
+              <p className="text-zinc-400 text-sm mt-2">
+                Land of God Tattoo Studio • Friends Colony, Una, Himachal Pradesh
               </p>
             </div>
 
-            <AncientDivider symbol="ॐ" className="!my-2 !justify-start" />
-
-            <div className="space-y-4 text-xs sm:text-sm text-studio-textMuted leading-relaxed font-serif">
+            <div className="space-y-4 text-sm text-zinc-300 leading-relaxed">
               <p>
-                <strong className="text-studio-gold font-display">LAND OF GOD TATTOO STUDIO</strong> was founded in Friends Colony, Una, Himachal Pradesh (Devbhoomi) to revive ancient Himalayan sacred geometry, spiritual Trishul archetypes, and Vedic symbology in permanent skin art. Led by Master Sunil, every piece is conceived as a spiritual talisman.
+                <strong className="text-white">Land of God Tattoo Studio</strong> is Northern India's premier bespoke tattoo atelier, led by certified master artist Sunil. Located in Friends Colony, Una, we specialize in hyper-realistic portraits, sacred geometry, fine-line mantras, and custom body art.
               </p>
               <p>
-                We unite sacred ancient Sanskrit calligraphy with uncompromising hospital-grade sterility. 100% single-use medical cartridges and hypoallergenic organic pigments ensure every sacred mark heals with timeless brilliance.
+                We prioritize client safety with hospital-grade sterilization, 100% single-use membrane needle cartridges, and premium vegan, hypoallergenic organic pigments.
               </p>
             </div>
 
-            {/* Micro Highlights Grid */}
+            {/* Highlights */}
             <div className="grid grid-cols-2 gap-4 pt-2">
-              <div className="ancient-stone-card ancient-ornate-corner p-4 rounded-lg flex items-start space-x-3">
-                <ShieldCheck className="w-5 h-5 text-studio-gold shrink-0 mt-0.5" />
+              <div className="bg-zinc-900/80 border border-white/10 p-4 rounded-xl flex items-start space-x-3">
+                <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs font-bold text-studio-textMain font-display uppercase">Clinical Sanctum</h4>
-                  <p className="text-[11px] text-studio-textMuted mt-0.5 font-serif">Autoclave sterilized & single-use cartridges</p>
+                  <h4 className="text-xs font-bold text-white uppercase">Clinical Hygiene</h4>
+                  <p className="text-xs text-zinc-400 mt-0.5">Autoclave sterilization &amp; 100% single-use needles</p>
                 </div>
               </div>
-              <div className="ancient-stone-card ancient-ornate-corner p-4 rounded-lg flex items-start space-x-3">
-                <Award className="w-5 h-5 text-studio-gold shrink-0 mt-0.5" />
+              <div className="bg-zinc-900/80 border border-white/10 p-4 rounded-xl flex items-start space-x-3">
+                <Award className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs font-bold text-studio-textMain font-display uppercase">Vedic Masters</h4>
-                  <p className="text-[11px] text-studio-textMuted mt-0.5 font-serif">11+ years in sacred geometry & realism</p>
+                  <h4 className="text-xs font-bold text-white uppercase">Master Experience</h4>
+                  <p className="text-xs text-zinc-400 mt-0.5">10+ years in realism &amp; sacred custom tattoos</p>
                 </div>
               </div>
             </div>
 
-            {/* Learn More link */}
+            {/* Link */}
             <div className="pt-2">
               <Link
                 to="/about"
-                className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-studio-bronzeLight hover:text-studio-gold group transition-colors font-display"
+                className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 transition-colors"
               >
-                <span>Read Our Devbhoomi Heritage</span>
-                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                <span>Read Full Studio Story</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
-          {/* RIGHT: STUDIO INTERIOR ARCHITECTURE */}
+          {/* RIGHT: STUDIO IMAGE */}
           <div className="lg:col-span-6">
-            <div className="ancient-stone-card ancient-ornate-corner p-2 rounded-2xl shadow-2xl relative group overflow-hidden">
+            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative group">
               <img
                 src="https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1200&q=80"
-                alt="LAND OF GOD Tattoo Studio Atelier Friends Colony Una"
-                className="w-full h-[360px] sm:h-[420px] object-cover rounded-xl filter brightness-90 contrast-110 group-hover:scale-105 transition-transform duration-700"
+                alt="Land of God Tattoo Studio in Friends Colony, Una"
+                className="w-full h-[360px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-2 bg-gradient-to-t from-studio-darker/95 via-transparent to-transparent flex items-end p-6 rounded-xl pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6 pointer-events-none">
                 <div className="text-left space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-studio-gold bg-black/80 px-2.5 py-1 rounded border border-studio-bronze/50 font-serif">
-                    🔱 Friends Colony, Una (HP)
+                  <span className="text-[11px] font-semibold text-amber-300 bg-black/80 px-2.5 py-1 rounded-md border border-white/10">
+                    Friends Colony, Una (HP)
                   </span>
-                  <h4 className="text-sm font-bold text-studio-textMain font-display">
-                    Sacred Private Tattoo Sanctum &amp; Cleanroom Atelier
+                  <h4 className="text-sm font-bold text-white">
+                    Private Tattoo Atelier &amp; Sterile Procedure Suite
                   </h4>
                 </div>
               </div>

@@ -29,8 +29,6 @@ import { AdminBlogs } from './admin/AdminBlogs';
 import { AdminContacts } from './admin/AdminContacts';
 import { AdminSettings } from './admin/AdminSettings';
 import { AdminCalendar } from './admin/AdminCalendar';
-
-import { AncientAtmosphere } from './components/effects/AncientAtmosphere';
 import { FloatingWhatsAppButton } from './components/common/FloatingWhatsAppButton';
 
 export const App = () => {
@@ -38,13 +36,10 @@ export const App = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <div className="min-h-screen ancient-bg-texture text-studio-textMain flex flex-col justify-between selection:bg-studio-bronze selection:text-studio-darker relative">
-      {/* Ancient Devbhoomi Atmospheric Floating Embers & Mandalas */}
-      <AncientAtmosphere />
-
+    <div className="min-h-screen bg-studio-bg text-studio-textMain flex flex-col justify-between selection:bg-studio-bronze selection:text-black">
       {!isAdminRoute && <Navbar />}
 
-      <div className="flex-1 relative z-10">
+      <div className="flex-1 relative">
         <Routes>
           {/* Public Pages matching Admin Modules */}
           <Route path="/" element={<HomePage />} />

@@ -153,16 +153,19 @@ export const BookingSection = () => {
   };
 
   return (
-    <section id="booking" className="py-20 bg-studio-bg relative border-t border-studio-border/30">
+    <section id="booking" className="py-20 bg-studio-bg relative border-t border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* Header */}
-        <div className="mb-10 border-b border-studio-border/30 pb-4 lg:pl-4">
-          <h2 className="ancient-carved-heading text-2xl sm:text-3xl font-black tracking-widest text-studio-gold uppercase">
-            ॥ ५. BESPOKE SESSION RESERVATION ॥
+        <div className="mb-10 border-b border-white/10 pb-4 text-left">
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+            Online Scheduling
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+            Book an Appointment
           </h2>
-          <p className="text-studio-bronzeLight text-xs font-serif tracking-widest mt-1 uppercase">
-            Friends Colony Atelier Availability &amp; Instant WhatsApp Reservation
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1">
+            Reserve your session with Master Sunil &amp; resident artists in Friends Colony, Una
           </p>
         </div>
 

@@ -1,38 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { blogsAPI } from '../../services/api';
-import { Clock, User, ArrowRight, BookOpen } from 'lucide-react';
+import { Clock, User, ArrowRight } from 'lucide-react';
 
 const DEFAULT_BLOGS = [
   {
     _id: 'b1',
-    title: 'How to Prepare Your Body and Mind for a Multi-Hour Session',
+    title: 'How to Prepare Your Body and Skin for a Multi-Hour Tattoo Session',
     slug: 'prep-your-body-for-tattoo-session',
-    excerpt: 'Hydration, carb loading, skin prep, and breathing techniques to maximize endurance in the chair.',
+    excerpt: 'Hydration, nutrition, skin prep, and breathing techniques to maximize endurance and comfort in the chair.',
     coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=600&q=80',
-    category: 'Tattoo Preparation',
+    category: 'Preparation',
     readTimeMinutes: 5,
-    author: 'ELIZA — Master Resident',
+    author: 'Master Sunil',
   },
   {
     _id: 'b2',
-    title: 'The Architecture of Sacred Geometry & Dotwork Alchemy',
+    title: 'The Art of Sacred Geometry & Fine-Line Realism',
     slug: 'sacred-geometry-and-dotwork-alchemy',
-    excerpt: 'Exploring the mathematical harmony of the golden ratio, Metatrons cube, and meditative pointillism.',
+    excerpt: 'Exploring mathematical symmetry, sacred Devbhoomi motifs, and micro-needle precision.',
     coverImage: 'https://images.unsplash.com/photo-1550537687-c91072c4792d?auto=format&fit=crop&w=600&q=80',
-    category: 'Tattoo Styles',
+    category: 'Tattoo Art',
     readTimeMinutes: 4,
-    author: 'MARK — Geometric Resident',
+    author: 'Studio Atelier',
   },
   {
     _id: 'b3',
-    title: 'Preserving Contrast: The Science of Tattoo Longevity and Aftercare',
+    title: 'Medical Aftercare: Preserving Long-Term Ink Contrast and Sharpness',
     slug: 'preserving-contrast-tattoo-longevity',
-    excerpt: 'Understanding UV photodegradation, immune macrophage ink lock-in, and lifelong pigment brilliance.',
+    excerpt: 'Understanding UV photodegradation, proper skin barrier healing, and lifetime tattoo vibrance.',
     coverImage: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&w=600&q=80',
-    category: 'Tattoo Aftercare',
+    category: 'Aftercare',
     readTimeMinutes: 6,
-    author: 'LIAM — Senior Resident',
+    author: 'Master Sunil',
   },
 ];
 
@@ -47,81 +47,86 @@ export const BlogSection = () => {
           setBlogs(res.blogs);
         }
       } catch (err) {
-        console.log('Using default blog posts');
+        // Fallback to default
       }
     };
     fetchBlogs();
   }, []);
 
   return (
-    <section id="blog" className="py-20 bg-studio-bg relative border-t border-studio-border/30">
+    <section id="blog" className="py-20 bg-studio-secondary/20 relative border-t border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 border-b border-studio-border/30 pb-4 lg:pl-4">
-          <div>
-            <h2 className="ancient-carved-heading text-2xl sm:text-3xl font-black tracking-widest text-studio-gold uppercase">
-              ॥ ७. INK WELL JOURNAL &amp; WISDOM ॥
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 border-b border-white/10 pb-4">
+          <div className="text-left">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              Articles &amp; Guides
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+              Studio Journal &amp; Insights
             </h2>
-            <p className="text-studio-bronzeLight text-xs font-serif tracking-widest mt-1 uppercase">
-              Sacred Philosophy, Preparation Guides &amp; Tattoo Culture
+            <p className="text-zinc-400 text-xs sm:text-sm mt-1">
+              Expert advice on tattoo care, preparation, and styling by Master Sunil
             </p>
           </div>
           <Link
             to="/blog"
-            className="mt-4 sm:mt-0 text-xs font-bold uppercase tracking-widest text-studio-textMuted hover:text-studio-bronzeLight flex items-center space-x-1"
+            className="mt-4 sm:mt-0 text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 flex items-center space-x-1"
           >
-            <span>Read All Articles</span>
+            <span>View All Articles</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        {/* 3 Blog Cards (Matches Reference Section 7) */}
+        {/* 3 Blog Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs.slice(0, 3).map((blog) => (
             <article
               key={blog._id}
-              className="glass-card rounded-xl overflow-hidden border border-studio-border/40 hover:border-studio-bronze transition-all duration-300 flex flex-col justify-between group"
+              className="bg-zinc-900/80 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-400/40 transition-all flex flex-col justify-between group shadow-md"
             >
-              <div className="relative h-48 overflow-hidden bg-studio-card">
+              <div className="relative h-48 overflow-hidden bg-black">
                 <img
                   src={blog.coverImage}
                   alt={blog.title}
-                  className="w-full h-full object-cover filter contrast-105 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-studio-card via-transparent to-transparent opacity-90" />
-                <span className="absolute top-3 left-3 bg-studio-darker/80 backdrop-blur-md text-[10px] font-bold text-studio-bronzeLight uppercase tracking-wider px-2.5 py-1 rounded border border-studio-border/40">
+                <span className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-[10px] font-semibold text-amber-300 uppercase tracking-wider px-2.5 py-1 rounded-md border border-white/10">
                   {blog.category}
                 </span>
               </div>
 
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="flex items-center space-x-3 text-[11px] text-studio-textMuted mb-2">
+              <div className="p-6 flex-1 flex flex-col justify-between space-y-4 text-left">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3 text-[11px] text-zinc-400">
                     <span className="flex items-center space-x-1">
-                      <Clock className="w-3 h-3 text-studio-bronze" />
-                      <span>{blog.readTimeMinutes || 4} min read</span>
+                      <User className="w-3.5 h-3.5 text-amber-400" />
+                      <span>{blog.author}</span>
                     </span>
                     <span>•</span>
-                    <span className="truncate">{blog.author}</span>
+                    <span className="flex items-center space-x-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{blog.readTimeMinutes} min read</span>
+                    </span>
                   </div>
 
-                  <h3 className="font-display font-bold text-base text-studio-textMain uppercase line-clamp-2 group-hover:text-studio-bronzeLight transition-colors">
+                  <h3 className="font-bold text-base text-white group-hover:text-amber-400 transition-colors line-clamp-2">
                     {blog.title}
                   </h3>
 
-                  <p className="text-xs text-studio-textMuted mt-2 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
                     {blog.excerpt}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-studio-border/30">
+                <div className="pt-3 border-t border-white/5">
                   <Link
                     to={`/blog/${blog.slug || blog._id}`}
-                    className="text-xs font-bold text-studio-bronzeLight hover:text-studio-textMain flex items-center space-x-1 group/link"
+                    className="inline-flex items-center space-x-1 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
                   >
-                    <span>Read Story</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover/link:translate-x-1 transition-transform" />
+                    <span>Read Article</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </div>

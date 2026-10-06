@@ -1,45 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { portfolioAPI } from '../../services/api';
-import { ArrowRight, Eye, Heart, Maximize2, X } from 'lucide-react';
+import { ArrowRight, Eye, Heart, Maximize2, X, MessageSquare } from 'lucide-react';
 import { createPortfolioInquiryUrl } from '../../utils/whatsapp';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
 const DEFAULT_PORTFOLIO = [
   {
     _id: 'sleeve-1',
-    title: 'Sleeve',
-    style: 'Sleeve',
-    bodyPlacement: 'Full Arm / Sleeve',
+    title: 'Sacred Sleeve & Geometry',
+    style: 'Geometric',
+    bodyPlacement: 'Full Arm Sleeve',
     coverImage: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&w=800&q=80',
-    description: 'Grand full geometric sleeve with sacred toroids and stippling.',
+    description: 'Bespoke geometric sleeve composition with sacred symmetry and stippling.',
     likes: 340,
   },
   {
     _id: 'realism-2',
-    title: 'Realism',
+    title: 'Classical Realism Sculpture',
     style: 'Realism',
     bodyPlacement: 'Forearm / Bicep',
     coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80',
-    description: 'Hyper-detailed classical sculpture portrait with soft atmospheric skin tones.',
+    description: 'Hyper-detailed classical sculpture portrait with smooth tonal gradients.',
     likes: 410,
   },
   {
     _id: 'blackwork-3',
-    title: 'Blackwork',
+    title: 'Solid Blackwork & Linework',
     style: 'Blackwork',
     bodyPlacement: 'Chest & Sternum',
     coverImage: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=800&q=80',
-    description: 'Deep saturated black ink composition with architectural gothic depth.',
+    description: 'Deep black saturation with architectural symmetry and sharp contrast.',
     likes: 290,
   },
   {
-    _id: 'watercolor-4',
-    title: 'Watercolor',
-    style: 'Watercolor',
-    bodyPlacement: 'Shoulder & Ribs',
+    _id: 'fine-line-4',
+    title: 'Fine-Line Sanskrit Calligraphy',
+    style: 'Fine Line',
+    bodyPlacement: 'Spine & Forearm',
     coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80',
-    description: 'Vibrant chromatic ink bleeds, teal-to-magenta gradients.',
+    description: 'Single-needle delicate script calligraphy and sacred Himalayan mantras.',
     likes: 520,
   },
 ];
@@ -57,30 +57,33 @@ export const PortfolioSection = () => {
           setPortfolioItems(res.portfolio);
         }
       } catch (err) {
-        console.log('Using default portfolio catalog');
+        // Fallback to default catalog
       }
     };
     fetchPortfolio();
   }, []);
 
-  const styles = ['All', 'Sleeve', 'Realism', 'Blackwork', 'Watercolor', 'Geometric', 'Fine Line'];
+  const styles = ['All', 'Geometric', 'Realism', 'Fine Line', 'Blackwork', 'Watercolor'];
 
   const filteredItems = activeFilter === 'All'
     ? portfolioItems
     : portfolioItems.filter(p => p.style.toLowerCase() === activeFilter.toLowerCase());
 
   return (
-    <section id="portfolio" className="py-20 bg-studio-secondary/40 border-t border-studio-border/30 relative">
+    <section id="portfolio" className="py-20 bg-studio-bg border-t border-b border-white/5 relative">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
         
-        {/* Header (Ancient Devbhoomi Styling) */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-studio-border/30 pb-4 lg:pl-4">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-white/10 pb-4">
           <div>
-            <h2 className="ancient-carved-heading text-2xl sm:text-3xl font-black tracking-widest text-studio-gold uppercase">
-              ॥ ३. SACRED PORTFOLIO &amp; ARCHIVES ॥
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              Curated Works
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">
+              Featured Portfolio
             </h2>
-            <p className="text-studio-bronzeLight text-xs font-serif tracking-widest mt-1 uppercase">
-              Curated Devbhoomi Masterworks &amp; Spiritual Craft
+            <p className="text-zinc-400 text-xs sm:text-sm mt-1">
+              Explore bespoke tattoos crafted by Master Sunil &amp; resident artists
             </p>
           </div>
 
@@ -90,10 +93,10 @@ export const PortfolioSection = () => {
               <button
                 key={style}
                 onClick={() => setActiveFilter(style)}
-                className={`text-xs font-serif px-3.5 py-1.5 rounded-lg transition-all ${
+                className={`text-xs px-3.5 py-1.5 rounded-lg font-medium transition-all ${
                   activeFilter === style
-                    ? 'bg-gradient-to-r from-studio-bronze to-amber-700 text-white font-bold shadow-md border border-amber-400/40'
-                    : 'bg-studio-secondary/90 text-studio-textMuted hover:text-studio-gold border border-studio-border/40'
+                    ? 'bg-amber-400 text-black font-bold shadow-sm'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-white border border-white/10'
                 }`}
               >
                 {style}
@@ -107,10 +110,10 @@ export const PortfolioSection = () => {
           {filteredItems.slice(0, 8).map((item) => (
             <div
               key={item._id}
-              className="group relative ancient-stone-card ancient-ornate-corner rounded-xl overflow-hidden flex flex-col justify-between transition-all duration-300"
+              className="group bg-zinc-900/80 border border-white/10 hover:border-amber-400/40 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-lg"
             >
               {/* Image Container */}
-              <div className="relative h-80 overflow-hidden bg-studio-secondary">
+              <div className="relative h-72 overflow-hidden bg-black">
                 <img
                   src={getFullImageUrl(item.coverImage || item.images?.[0])}
                   alt={item.title}
@@ -118,58 +121,64 @@ export const PortfolioSection = () => {
                     e.target.onerror = null;
                     e.target.src = 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80';
                   }}
-                  className="w-full h-full object-cover filter contrast-110 brightness-95 group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111517] via-transparent to-transparent opacity-85 group-hover:opacity-65 transition-opacity" />
 
-                {/* Quick zoom button */}
-                <button
-                  onClick={() => setSelectedLightbox(item)}
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/80 backdrop-blur-md border border-studio-bronze/40 text-studio-gold hover:text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md"
-                  title="Expand image"
-                >
-                  <Maximize2 className="w-4 h-4" />
-                </button>
-
-                {/* Body Placement tag */}
-                <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-[10px] font-bold text-studio-gold uppercase tracking-wider px-2.5 py-0.5 rounded border border-studio-bronze/40 shadow-sm font-serif">
-                  {item.bodyPlacement}
-                </div>
-              </div>
-
-              {/* Title & Style Info */}
-              <div className="p-4 bg-transparent border-t border-studio-border/30">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display font-bold text-base text-studio-textMain uppercase tracking-wide group-hover:text-studio-gold transition-colors">
-                    {item.title}
-                  </h3>
-                  <span className="text-[11px] font-serif font-bold text-studio-bronzeLight">
+                {/* Top style badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="bg-black/80 backdrop-blur-sm text-zinc-200 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md border border-white/10">
                     {item.style}
                   </span>
                 </div>
-                <p className="text-[11px] text-studio-textMuted line-clamp-2 mt-1 leading-relaxed font-serif">
-                  {item.description}
-                </p>
-                
-                <div className="mt-3 pt-2 border-t border-studio-border/20 flex items-center justify-between text-xs font-serif">
+
+                {/* Quick overlay buttons */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                   <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const waUrl = createPortfolioInquiryUrl(item.title, item.style, item.bodyPlacement);
-                      window.open(waUrl, '_blank');
-                    }}
-                    className="inline-flex items-center space-x-1 text-[11px] font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 px-2.5 py-1 rounded transition-all shadow-sm"
-                    title="Ask admin for tattoo details on WhatsApp"
+                    onClick={() => setSelectedLightbox(item)}
+                    className="p-2.5 rounded-full bg-white text-black hover:bg-amber-400 transition-colors shadow-lg"
+                    title="View Full Size"
                   >
-                    <span>💬 WhatsApp Details</span>
+                    <Maximize2 className="w-4 h-4" />
                   </button>
                   <button
-                    type="button"
-                    onClick={() => setSelectedLightbox(item)}
-                    className="text-studio-bronzeLight hover:text-studio-gold text-[11px] font-semibold font-display uppercase tracking-wider"
+                    onClick={() => {
+                      const waUrl = createPortfolioInquiryUrl(item.title, item.style);
+                      window.open(waUrl, '_blank');
+                    }}
+                    className="p-2.5 rounded-full bg-emerald-600 text-white hover:bg-emerald-500 transition-colors shadow-lg"
+                    title="Inquire on WhatsApp"
                   >
-                    Expand →
+                    <MessageSquare className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-4 space-y-2 text-left">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm text-white truncate">
+                    {item.title}
+                  </h3>
+                  <span className="text-xs text-zinc-400 flex items-center gap-1">
+                    <Heart className="w-3.5 h-3.5 fill-red-500/20 text-red-400" />
+                    <span>{item.likes || 120}</span>
+                  </span>
+                </div>
+
+                <p className="text-xs text-zinc-400 line-clamp-2">
+                  {item.description || `${item.style} custom piece by Master Sunil.`}
+                </p>
+
+                <div className="pt-2 flex items-center justify-between text-xs border-t border-white/5">
+                  <span className="text-[11px] text-zinc-400">{item.bodyPlacement || 'Custom'}</span>
+                  <button
+                    onClick={() => {
+                      const waUrl = createPortfolioInquiryUrl(item.title, item.style);
+                      window.open(waUrl, '_blank');
+                    }}
+                    className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    Inquire on WhatsApp →
                   </button>
                 </div>
               </div>
@@ -177,62 +186,73 @@ export const PortfolioSection = () => {
           ))}
         </div>
 
+        {/* View All CTA */}
+        <div className="mt-10 text-center">
+          <Link
+            to="/portfolio"
+            className="inline-flex items-center space-x-2 bg-zinc-900 hover:bg-zinc-800 text-white border border-white/15 hover:border-amber-400 px-6 py-3 rounded-lg text-xs uppercase tracking-wider font-bold transition-all"
+          >
+            <span>Explore Complete Gallery</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
       </div>
 
       {/* Lightbox Modal */}
       {selectedLightbox && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative max-w-4xl w-full bg-studio-card border border-studio-border rounded-xl overflow-hidden shadow-2xl">
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setSelectedLightbox(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedLightbox(null)}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 transition-colors"
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/80 text-white hover:bg-white hover:text-black transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
+
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="h-[450px] bg-black flex items-center justify-center p-2">
+              <div className="h-96 md:h-[500px] bg-black">
                 <img
-                  src={selectedLightbox.coverImage || selectedLightbox.images?.[0]}
+                  src={getFullImageUrl(selectedLightbox.coverImage || selectedLightbox.images?.[0])}
                   alt={selectedLightbox.title}
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="p-6 flex flex-col justify-between space-y-4">
-                <div>
-                  <span className="text-xs font-bold text-studio-bronzeLight uppercase tracking-wider">
-                    {selectedLightbox.style} Tattoo
+
+              <div className="p-6 md:p-8 flex flex-col justify-between text-left space-y-4">
+                <div className="space-y-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                    {selectedLightbox.style} • {selectedLightbox.bodyPlacement}
                   </span>
-                  <h3 className="font-condensed font-black text-2xl text-studio-textMain uppercase mt-1">
+                  <h3 className="text-2xl font-bold text-white">
                     {selectedLightbox.title}
                   </h3>
-                  <p className="text-xs text-studio-textMuted mt-1">
-                    Placement: <strong className="text-studio-textMain">{selectedLightbox.bodyPlacement}</strong>
-                  </p>
-                  <p className="text-xs text-studio-textMuted mt-4 leading-relaxed font-serif">
-                    {selectedLightbox.description}
+                  <p className="text-sm text-zinc-300 leading-relaxed">
+                    {selectedLightbox.description || 'Custom crafted design at Land of God Tattoo Studio in Friends Colony, Una.'}
                   </p>
                 </div>
-                <div className="pt-4 border-t border-studio-border space-y-2">
+
+                <div className="space-y-2 pt-4 border-t border-white/10">
                   <button
-                    type="button"
                     onClick={() => {
-                      const waUrl = createPortfolioInquiryUrl(
-                        selectedLightbox.title,
-                        selectedLightbox.style,
-                        selectedLightbox.bodyPlacement
-                      );
+                      const waUrl = createPortfolioInquiryUrl(selectedLightbox.title, selectedLightbox.style);
                       window.open(waUrl, '_blank');
                     }}
-                    className="w-full bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/60 hover:border-emerald-400 text-emerald-300 font-bold py-2.5 px-4 text-xs tracking-wider uppercase text-center rounded flex items-center justify-center space-x-1.5 shadow-md transition-all"
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-lg text-xs uppercase tracking-wider transition-colors"
                   >
-                    <span>💬 Inquire on WhatsApp for Details</span>
+                    💬 Inquire This Design on WhatsApp
                   </button>
                   <Link
-                    to={`/booking?style=${encodeURIComponent(selectedLightbox.style)}&placement=${encodeURIComponent(selectedLightbox.bodyPlacement)}`}
-                    onClick={() => setSelectedLightbox(null)}
-                    className="w-full bg-studio-bronze hover:bg-studio-bronzeLight text-studio-darker font-bold py-2.5 px-4 text-xs font-condensed tracking-wider uppercase text-center rounded block"
+                    to="/booking"
+                    className="w-full bg-amber-400 hover:bg-amber-300 text-black font-bold py-3 px-4 rounded-lg text-xs uppercase tracking-wider flex items-center justify-center transition-colors"
                   >
-                    Request Similar Tattoo Session
+                    Book Consultation
                   </Link>
                 </div>
               </div>

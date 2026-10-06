@@ -108,44 +108,43 @@ export const Interactive3DPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 pb-16 bg-studio-bg">
+    <div className="min-h-screen pt-24 pb-16 bg-studio-bg text-left">
       <Helmet>
-        <title>Interactive 3D Sacred Tattoo Placement Lab — LAND OF GOD TATTOO STUDIO (Una)</title>
+        <title>3D Tattoo Body Placement Studio — LAND OF GOD TATTOO STUDIO (Una)</title>
         <meta
           name="description"
-          content="Explore anatomical tattoo placements in real-time on our 3D muscular écorché model. Project sacred Devbhoomi designs and book your bespoke session in Friends Colony, Una."
+          content="Explore anatomical tattoo placements in real-time on our 3D muscular model. Test custom designs and book your session in Friends Colony, Una."
         />
       </Helmet>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 space-y-2">
-          <span className="text-xs uppercase tracking-[0.25em] font-bold text-studio-glowCyan flex items-center justify-center space-x-2">
-            <Sparkles className="w-4 h-4" />
-            <span>INTERACTIVE ATELIER LAB</span>
+        <div className="text-left mb-8 space-y-2 border-b border-white/10 pb-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+            Interactive 3D Placement Studio
           </span>
-          <h1 className="font-condensed font-black text-4xl sm:text-5xl uppercase tracking-tight text-studio-textMain">
-            3D Body Placement &amp; Reference Studio
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Live Body Placement &amp; Reference Studio
           </h1>
-          <p className="text-xs sm:text-sm text-studio-textMuted">
-            Touch or select any anatomical body part below to view and test the reference tattoo assigned by the studio master.
+          <p className="text-xs sm:text-sm text-zinc-400">
+            Select any anatomical zone below to preview reference tattoos assigned by Master Sunil on the 360-degree body model.
           </p>
         </div>
 
         {/* Anatomical Zone Filter Pills */}
-        <div className="flex items-center justify-center flex-wrap gap-2 mb-8">
-          <span className="text-xs text-studio-textMuted uppercase font-bold mr-2">Body Zone:</span>
+        <div className="flex items-center flex-wrap gap-2 mb-8">
+          <span className="text-xs text-zinc-400 font-semibold uppercase mr-2">Body Zone:</span>
           {bodyAreas.map(area => {
             const isSelected = selectedBodyArea.toLowerCase() === area.toLowerCase();
             return (
               <button
                 key={area}
                 onClick={() => handleSelectBodyArea(area)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center space-x-1.5 ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isSelected
-                    ? 'bg-sky-600 dark:bg-studio-glowCyan text-white dark:text-gray-950 font-black shadow-cyan-glow scale-105'
-                    : 'bg-studio-card/80 text-studio-textMuted hover:text-studio-textMain border border-studio-border/30 hover:border-studio-bronze/60'
+                    ? 'bg-amber-400 text-black font-bold shadow-md'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-white border border-white/10'
                 }`}
               >
                 <span>{area}</span>
@@ -158,20 +157,20 @@ export const Interactive3DPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* CENTER 3D MANNEQUIN CANVAS */}
-          <div className="lg:col-span-8 glass-panel-dark rounded-2xl p-4 border border-studio-border/60 shadow-2xl relative min-h-[580px] flex flex-col items-center justify-center">
+          <div className="lg:col-span-8 flex flex-col items-center justify-center">
             
             {/* Active Reference Notification Banner */}
-            <div className="w-full mb-3 flex items-center justify-between bg-studio-darker/90 border border-studio-border/60 px-4 py-2 rounded-xl text-xs">
+            <div className="w-full mb-3 flex items-center justify-between bg-zinc-900/90 border border-white/10 px-4 py-2.5 rounded-xl text-xs">
               <div className="flex items-center space-x-2">
-                <span className="text-amber-400 font-black flex items-center space-x-1">
+                <span className="text-amber-400 font-bold flex items-center space-x-1">
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
                   <span className="uppercase tracking-wider">Active Reference:</span>
                 </span>
-                <span className="font-bold text-studio-textMain">{selectedDesign?.name || 'Selected Motif'}</span>
-                <span className="text-studio-textMuted hidden sm:inline">for {selectedBodyArea}</span>
+                <span className="font-bold text-white">{selectedDesign?.name || 'Selected Motif'}</span>
+                <span className="text-zinc-400 hidden sm:inline">for {selectedBodyArea}</span>
               </div>
-              <span className="text-[11px] text-studio-glowCyan font-semibold bg-studio-glowCyan/10 px-2 py-0.5 rounded border border-studio-glowCyan/30">
-                Set by Studio Admin
+              <span className="text-[11px] text-amber-300 font-semibold bg-amber-400/10 px-2.5 py-0.5 rounded-md border border-amber-400/20">
+                Admin Reference
               </span>
             </div>
 
