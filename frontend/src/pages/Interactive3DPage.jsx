@@ -78,10 +78,9 @@ export const Interactive3DPage = () => {
 
           setDesigns(merged);
 
-          // Auto-select reference tattoo for current body area
-          const refTattoo = findReferenceTattooForArea(selectedBodyArea, merged);
-          if (refTattoo) {
-            setSelectedDesign(refTattoo);
+          // If no design selected yet, select the first design
+          if (!selectedDesign && merged.length > 0) {
+            setSelectedDesign(merged[0]);
           }
         }
       } catch (err) {
@@ -89,24 +88,22 @@ export const Interactive3DPage = () => {
       }
     };
     fetchDesigns();
-  }, [findReferenceTattooForArea]);
+  }, []);
 
-  // When body area is changed, auto-switch to admin reference tattoo for that body area
+  // When body area is clicked, keep the currently selected tattoo locked and preview it on that body part!
   const handleSelectBodyArea = (area) => {
     setSelectedBodyArea(area);
-    const ref = findReferenceTattooForArea(area, designs);
-    if (ref) {
-      setSelectedDesign(ref);
-      toast.success(`Selected ${area}! Loaded admin reference tattoo: "${ref.name}"`);
+    if (selectedDesign) {
+      toast.success(`Testing "${selectedDesign.name}" on ${area}!`);
+    } else if (designs.length > 0) {
+      setSelectedDesign(designs[0]);
+      toast.success(`Testing "${designs[0].name}" on ${area}!`);
     }
   };
 
   const filteredDesigns = designs.filter(d => {
     const matchesStyle = selectedStyle === 'All' || d.style.toLowerCase() === selectedStyle.toLowerCase();
-    const matchesArea = (d.bodyAreas || ['Forearm']).some(area => 
-      area.toLowerCase().includes(selectedBodyArea.toLowerCase()) || selectedBodyArea.toLowerCase().includes(area.toLowerCase())
-    );
-    return matchesStyle && matchesArea;
+    return matchesStyle;
   });
 
   const handleProceedToBooking = () => {

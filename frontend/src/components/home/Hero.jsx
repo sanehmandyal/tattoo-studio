@@ -75,9 +75,10 @@ export const Hero = () => {
 
           setDesigns(merged);
 
-          // Auto-select reference for initial body area (Forearm)
-          const ref = findReferenceTattooForArea('Forearm', merged);
-          if (ref) setSelectedDesign(ref);
+          // If no design selected yet, select the first
+          if (!selectedDesign && merged.length > 0) {
+            setSelectedDesign(merged[0]);
+          }
         }
       } catch (err) {
         console.warn('Using default flash motifs catalog:', err);
@@ -94,20 +95,20 @@ export const Hero = () => {
     return matchesStyle;
   });
 
+  // When body part is clicked, keep the selected tattoo locked and test on that body part!
   const handleSelectBodyPart = (areaName) => {
     setSelectedBodyArea(areaName);
-    const ref = findReferenceTattooForArea(areaName, designs);
-    if (ref) {
-      setSelectedDesign(ref);
-      toast.success(`Touched ${areaName}! Loaded admin reference: "${ref.name}"`);
-    } else {
-      toast.success(`Touched ${areaName}! Previewing on your ${areaName}`);
+    if (selectedDesign) {
+      toast.success(`Testing "${selectedDesign.name}" on ${areaName}!`);
+    } else if (designs.length > 0) {
+      setSelectedDesign(designs[0]);
+      toast.success(`Testing "${designs[0].name}" on ${areaName}!`);
     }
   };
 
   const handleSelectDesign = (design) => {
     setSelectedDesign(design);
-    toast.success(`Selected "${design.name}". Applied to ${selectedBodyArea}!`);
+    toast.success(`Selected "${design.name}". Testing on ${selectedBodyArea}!`);
   };
 
   const handleToggleFavorite = (design, e) => {
