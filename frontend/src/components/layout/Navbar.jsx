@@ -275,7 +275,7 @@ export const Navbar = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-center bg-studio-card border border-studio-border py-2 text-sm font-semibold uppercase tracking-wider text-studio-bronzeLight"
               >
-                Customer Sign In / Register
+                Admin Login
               </Link>
             )}
 
