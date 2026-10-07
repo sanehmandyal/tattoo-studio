@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Interactive3DStudio } from '../components/tattoo-studio/Interactive3DStudio';
 import { designsAPI } from '../services/api';
-import { Sparkles, ArrowRight, Star, X, Image as ImageIcon, Sliders, Check, Layers, RotateCcw, Flame, Palette } from 'lucide-react';
+import { Sparkles, ArrowRight, Star, X, Image as ImageIcon, Sliders, Check, Layers, RotateCcw, Flame, Palette, Clock, Award, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../utils/whatsapp';
 
@@ -173,56 +173,97 @@ export const Interactive3DPage = () => {
           />
         </div>
 
-        {/* BOTTOM BOOKING & CONSULTATION ACTION BAR */}
-        <div className="mt-4 bg-zinc-900/80 border border-white/10 p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-xl bg-black/80 border border-white/10 p-1 flex items-center justify-center shrink-0">
-              {selectedDesign?.svg ? (
-                selectedDesign.svg
-              ) : selectedDesign?.previewImage || selectedDesign?.dataUri ? (
-                <img
-                  src={getFullImageUrl(selectedDesign.previewImage || selectedDesign.dataUri)}
-                  alt={selectedDesign.name}
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <Palette className="w-5 h-5 text-amber-400" />
-              )}
-            </div>
-            <div>
-              <div className="text-xs text-zinc-400 font-medium">Ready to ink this placement?</div>
-              <div className="text-sm font-bold text-white">
-                {selectedDesign?.name || 'Selected Design'} on <span className="text-amber-400">{selectedBodyArea}</span>
+        {/* SELECTED TATTOO SHOWCASE & PLACEMENT DETAILS */}
+        {selectedDesign && (
+          <div className="mt-6 bg-zinc-900/90 border border-amber-500/20 rounded-3xl p-5 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-all">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              
+              {/* Left: High-Res Tattoo Image Preview & Comprehensive Details */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-5 w-full lg:w-auto">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-black/90 border-2 border-amber-500/30 p-2 flex items-center justify-center shrink-0 shadow-inner group overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-transparent pointer-events-none" />
+                  {selectedDesign.previewImage || selectedDesign.dataUri ? (
+                    <img
+                      src={getFullImageUrl(selectedDesign.previewImage || selectedDesign.dataUri)}
+                      alt={selectedDesign.name}
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/images/tattoos/mahadev_trishul.png';
+                      }}
+                    />
+                  ) : (
+                    <Palette className="w-8 h-8 text-amber-400" />
+                  )}
+                  <span className="absolute bottom-1 right-1 bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded shadow">
+                    ORIGINAL
+                  </span>
+                </div>
+
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider">
+                      {selectedDesign.style || 'Sacred Tattoo'}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-zinc-800 border border-white/10 text-zinc-300 text-[10px] font-semibold flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-amber-400" />
+                      {selectedDesign.estTime || '2-3 hrs'}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-zinc-800 border border-white/10 text-emerald-400 text-[10px] font-semibold flex items-center gap-1">
+                      <Award className="w-3 h-3 text-emerald-400" />
+                      {selectedDesign.difficulty || 'Custom Masterpiece'}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                    {selectedDesign.name}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-zinc-300 line-clamp-2 leading-relaxed max-w-2xl">
+                    {selectedDesign.description || 'Authentic handcrafted studio artwork designed for anatomical flow and sacred permanence.'}
+                  </p>
+
+                  <div className="text-[11px] text-zinc-400 pt-0.5 flex items-center gap-2 flex-wrap">
+                    <span className="text-amber-400 font-semibold flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" />
+                      Artist: {selectedDesign.artist || 'Master Sunil'} ({selectedDesign.artistTitle || 'Certified Master Tattooist'})
+                    </span>
+                    <span className="text-zinc-600">•</span>
+                    <span>Currently placed on <strong className="text-white bg-zinc-800/80 px-2 py-0.5 rounded border border-white/10">{selectedBodyArea}</strong></span>
+                  </div>
+                </div>
               </div>
+
+              {/* Right: Action Buttons */}
+              <div className="flex sm:flex-row flex-col items-center gap-3 w-full lg:w-auto shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-white/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const waUrl = createArtworkInquiryUrl(
+                      selectedDesign.name || '3D Tattoo Design',
+                      'Land of God Studio',
+                      selectedBodyArea
+                    );
+                    window.open(waUrl, '_blank');
+                  }}
+                  className="w-full sm:w-auto bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 hover:text-emerald-200 font-bold py-3 px-5 text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2"
+                >
+                  <span>💬 WhatsApp Inquiry</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleProceedToBooking}
+                  className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-black py-3 px-6 text-xs uppercase tracking-wider rounded-xl shadow-xl hover:shadow-amber-500/20 flex items-center justify-center space-x-2 transition-all group"
+                >
+                  <span>Book Custom Session</span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+
             </div>
           </div>
-
-          <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => {
-                const waUrl = createArtworkInquiryUrl(
-                  selectedDesign?.name || '3D Tattoo Design',
-                  'Land of God Studio',
-                  selectedBodyArea
-                );
-                window.open(waUrl, '_blank');
-              }}
-              className="flex-1 sm:flex-none bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-bold py-2.5 px-4 text-xs uppercase tracking-wider rounded-xl transition-all"
-            >
-              💬 WhatsApp Inquiry
-            </button>
-
-            <button
-              onClick={handleProceedToBooking}
-              disabled={!selectedDesign}
-              className="flex-1 sm:flex-none bg-amber-400 hover:bg-amber-300 text-black font-black py-2.5 px-5 text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center space-x-1.5 transition-all disabled:opacity-40"
-            >
-              <span>Book Appointment</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        )}
 
       </div>
 
