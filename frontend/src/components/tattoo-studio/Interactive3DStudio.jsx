@@ -237,6 +237,7 @@ export const Interactive3DStudio = ({
   const [activeTab, setActiveTab] = useState('transform');
 
   const studioContainerRef = useRef(null);
+  const tattooPickerScrollRef = useRef(null);
 
   // Preload all 360 frame images into browser cache for instant rotation
   useEffect(() => {
@@ -251,6 +252,10 @@ export const Interactive3DStudio = ({
     const el = studioContainerRef.current;
     if (!el) return;
     const handleWheelNonPassive = (e) => {
+      // If user is hovering/scrolling over the horizontal tattoo slider or other interactive scroll areas, let it scroll naturally!
+      if (e.target && (e.target.closest('.interactive-scroll-area') || e.target.closest('.no-wheel-zoom'))) {
+        return;
+      }
       e.preventDefault();
       const zoomDelta = e.deltaY * -0.0015;
       setZoomLevel((prev) => Math.min(Math.max(parseFloat((prev + zoomDelta).toFixed(2)), 0.8), 2.8));
@@ -370,6 +375,14 @@ export const Interactive3DStudio = ({
     setHasUserChosenTattoo(true);
     setShowTattooPicker(false);
     toast.success(`Selected "${design.name}". Tap any body part to test!`);
+  };
+
+  // Smooth Left / Right Scroll for Tattoo Selection Slider
+  const scrollTattooPicker = (dir) => {
+    if (tattooPickerScrollRef.current) {
+      const scrollAmount = dir === 'left' ? -260 : 260;
+      tattooPickerScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
   };
 
   // Normalized 0 to 360 angle
@@ -774,32 +787,37 @@ export const Interactive3DStudio = ({
 
       </div>
 
-      {/* 4. SLEEK HORIZONTAL TRANSPARENT TATTOO PICKER DOCK (ONLY APPEARS ON INITIAL TOUCH OR WHEN CHANGING TATTOO) */}
+      {/* 4. SLEEK HORIZONTAL TRANSPARENT TATTOO PICKER DOCK (SEAMLESS SLIDER WITH LEFT/RIGHT SCROLL & TOUCH/DRAG) */}
       {showTattooPicker && (
-        <div className="absolute top-14 left-3 right-3 z-40 bg-black/65 backdrop-blur-xl border border-white/15 rounded-2xl p-2.5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 pointer-events-auto">
-          
+        <div
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="interactive-scroll-area no-wheel-zoom absolute top-12 sm:top-14 left-2 right-2 sm:left-3 sm:right-3 z-40 bg-zinc-950/90 backdrop-blur-2xl border border-amber-500/30 rounded-2xl p-2.5 sm:p-3 shadow-[0_15px_40px_rgba(0,0,0,0.85)] animate-in fade-in zoom-in-95 duration-200 pointer-events-auto"
+        >
           {/* Header of Horizontal Bar */}
-          <div className="flex items-center justify-between pb-2 border-b border-white/10 mb-2">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Select Tattoo for {selectedBodyArea}
+          <div className="flex flex-wrap items-center justify-between pb-2 border-b border-white/10 mb-2 gap-1.5">
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+              <span className="text-[11px] sm:text-xs font-bold text-white uppercase tracking-wider">
+                {selectedBodyArea} Tattoos
               </span>
-              <span className="text-[10px] text-zinc-400 font-mono">
-                ({filteredPickerDesigns.length} available)
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">
+                {filteredPickerDesigns.length}
               </span>
             </div>
 
             {/* Filter Styles in Horizontal Bar */}
-            <div className="flex items-center space-x-1 overflow-x-auto max-w-[50%] scrollbar-none">
-              {['All', 'Sacred Devbhoomi', 'Geometric', 'Fine Line', 'Blackwork', 'Japanese'].map(s => (
+            <div className="flex items-center space-x-1 overflow-x-auto max-w-full sm:max-w-[55%] scrollbar-none py-0.5">
+              {['All', 'Sacred Devbhoomi', 'Geometric', 'Fine Line', 'Blackwork', 'Japanese'].map((s) => (
                 <button
                   key={s}
+                  type="button"
                   onClick={() => setPickerStyleFilter(s)}
                   className={`shrink-0 px-2 py-0.5 text-[9px] font-bold rounded-md transition-all ${
                     pickerStyleFilter === s
-                      ? 'bg-amber-400 text-black'
-                      : 'bg-zinc-900/70 text-zinc-400 hover:text-white border border-white/5'
+                      ? 'bg-amber-400 text-black shadow-sm'
+                      : 'bg-zinc-900/80 text-zinc-400 hover:text-white border border-white/5'
                   }`}
                 >
                   {s}
@@ -810,49 +828,88 @@ export const Interactive3DStudio = ({
             <button
               type="button"
               onClick={() => setShowTattooPicker(false)}
-              className="p-1 text-zinc-400 hover:text-white bg-zinc-900/80 rounded-lg border border-white/10"
+              className="p-1 text-zinc-400 hover:text-white bg-zinc-900/80 hover:bg-zinc-800 rounded-lg border border-white/10 transition-colors ml-auto"
               title="Close picker"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Horizontal Scrollable Row of Transparent Tattoo Cards */}
-          <div className="flex items-center space-x-2.5 overflow-x-auto py-1 scrollbar-thin">
-            {filteredPickerDesigns.map(design => {
-              const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
-              const rawSrc = design.previewImage || design.dataUri || design.image || '';
-              const imgSrc = getFullImageUrl(rawSrc.replace(/\.jpg$/, '.png'));
+          {/* Horizontal Scrollable Slider Container with Left & Right Scroll Buttons */}
+          <div className="relative group/slider flex items-center">
+            
+            {/* Left Scroll Arrow */}
+            <button
+              type="button"
+              onClick={() => scrollTattooPicker('left')}
+              className="absolute -left-1 z-10 p-1.5 bg-black/85 hover:bg-amber-400 hover:text-black text-amber-300 rounded-full border border-amber-500/40 shadow-xl transition-all hover:scale-110 active:scale-95"
+              title="Scroll Left"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
 
-              return (
-                <button
-                  key={design._id || design.name}
-                  type="button"
-                  onClick={() => handleSelectTattooArtwork(design)}
-                  className={`shrink-0 flex items-center space-x-2 p-1.5 pr-3 rounded-xl transition-all border ${
-                    isSelected
-                      ? 'bg-amber-500/25 border-amber-400 shadow-md ring-1 ring-amber-400'
-                      : 'bg-zinc-950/50 hover:bg-zinc-900/80 border-white/10 hover:border-amber-400/40 text-left'
-                  }`}
-                >
-                  <div className="w-10 h-10 rounded-lg bg-black/80 p-0.5 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
-                    {design.svg ? (
-                      design.svg
-                    ) : (
-                      <img src={imgSrc} alt={design.name} className="w-full h-full object-contain" />
-                    )}
-                  </div>
-                  <div className="text-left">
-                    <div className="text-[11px] font-bold text-white uppercase truncate max-w-[110px]">
-                      {design.name}
+            {/* Horizontal Scroll Track */}
+            <div
+              ref={tattooPickerScrollRef}
+              onWheel={(e) => {
+                e.stopPropagation();
+                if (e.deltaY && tattooPickerScrollRef.current) {
+                  tattooPickerScrollRef.current.scrollLeft += e.deltaY;
+                }
+              }}
+              className="interactive-scroll-area flex items-center space-x-2.5 overflow-x-auto px-6 py-1.5 scroll-smooth overscroll-contain touch-pan-x w-full"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#f59e0b #18181b',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              {filteredPickerDesigns.map((design) => {
+                const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
+                const rawSrc = design.previewImage || design.dataUri || design.image || '';
+                const imgSrc = getFullImageUrl(rawSrc.replace(/\.jpg$/, '.png'));
+
+                return (
+                  <button
+                    key={design._id || design.name}
+                    type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={() => handleSelectTattooArtwork(design)}
+                    className={`shrink-0 flex items-center space-x-2 p-1.5 pr-3 rounded-xl transition-all border select-none cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-500/25 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.35)] ring-1 ring-amber-400'
+                        : 'bg-zinc-900/70 hover:bg-zinc-800/90 border-white/10 hover:border-amber-400/50 text-left hover:scale-[1.02]'
+                    }`}
+                  >
+                    <div className="w-11 h-11 rounded-lg bg-black/90 p-0.5 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
+                      {design.svg ? (
+                        design.svg
+                      ) : (
+                        <img src={imgSrc} alt={design.name} className="w-full h-full object-contain pointer-events-none" />
+                      )}
                     </div>
-                    <div className="text-[9px] text-amber-400/90 font-semibold">
-                      {design.style}
+                    <div className="text-left">
+                      <div className="text-[11px] font-bold text-white uppercase truncate max-w-[120px]">
+                        {design.name}
+                      </div>
+                      <div className="text-[9px] text-amber-400/90 font-semibold">
+                        {design.style}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Scroll Arrow */}
+            <button
+              type="button"
+              onClick={() => scrollTattooPicker('right')}
+              className="absolute -right-1 z-10 p-1.5 bg-black/85 hover:bg-amber-400 hover:text-black text-amber-300 rounded-full border border-amber-500/40 shadow-xl transition-all hover:scale-110 active:scale-95"
+              title="Scroll Right"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       )}
@@ -914,6 +971,7 @@ export const Interactive3DStudio = ({
               <span className="text-[10px] uppercase font-bold text-amber-400">Size:</span>
               <button
                 type="button"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.2))}
                 className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
                 title="Decrease Tattoo Size"
@@ -926,11 +984,15 @@ export const Interactive3DStudio = ({
                 max="3.0"
                 step="0.05"
                 value={tattooScale}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
                 onChange={(e) => setTattooScale(parseFloat(e.target.value))}
                 className="w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <button
                 type="button"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 3.0))}
                 className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
                 title="Increase Tattoo Size"
@@ -950,6 +1012,7 @@ export const Interactive3DStudio = ({
               </span>
               <button
                 type="button"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => setTattooRotationOffset((prev) => (prev - 15 + 360) % 360)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
                 title="Rotate -15°"
@@ -962,11 +1025,15 @@ export const Interactive3DStudio = ({
                 max="360"
                 step="5"
                 value={tattooRotationOffset}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
                 onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
                 className="w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <button
                 type="button"
+                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => setTattooRotationOffset((prev) => (prev + 15) % 360)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
                 title="Rotate +15°"
@@ -1083,6 +1150,9 @@ export const Interactive3DStudio = ({
                 max="1.0"
                 step="0.05"
                 value={tattooOpacity}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
                 onChange={(e) => setTattooOpacity(parseFloat(e.target.value))}
                 className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                 title="Adjust ink opacity"
