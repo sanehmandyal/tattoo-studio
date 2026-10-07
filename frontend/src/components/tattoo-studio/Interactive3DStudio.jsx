@@ -24,11 +24,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.15,
     sizeDescription: 'Medium / Elongated',
     frames: {
-      0: { left: 19.5, top: 38.5, width: 12.0, height: 16.0, rotate: -26, opacity: 1 },
-      45: { left: 29.5, top: 42.0, width: 12.0, height: 16.5, rotate: -15, opacity: 1 },
-      90: { left: 54.0, top: 43.5, width: 12.0, height: 16.0, rotate: 0, opacity: 1 },
-      135: { left: 33.0, top: 42.0, width: 12.0, height: 16.0, rotate: 12, opacity: 1 },
-      180: { left: 19.5, top: 38.5, width: 12.0, height: 16.0, rotate: 26, opacity: 1 }
+      0: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: -26, opacity: 1 },
+      45: { left: 29.5, top: 42.0, width: 11.5, height: 16.5, rotate: -15, opacity: 1 },
+      90: { left: 54.0, top: 43.5, width: 11.0, height: 16.0, rotate: 0, opacity: 1 },
+      135: { left: 33.0, top: 42.0, width: 11.0, height: 16.0, rotate: 12, opacity: 1 },
+      180: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: 26, opacity: 1 }
     }
   },
   'Upper Arm': {
@@ -38,11 +38,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.20,
     sizeDescription: 'Medium / Cylindrical',
     frames: {
-      0: { left: 25.0, top: 29.5, width: 12.5, height: 15.0, rotate: -22, opacity: 1 },
-      45: { left: 33.0, top: 31.5, width: 12.5, height: 15.0, rotate: -12, opacity: 1 },
-      90: { left: 54.0, top: 32.5, width: 12.5, height: 15.0, rotate: 0, opacity: 1 },
-      135: { left: 36.5, top: 31.5, width: 12.5, height: 15.0, rotate: 10, opacity: 1 },
-      180: { left: 25.0, top: 29.5, width: 12.5, height: 15.0, rotate: 22, opacity: 1 }
+      0: { left: 25.0, top: 29.5, width: 12.0, height: 15.0, rotate: -22, opacity: 1 },
+      45: { left: 33.0, top: 31.5, width: 12.0, height: 15.0, rotate: -12, opacity: 1 },
+      90: { left: 54.0, top: 32.5, width: 12.0, height: 15.0, rotate: 0, opacity: 1 },
+      135: { left: 36.5, top: 31.5, width: 12.0, height: 15.0, rotate: 10, opacity: 1 },
+      180: { left: 25.0, top: 29.5, width: 12.0, height: 15.0, rotate: 22, opacity: 1 }
     }
   },
   Shoulder: {
@@ -52,11 +52,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.10,
     sizeDescription: 'Curved / Round',
     frames: {
-      0: { left: 31.0, top: 22.5, width: 13.0, height: 12.5, rotate: -12, opacity: 1 },
-      45: { left: 36.5, top: 23.5, width: 13.0, height: 12.5, rotate: -8, opacity: 1 },
-      90: { left: 54.0, top: 23.5, width: 13.0, height: 13.0, rotate: 0, opacity: 1 },
-      135: { left: 40.0, top: 23.5, width: 13.0, height: 12.5, rotate: 8, opacity: 1 },
-      180: { left: 31.0, top: 22.5, width: 13.0, height: 12.5, rotate: 12, opacity: 1 }
+      0: { left: 31.0, top: 22.5, width: 12.5, height: 12.5, rotate: -12, opacity: 1 },
+      45: { left: 36.5, top: 23.5, width: 12.5, height: 12.5, rotate: -8, opacity: 1 },
+      90: { left: 54.0, top: 23.5, width: 12.5, height: 13.0, rotate: 0, opacity: 1 },
+      135: { left: 40.0, top: 23.5, width: 12.5, height: 12.5, rotate: 8, opacity: 1 },
+      180: { left: 31.0, top: 22.5, width: 12.5, height: 12.5, rotate: 12, opacity: 1 }
     }
   },
   Chest: {
@@ -66,11 +66,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.40,
     sizeDescription: 'Broad / Statement Plate',
     frames: {
-      0: { left: 50.0, top: 26.5, width: 24.0, height: 15.0, rotate: 0, opacity: 1 },
-      45: { left: 52.0, top: 26.5, width: 20.0, height: 15.0, rotate: -4, opacity: 1 },
-      90: { left: 46.0, top: 28.0, width: 13.0, height: 14.0, rotate: -4, opacity: 0.9 },
-      315: { left: 48.0, top: 26.5, width: 20.0, height: 15.0, rotate: 4, opacity: 1 },
-      270: { left: 54.0, top: 28.0, width: 13.0, height: 14.0, rotate: 4, opacity: 0.9 }
+      0: { left: 50.0, top: 26.5, width: 22.0, height: 15.0, rotate: 0, opacity: 1 },
+      45: { left: 52.0, top: 26.5, width: 19.0, height: 15.0, rotate: -4, opacity: 1 },
+      90: { left: 46.0, top: 28.0, width: 12.0, height: 14.0, rotate: -4, opacity: 0.95 },
+      315: { left: 48.0, top: 26.5, width: 19.0, height: 15.0, rotate: 4, opacity: 1 },
+      270: { left: 54.0, top: 28.0, width: 12.0, height: 14.0, rotate: 4, opacity: 0.95 }
     }
   },
   Back: {
@@ -80,11 +80,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.50,
     sizeDescription: 'Large / Full Canvas',
     frames: {
-      180: { left: 50.0, top: 26.5, width: 26.0, height: 18.0, rotate: 0, opacity: 1 },
-      135: { left: 52.0, top: 26.5, width: 22.0, height: 17.0, rotate: 4, opacity: 1 },
-      225: { left: 48.0, top: 26.5, width: 22.0, height: 17.0, rotate: -4, opacity: 1 },
-      90: { left: 42.0, top: 28.0, width: 13.0, height: 15.0, rotate: 4, opacity: 0.85 },
-      270: { left: 58.0, top: 28.0, width: 13.0, height: 15.0, rotate: -4, opacity: 0.85 }
+      180: { left: 50.0, top: 26.5, width: 24.0, height: 18.0, rotate: 0, opacity: 1 },
+      135: { left: 52.0, top: 26.5, width: 20.0, height: 17.0, rotate: 4, opacity: 1 },
+      225: { left: 48.0, top: 26.5, width: 20.0, height: 17.0, rotate: -4, opacity: 1 },
+      90: { left: 42.0, top: 28.0, width: 12.0, height: 15.0, rotate: 4, opacity: 0.9 },
+      270: { left: 58.0, top: 28.0, width: 12.0, height: 15.0, rotate: -4, opacity: 0.9 }
     }
   },
   Spine: {
@@ -94,9 +94,9 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.15,
     sizeDescription: 'Tall / Vertical Linear',
     frames: {
-      180: { left: 50.0, top: 32.0, width: 11.0, height: 30.0, rotate: 0, opacity: 1 },
-      135: { left: 52.0, top: 32.0, width: 10.0, height: 28.0, rotate: 2, opacity: 1 },
-      225: { left: 48.0, top: 32.0, width: 10.0, height: 28.0, rotate: -2, opacity: 1 }
+      180: { left: 50.0, top: 32.0, width: 10.0, height: 30.0, rotate: 0, opacity: 1 },
+      135: { left: 52.0, top: 32.0, width: 9.5, height: 28.0, rotate: 2, opacity: 1 },
+      225: { left: 48.0, top: 32.0, width: 9.5, height: 28.0, rotate: -2, opacity: 1 }
     }
   },
   Ribs: {
@@ -106,10 +106,10 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.15,
     sizeDescription: 'Curved Flank / Ribs',
     frames: {
-      0: { left: 50.0, top: 36.0, width: 18.0, height: 14.0, rotate: 0, opacity: 1 },
-      45: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: -4, opacity: 1 },
-      90: { left: 47.0, top: 36.5, width: 14.0, height: 15.0, rotate: 0, opacity: 0.95 },
-      315: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: 4, opacity: 1 }
+      0: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: 0, opacity: 1 },
+      45: { left: 50.0, top: 36.0, width: 15.0, height: 14.0, rotate: -4, opacity: 1 },
+      90: { left: 47.0, top: 36.5, width: 13.0, height: 15.0, rotate: 0, opacity: 0.95 },
+      315: { left: 50.0, top: 36.0, width: 15.0, height: 14.0, rotate: 4, opacity: 1 }
     }
   },
   Thigh: {
@@ -119,14 +119,14 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.40,
     sizeDescription: 'Large / Quad Plate',
     frames: {
-      0: { left: 42.0, top: 57.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
-      45: { left: 46.0, top: 57.5, width: 16.0, height: 19.0, rotate: -2, opacity: 1 },
-      90: { left: 52.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
-      135: { left: 50.0, top: 58.0, width: 16.0, height: 19.0, rotate: 2, opacity: 1 },
-      180: { left: 42.0, top: 57.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
-      225: { left: 50.0, top: 58.0, width: 16.0, height: 19.0, rotate: -2, opacity: 1 },
-      270: { left: 48.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
-      315: { left: 54.0, top: 57.5, width: 16.0, height: 19.0, rotate: 2, opacity: 1 }
+      0: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1 },
+      45: { left: 46.0, top: 57.5, width: 15.0, height: 19.0, rotate: -2, opacity: 1 },
+      90: { left: 52.0, top: 58.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1 },
+      135: { left: 50.0, top: 58.0, width: 15.0, height: 19.0, rotate: 2, opacity: 1 },
+      180: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1 },
+      225: { left: 50.0, top: 58.0, width: 15.0, height: 19.0, rotate: -2, opacity: 1 },
+      270: { left: 48.0, top: 58.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1 },
+      315: { left: 54.0, top: 57.5, width: 15.0, height: 19.0, rotate: 2, opacity: 1 }
     }
   },
   Calf: {
@@ -136,14 +136,14 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 1.20,
     sizeDescription: 'Medium / Tapered',
     frames: {
-      0: { left: 39.5, top: 76.5, width: 13.5, height: 17.0, rotate: 0, opacity: 1 },
-      45: { left: 43.5, top: 76.5, width: 13.5, height: 17.0, rotate: -2, opacity: 1 },
-      90: { left: 52.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1 },
-      135: { left: 48.0, top: 77.0, width: 13.5, height: 17.0, rotate: 2, opacity: 1 },
-      180: { left: 39.5, top: 76.5, width: 13.5, height: 17.0, rotate: 0, opacity: 1 },
-      225: { left: 52.0, top: 77.0, width: 13.5, height: 17.0, rotate: -2, opacity: 1 },
-      270: { left: 48.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1 },
-      315: { left: 56.5, top: 76.5, width: 13.5, height: 17.0, rotate: 2, opacity: 1 }
+      0: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1 },
+      45: { left: 43.5, top: 76.5, width: 13.0, height: 17.0, rotate: -2, opacity: 1 },
+      90: { left: 52.0, top: 77.0, width: 13.5, height: 17.0, rotate: 0, opacity: 1 },
+      135: { left: 48.0, top: 77.0, width: 13.0, height: 17.0, rotate: 2, opacity: 1 },
+      180: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1 },
+      225: { left: 52.0, top: 77.0, width: 13.0, height: 17.0, rotate: -2, opacity: 1 },
+      270: { left: 48.0, top: 77.0, width: 13.5, height: 17.0, rotate: 0, opacity: 1 },
+      315: { left: 56.5, top: 76.5, width: 13.0, height: 17.0, rotate: 2, opacity: 1 }
     }
   },
   Wrist: {
@@ -153,11 +153,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 0.85,
     sizeDescription: 'Compact / Minimal',
     frames: {
-      0: { left: 15.5, top: 48.0, width: 9.5, height: 9.5, rotate: -28, opacity: 1 },
-      45: { left: 27.0, top: 51.5, width: 9.5, height: 9.5, rotate: -18, opacity: 1 },
-      90: { left: 54.0, top: 53.0, width: 9.5, height: 9.5, rotate: 0, opacity: 1 },
-      135: { left: 30.5, top: 51.5, width: 9.5, height: 9.5, rotate: 14, opacity: 1 },
-      180: { left: 15.5, top: 48.0, width: 9.5, height: 9.5, rotate: 28, opacity: 1 }
+      0: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: -28, opacity: 1 },
+      45: { left: 27.0, top: 51.5, width: 9.0, height: 9.0, rotate: -18, opacity: 1 },
+      90: { left: 54.0, top: 53.0, width: 9.0, height: 9.0, rotate: 0, opacity: 1 },
+      135: { left: 30.5, top: 51.5, width: 9.0, height: 9.0, rotate: 14, opacity: 1 },
+      180: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: 28, opacity: 1 }
     }
   },
   Neck: {
@@ -167,11 +167,11 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 0.85,
     sizeDescription: 'Subtle / Compact',
     frames: {
-      0: { left: 50.0, top: 17.5, width: 11.0, height: 9.0, rotate: 0, opacity: 1 },
-      45: { left: 51.0, top: 18.0, width: 11.5, height: 9.0, rotate: -3, opacity: 1 },
-      90: { left: 50.0, top: 18.5, width: 11.0, height: 9.0, rotate: 0, opacity: 0.9 },
-      180: { left: 50.0, top: 17.5, width: 11.5, height: 9.0, rotate: 0, opacity: 1 },
-      315: { left: 49.0, top: 18.0, width: 11.5, height: 9.0, rotate: 3, opacity: 1 }
+      0: { left: 50.0, top: 17.5, width: 10.0, height: 8.5, rotate: 0, opacity: 1 },
+      45: { left: 51.0, top: 18.0, width: 10.5, height: 8.5, rotate: -3, opacity: 1 },
+      90: { left: 50.0, top: 18.5, width: 10.0, height: 8.5, rotate: 0, opacity: 0.9 },
+      180: { left: 50.0, top: 17.5, width: 10.5, height: 8.5, rotate: 0, opacity: 1 },
+      315: { left: 49.0, top: 18.0, width: 10.5, height: 8.5, rotate: 3, opacity: 1 }
     }
   },
   Ankle: {
@@ -181,9 +181,9 @@ const ANATOMICAL_PLACEMENTS = {
     defaultScale: 0.80,
     sizeDescription: 'Small / Minimal Band',
     frames: {
-      0: { left: 39.0, top: 90.0, width: 10.5, height: 9.0, rotate: 0, opacity: 1 },
-      90: { left: 52.0, top: 90.0, width: 10.5, height: 9.0, rotate: 0, opacity: 1 },
-      180: { left: 39.0, top: 90.0, width: 10.5, height: 9.0, rotate: 0, opacity: 1 }
+      0: { left: 39.0, top: 90.0, width: 10.0, height: 8.5, rotate: 0, opacity: 1 },
+      90: { left: 52.0, top: 90.0, width: 10.0, height: 8.5, rotate: 0, opacity: 1 },
+      180: { left: 39.0, top: 90.0, width: 10.0, height: 8.5, rotate: 0, opacity: 1 }
     }
   }
 };
@@ -227,11 +227,11 @@ export const Interactive3DStudio = ({
 
   // Fine Tuning for Tattoo Placement, Size & 360° In-Place Rotation
   const [tattooScale, setTattooScale] = useState(1.15);
-  const [tattooOpacity, setTattooOpacity] = useState(1.0); // 100% full crisp opacity by default
+  const [tattooOpacity, setTattooOpacity] = useState(1.0); // 100% crisp pure opacity
   const [tattooRotationOffset, setTattooRotationOffset] = useState(0); // 0° to 360° pure in-place spin
   const [offsetNudgeX, setOffsetNudgeX] = useState(0);
   const [offsetNudgeY, setOffsetNudgeY] = useState(0);
-  const [blendMode, setBlendMode] = useState('high-contrast'); // 'high-contrast' (Crisp jet black) | 'natural-skin' (Multiply) | 'direct' (Normal)
+  const [blendMode, setBlendMode] = useState('high-contrast');
 
   // Active Control Panel Tab: 'transform' (size/rotate) | 'position' (drag/nudge)
   const [activeTab, setActiveTab] = useState('transform');
@@ -441,29 +441,32 @@ export const Interactive3DStudio = ({
   const zoomOriginX = zoomFocusMode === 'tattoo' && frameCoords ? `${frameCoords.left + offsetNudgeX}%` : '50%';
   const zoomOriginY = zoomFocusMode === 'tattoo' && frameCoords ? `${frameCoords.top + offsetNudgeY}%` : '50%';
 
-  const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
+  // Always use transparent PNG if available
+  let imageSrc = '';
+  if (selectedDesign) {
+    const raw = selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image || '';
+    imageSrc = getFullImageUrl(raw.replace(/\.jpg$/, '.png'));
+  }
+
   const totalTattooRotation = ((frameCoords?.rotate || 0) + tattooRotationOffset) % 360;
 
-  // Calculate high visibility ink styles
+  // Calculate clean tattoo stencil filter without square background
   const getInkImageStyle = () => {
     if (blendMode === 'high-contrast') {
       return {
-        mixBlendMode: 'multiply',
-        filter: 'contrast(2.2) brightness(0.75) saturate(1.2) drop-shadow(0 0 1px rgba(0,0,0,0.95))',
+        filter: 'contrast(1.6) brightness(0.9) drop-shadow(0 0 1px rgba(0,0,0,0.95))',
         opacity: tattooOpacity,
       };
     }
     if (blendMode === 'natural-skin') {
       return {
-        mixBlendMode: 'multiply',
-        filter: 'contrast(1.4) brightness(0.9) drop-shadow(0 0 1px rgba(0,0,0,0.6))',
-        opacity: tattooOpacity,
+        filter: 'contrast(1.2) brightness(0.95) drop-shadow(0 0 1px rgba(0,0,0,0.7))',
+        opacity: tattooOpacity * 0.9,
       };
     }
     // Direct Sharp Stencil
     return {
-      mixBlendMode: 'normal',
-      filter: 'contrast(1.2) brightness(1.0) drop-shadow(0 0 4px rgba(0,0,0,0.7))',
+      filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.8))',
       opacity: tattooOpacity,
     };
   };
@@ -642,7 +645,7 @@ export const Interactive3DStudio = ({
               style={{ transform: currentFrame.flip ? 'scaleX(-1)' : 'none' }}
             />
 
-            {/* REALISTIC HIGH-CONTRAST INKED TATTOO WITH ZERO-SHIFT IN-PLACE ROTATION */}
+            {/* REALISTIC INKED TATTOO WITH CLEAN ALPHA TRANSPARENCY & ZERO ROTATION DRIFT */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
                 ref={tattooElemRef}
@@ -659,14 +662,14 @@ export const Interactive3DStudio = ({
                 style={{
                   left: `calc(${frameCoords.left + offsetNudgeX}%)`,
                   top: `calc(${frameCoords.top + offsetNudgeY}%)`,
-                  width: `${Math.max(frameCoords.width, frameCoords.height) * 1.30}%`,
-                  aspectRatio: '1 / 1',
+                  width: `${frameCoords.width}%`,
+                  height: `${frameCoords.height}%`,
                   transform: 'translate3d(-50%, -50%, 0)',
                   transformOrigin: '50% 50%',
                 }}
                 title="Drag to move tattoo • Drag top handle or use slider to rotate"
               >
-                {/* 360° In-Place Rotation Canvas (Rotates strictly around 50% 50% with ZERO position drift) */}
+                {/* Pure 360° In-Place Rotation Canvas (Rotates strictly around 50% 50% center pivot) */}
                 <div
                   className="relative w-full h-full flex items-center justify-center transform-gpu will-change-transform"
                   style={{
@@ -674,8 +677,8 @@ export const Interactive3DStudio = ({
                     transformOrigin: '50% 50%',
                   }}
                 >
-                  {/* Rotating Bounding Box & Top Rotate Handle */}
-                  <div className="absolute inset-[-4px] border border-dashed border-amber-400/60 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* Subtle Rotation Handle on Hover */}
+                  <div className="absolute inset-0 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                     <div
                       onPointerDown={(e) => {
                         e.stopPropagation();
@@ -688,14 +691,14 @@ export const Interactive3DStudio = ({
                           };
                         }
                       }}
-                      className="absolute -top-6 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-400 text-black flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg pointer-events-auto hover:scale-110 transition-transform"
+                      className="absolute -top-5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-400 text-black flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg pointer-events-auto hover:scale-110 transition-transform"
                       title="Drag to Rotate Tattoo 360°"
                     >
                       <RotateCw className="w-3 h-3" />
                     </div>
                   </div>
 
-                  {/* High Visibility Tattoo Rendering */}
+                  {/* Clean Transparent Ink Rendering (NO background box or dark square) */}
                   {selectedDesign.svg ? (
                     <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold pointer-events-none">
                       {selectedDesign.svg}
@@ -818,7 +821,8 @@ export const Interactive3DStudio = ({
           <div className="flex items-center space-x-2.5 overflow-x-auto py-1 scrollbar-thin">
             {filteredPickerDesigns.map(design => {
               const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
-              const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
+              const rawSrc = design.previewImage || design.dataUri || design.image || '';
+              const imgSrc = getFullImageUrl(rawSrc.replace(/\.jpg$/, '.png'));
 
               return (
                 <button
@@ -938,7 +942,7 @@ export const Interactive3DStudio = ({
               </span>
             </div>
 
-            {/* Tattoo 360° In-Place Rotation (Pure 0° to 360° center spin without changing position) */}
+            {/* Tattoo 360° In-Place Rotation */}
             <div className="flex items-center space-x-1.5">
               <span className="text-[10px] uppercase font-bold text-amber-400 flex items-center space-x-1">
                 <RotateCw className="w-3 h-3 text-amber-400 inline" />
@@ -1044,7 +1048,7 @@ export const Interactive3DStudio = ({
                 className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
                   blendMode === 'high-contrast' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
                 }`}
-                title="Ultra sharp, dark and clear on skin"
+                title="Ultra sharp and clear on skin"
               >
                 🔥 High Contrast
               </button>
