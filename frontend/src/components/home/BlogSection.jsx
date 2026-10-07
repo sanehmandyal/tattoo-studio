@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { blogsAPI } from '../../services/api';
-import { Clock, User, ArrowRight } from 'lucide-react';
+import { Clock, User, ArrowRight, BookOpen } from 'lucide-react';
+import { getFullImageUrl } from '../../utils/imageHelper';
 
 const DEFAULT_BLOGS = [
   {
@@ -9,30 +10,30 @@ const DEFAULT_BLOGS = [
     title: 'How to Prepare Your Body and Skin for a Multi-Hour Tattoo Session',
     slug: 'prep-your-body-for-tattoo-session',
     excerpt: 'Hydration, nutrition, skin prep, and breathing techniques to maximize endurance and comfort in the chair.',
-    coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=600&q=80',
-    category: 'Preparation',
+    coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80',
+    category: 'Tattoo Preparation',
     readTimeMinutes: 5,
     author: 'Master Sunil',
   },
   {
     _id: 'b2',
-    title: 'The Art of Sacred Geometry & Fine-Line Realism',
-    slug: 'sacred-geometry-and-dotwork-alchemy',
-    excerpt: 'Exploring mathematical symmetry, sacred Devbhoomi motifs, and micro-needle precision.',
-    coverImage: 'https://images.unsplash.com/photo-1550537687-c91072c4792d?auto=format&fit=crop&w=600&q=80',
-    category: 'Tattoo Art',
+    title: 'The Sacred Architecture of Mahadev Trishul & Devbhoomi Geometry',
+    slug: 'sacred-geometry-devbhoomi-art',
+    excerpt: 'Exploring the spiritual symbolism of Lord Shiva, the cosmic trident, and sacred golden-ratio yantras.',
+    coverImage: '/images/tattoos/mahadev_trishul.png',
+    category: 'Sacred Devbhoomi',
     readTimeMinutes: 4,
-    author: 'Studio Atelier',
+    author: 'Master Sunil',
   },
   {
     _id: 'b3',
     title: 'Medical Aftercare: Preserving Long-Term Ink Contrast and Sharpness',
     slug: 'preserving-contrast-tattoo-longevity',
     excerpt: 'Understanding UV photodegradation, proper skin barrier healing, and lifetime tattoo vibrance.',
-    coverImage: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&w=600&q=80',
-    category: 'Aftercare',
+    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+    category: 'Tattoo Aftercare',
     readTimeMinutes: 6,
-    author: 'Master Sunil',
+    author: 'Aman Verma',
   },
 ];
 
@@ -86,13 +87,19 @@ export const BlogSection = () => {
               key={blog._id}
               className="bg-zinc-900/80 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-400/40 transition-all flex flex-col justify-between group shadow-md"
             >
-              <div className="relative h-48 overflow-hidden bg-black">
+              <div className="relative h-48 overflow-hidden bg-black/90 flex items-center justify-center p-2">
                 <img
-                  src={blog.coverImage}
+                  src={getFullImageUrl(blog.coverImage)}
                   alt={blog.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
+                    blog.coverImage?.includes('/tattoos/') ? 'object-contain p-2' : 'object-cover'
+                  }`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/images/tattoos/mahadev_trishul.png';
+                  }}
                 />
-                <span className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-[10px] font-semibold text-amber-300 uppercase tracking-wider px-2.5 py-1 rounded-md border border-white/10">
+                <span className="absolute top-3 left-3 bg-black/85 backdrop-blur-md text-[10px] font-bold text-amber-300 uppercase tracking-wider px-2.5 py-1 rounded-md border border-amber-500/30">
                   {blog.category}
                 </span>
               </div>

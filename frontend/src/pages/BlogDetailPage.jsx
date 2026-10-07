@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { blogsAPI } from '../services/api';
 import { Clock, User, ArrowLeft, Share2, Tag, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
+import { getFullImageUrl } from '../utils/imageHelper';
 
 export const BlogDetailPage = () => {
   const { slugOrId } = useParams();
@@ -101,11 +102,17 @@ export const BlogDetailPage = () => {
         </div>
 
         {/* Featured Image */}
-        <div className="rounded-2xl overflow-hidden border border-studio-border shadow-2xl mb-10 h-80 sm:h-[420px] bg-studio-card">
+        <div className="rounded-2xl overflow-hidden border border-studio-border shadow-2xl mb-10 h-80 sm:h-[420px] bg-black/90 flex items-center justify-center p-4">
           <img
-            src={blog.coverImage}
+            src={getFullImageUrl(blog.coverImage)}
             alt={blog.title}
-            className="w-full h-full object-cover"
+            className={`w-full h-full ${
+              blog.coverImage?.includes('/tattoos/') ? 'object-contain p-4' : 'object-cover'
+            }`}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/images/tattoos/mahadev_trishul.png';
+            }}
           />
         </div>
 

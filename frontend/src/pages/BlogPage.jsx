@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { blogsAPI } from '../services/api';
 import { Search, Clock, ArrowRight, User } from 'lucide-react';
+import { getFullImageUrl } from '../utils/imageHelper';
 
 export const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -112,14 +113,20 @@ export const BlogPage = () => {
                 key={blog._id}
                 className="glass-card rounded-xl overflow-hidden border border-studio-border/40 hover:border-studio-bronze transition-all duration-300 flex flex-col justify-between group shadow-xl"
               >
-                <div className="relative h-56 overflow-hidden bg-studio-card">
+                <div className="relative h-56 overflow-hidden bg-black/90 flex items-center justify-center p-2">
                   <img
-                    src={blog.coverImage}
+                    src={getFullImageUrl(blog.coverImage)}
                     alt={blog.title}
-                    className="w-full h-full object-cover filter contrast-105 group-hover:scale-105 transition-transform duration-500"
+                    className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
+                      blog.coverImage?.includes('/tattoos/') ? 'object-contain p-2' : 'object-cover'
+                    }`}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/images/tattoos/mahadev_trishul.png';
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-studio-card via-transparent to-transparent opacity-90" />
-                  <span className="absolute top-3 left-3 bg-studio-darker/80 text-[10px] font-bold text-studio-bronzeLight uppercase tracking-wider px-2.5 py-1 rounded border border-studio-border/40">
+                  <div className="absolute inset-0 bg-gradient-to-t from-studio-card/80 via-transparent to-transparent opacity-70 pointer-events-none" />
+                  <span className="absolute top-3 left-3 bg-studio-darker/90 text-[10px] font-bold text-studio-bronzeLight uppercase tracking-wider px-2.5 py-1 rounded border border-studio-border/40">
                     {blog.category}
                   </span>
                 </div>

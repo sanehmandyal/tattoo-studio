@@ -743,49 +743,54 @@ export const seedInitialData = async () => {
       console.log('[Seeder] Seeded default aftercare instructions.');
     }
 
-    // 7. Blog Posts — Seed only if empty
-    const blogCount = await Blog.countDocuments();
-    if (blogCount === 0) {
-      await Blog.create([
-        {
-          title: 'How to Prepare Your Body and Mind for a Multi-Hour Tattoo Session',
-          slug: 'prep-your-body-for-tattoo-session',
-          excerpt: 'Hydration, carb loading, skin prep, and breathing techniques to maximize endurance in the chair.',
-          content: 'Preparation is the secret to a comfortable tattoo session. Learn how to hydrate, eat balanced meals, and mentally prepare for your bespoke artwork.',
-          coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80',
-          author: 'Master Sunil — Lead Artist',
-          category: 'Tattoo Preparation',
-          tags: ['Preparation', 'Session Prep', 'Endurance', 'Pain Management'],
-          readTimeMinutes: 5,
-          isPublished: true,
-        },
-        {
-          title: 'The Sacred Architecture of Mahadev Trishul & Devbhoomi Geometry',
-          slug: 'sacred-geometry-devbhoomi-art',
-          excerpt: 'Exploring the spiritual symbolism of Lord Shiva, the cosmic trident, and sacred golden-ratio yantras.',
-          content: 'Himachal Pradesh, known as Devbhoomi (Land of the Gods), holds deep spiritual reverence for Lord Shiva. Discover the symbology behind sacred Trishul tattooing.',
-          coverImage: 'https://images.unsplash.com/photo-1550537687-c91072c4792d?auto=format&fit=crop&w=800&q=80',
-          author: 'Master Sunil — Lead Artist',
-          category: 'Tattoo Styles',
-          tags: ['Mahadev', 'Sacred Geometry', 'Devbhoomi', 'Symbolism'],
-          readTimeMinutes: 4,
-          isPublished: true,
-        },
-        {
-          title: 'Preserving Contrast: The Science of Tattoo Longevity and Aftercare',
-          slug: 'preserving-contrast-tattoo-longevity',
-          excerpt: 'Understanding UV photodegradation, immune macrophage ink lock-in, and lifelong pigment brilliance.',
-          content: 'Your tattoo is a living piece of art. Learn how medical-grade aftercare and UV protection keep black ink crisp and colors vibrant for a lifetime.',
-          coverImage: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?auto=format&fit=crop&w=800&q=80',
-          author: 'Aman Verma — Senior Resident',
-          category: 'Tattoo Aftercare',
-          tags: ['Aftercare', 'Science', 'Longevity', 'Sun Protection'],
-          readTimeMinutes: 6,
-          isPublished: true,
-        }
-      ]);
-      console.log('[Seeder] Seeded default blog posts.');
+    // 7. Blog Posts — Seed & update matching cover images
+    const AUTHENTIC_BLOGS = [
+      {
+        title: 'How to Prepare Your Body and Skin for a Multi-Hour Tattoo Session',
+        slug: 'prep-your-body-for-tattoo-session',
+        excerpt: 'Hydration, nutrition, skin prep, and breathing techniques to maximize endurance and comfort in the chair.',
+        content: 'Preparation is the secret to a comfortable tattoo session. Learn how to hydrate, eat balanced meals, and mentally prepare for your bespoke artwork.',
+        coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80',
+        author: 'Master Sunil — Lead Artist',
+        category: 'Tattoo Preparation',
+        tags: ['Preparation', 'Session Prep', 'Endurance', 'Pain Management'],
+        readTimeMinutes: 5,
+        isPublished: true,
+      },
+      {
+        title: 'The Sacred Architecture of Mahadev Trishul & Devbhoomi Geometry',
+        slug: 'sacred-geometry-devbhoomi-art',
+        excerpt: 'Exploring the spiritual symbolism of Lord Shiva, the cosmic trident, and sacred golden-ratio yantras.',
+        content: 'Himachal Pradesh, known as Devbhoomi (Land of the Gods), holds deep spiritual reverence for Lord Shiva. Discover the symbology behind sacred Trishul tattooing.',
+        coverImage: '/images/tattoos/mahadev_trishul.png',
+        author: 'Master Sunil — Lead Artist',
+        category: 'Sacred Devbhoomi',
+        tags: ['Mahadev', 'Sacred Geometry', 'Devbhoomi', 'Symbolism'],
+        readTimeMinutes: 4,
+        isPublished: true,
+      },
+      {
+        title: 'Preserving Contrast: The Science of Tattoo Longevity and Aftercare',
+        slug: 'preserving-contrast-tattoo-longevity',
+        excerpt: 'Understanding UV photodegradation, immune macrophage ink lock-in, and lifelong pigment brilliance.',
+        content: 'Your tattoo is a living piece of art. Learn how medical-grade aftercare and UV protection keep black ink crisp and colors vibrant for a lifetime.',
+        coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+        author: 'Aman Verma — Senior Resident',
+        category: 'Tattoo Aftercare',
+        tags: ['Aftercare', 'Science', 'Longevity', 'Sun Protection'],
+        readTimeMinutes: 6,
+        isPublished: true,
+      }
+    ];
+
+    for (const b of AUTHENTIC_BLOGS) {
+      await Blog.findOneAndUpdate(
+        { slug: b.slug },
+        { $set: b },
+        { upsert: true, new: true }
+      );
     }
+    console.log('[Seeder] Seeded/updated default blog posts with accurate matching cover images.');
 
     // 8. Site Settings — Seed only if empty
     const settingsCount = await SiteSettings.countDocuments();
