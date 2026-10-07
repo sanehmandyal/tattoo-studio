@@ -45,7 +45,17 @@ export const BlogSection = () => {
       try {
         const res = await blogsAPI.getAll({ limit: 3 });
         if (res.success && res.blogs?.length > 0) {
-          setBlogs(res.blogs);
+          const mapped = res.blogs.map(b => ({
+            ...b,
+            coverImage: b.coverImage?.includes('images.unsplash.com') && (b.title?.toLowerCase().includes('mahadev') || b.title?.toLowerCase().includes('geometry'))
+              ? '/images/tattoos/mahadev_trishul.png'
+              : b.title?.toLowerCase().includes('prep')
+              ? 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80'
+              : b.title?.toLowerCase().includes('aftercare') || b.title?.toLowerCase().includes('contrast')
+              ? 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80'
+              : b.coverImage || '/images/tattoos/mahadev_trishul.png'
+          }));
+          setBlogs(mapped);
         }
       } catch (err) {
         // Fallback to default

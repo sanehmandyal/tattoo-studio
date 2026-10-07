@@ -5,6 +5,27 @@ import { blogsAPI } from '../services/api';
 import { Search, Clock, ArrowRight, User } from 'lucide-react';
 import { getFullImageUrl } from '../utils/imageHelper';
 
+export const getArticleCoverImage = (blog) => {
+  const t = (blog?.title || '').toLowerCase();
+  const s = (blog?.slug || '').toLowerCase();
+  const c = (blog?.category || '').toLowerCase();
+
+  // 1. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry
+  if (t.includes('mahadev') || t.includes('shiva') || t.includes('trishul') || s.includes('mahadev') || s.includes('sacred-geometry') || t.includes('geometry')) {
+    return '/images/tattoos/mahadev_trishul.png';
+  }
+  // 2. Tattoo Preparation / Session Prep / Hydration / Skin Prep
+  if (t.includes('prep') || t.includes('prepare') || s.includes('prep') || c.includes('prep') || t.includes('session')) {
+    return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80';
+  }
+  // 3. Aftercare / Contrast / Longevity / Healing / Science
+  if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity') || s.includes('contrast') || s.includes('aftercare') || c.includes('aftercare') || t.includes('science')) {
+    return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80';
+  }
+
+  return blog?.coverImage || '/images/tattoos/mahadev_trishul.png';
+};
+
 export const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -29,7 +50,13 @@ export const BlogPage = () => {
         if (selectedCategory !== 'All') params.category = selectedCategory;
         if (search) params.search = search;
         const res = await blogsAPI.getAll(params);
-        if (res.success) setBlogs(res.blogs);
+        if (res.success && res.blogs) {
+          const mapped = res.blogs.map(b => ({
+            ...b,
+            coverImage: getArticleCoverImage(b)
+          }));
+          setBlogs(mapped);
+        }
       } catch (err) {
         console.error(err);
       } finally {
