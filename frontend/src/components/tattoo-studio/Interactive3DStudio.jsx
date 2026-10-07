@@ -213,13 +213,13 @@ export const Interactive3DStudio = ({
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
-  const [hoveredPart, setHoveredPart] = useState(null);
-  const [highlightPulse, setHighlightPulse] = useState(true);
-  
-  // Custom Fine Tuning for Tattoo Placement & Size
+  // Focus Mode: 'body' (center zoom) or 'tattoo' (focus zoom directly on tattoo part)
+  const [zoomFocusMode, setZoomFocusMode] = useState('tattoo');
+
+  // Custom Fine Tuning for Tattoo Placement, Size & 360° Rotation
   const [tattooScale, setTattooScale] = useState(1.10);
   const [tattooOpacity, setTattooOpacity] = useState(0.95);
-  const [tattooRotationOffset, setTattooRotationOffset] = useState(0);
+  const [tattooRotationOffset, setTattooRotationOffset] = useState(0); // Full 0° to 360°
   const [offsetNudgeX, setOffsetNudgeX] = useState(0);
   const [offsetNudgeY, setOffsetNudgeY] = useState(0);
   const [blendMode, setBlendMode] = useState('multiply'); // 'multiply' gives true skin ink absorption
@@ -324,7 +324,7 @@ export const Interactive3DStudio = ({
   const handleWheel = (e) => {
     e.preventDefault();
     const zoomDelta = e.deltaY * -0.0015;
-    setZoomLevel((prev) => Math.min(Math.max(parseFloat((prev + zoomDelta).toFixed(2)), 0.8), 2.5));
+    setZoomLevel((prev) => Math.min(Math.max(parseFloat((prev + zoomDelta).toFixed(2)), 0.8), 2.8));
   };
 
   // Normalized 0 to 360 angle
@@ -370,8 +370,8 @@ export const Interactive3DStudio = ({
   const isTattooVisibleInAngle = Boolean(frameCoords && (frameCoords.opacity ?? 1) > 0.2);
 
   // Zoom handlers
-  const handleZoomIn = () => setZoomLevel((prev) => Math.min(parseFloat((prev + 0.25).toFixed(2)), 2.5));
-  const handleZoomOut = () => setZoomLevel((prev) => Math.max(parseFloat((prev - 0.25).toFixed(2)), 0.8));
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(parseFloat((prev + 0.3).toFixed(2)), 2.8));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(parseFloat((prev - 0.3).toFixed(2)), 0.8));
   const handleResetZoom = () => {
     setZoomLevel(1.0);
     setPanOffset({ x: 0, y: 0 });
@@ -400,11 +400,15 @@ export const Interactive3DStudio = ({
     toast.info(`Centered and reset on ${placementConfig?.label || selectedBodyArea}`);
   };
 
+  // Focus Origin: if 'tattoo' mode, pivot zoom right on the tattoo coordinates!
+  const zoomOriginX = zoomFocusMode === 'tattoo' && frameCoords ? `${frameCoords.left + offsetNudgeX}%` : '50%';
+  const zoomOriginY = zoomFocusMode === 'tattoo' && frameCoords ? `${frameCoords.top + offsetNudgeY}%` : '50%';
+
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
 
   return (
     <div
-      className={`relative w-full ${compact ? 'h-[540px] sm:h-[600px] md:h-[660px]' : 'h-[600px] sm:h-[680px] md:h-[780px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-colors`}
+      className={`relative w-full ${compact ? 'h-[560px] sm:h-[620px] md:h-[680px]' : 'h-[620px] sm:h-[700px] md:h-[800px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-colors`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -440,31 +444,39 @@ export const Interactive3DStudio = ({
             {isAutoRotating ? '⏸ Stop Orbit' : '▶ 360° Spin'}
           </button>
 
-          {/* Quick Zoom Presets */}
-          <div className="hidden md:flex items-center space-x-1 border-l border-white/10 pl-1.5 ml-1">
+          {/* Zoom Target Focus Mode (Tattoo vs Body) */}
+          <div className="hidden sm:flex items-center space-x-1 border-l border-white/10 pl-1.5 ml-1">
             <button
               type="button"
-              onClick={() => { setZoomLevel(1.0); setPanOffset({ x: 0, y: 0 }); }}
-              className={`px-2 py-0.5 text-[9px] font-bold rounded ${zoomLevel === 1.0 ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white'}`}
-              title="Full Body View"
+              onClick={() => {
+                setZoomFocusMode('tattoo');
+                setZoomLevel(1.8);
+                toast.success(`Zooming in on ${placementConfig?.name}!`);
+              }}
+              className={`px-2 py-0.5 text-[9px] font-bold rounded transition-all ${
+                zoomFocusMode === 'tattoo' && zoomLevel > 1.2
+                  ? 'bg-amber-400 text-black shadow-md'
+                  : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
+              }`}
+              title="Zoom directly onto the tattoo & muscle area"
             >
-              1x Body
+              🔍 Focus Tattoo
             </button>
             <button
               type="button"
-              onClick={() => { setZoomLevel(1.6); setPanOffset({ x: 0, y: 0 }); }}
-              className={`px-2 py-0.5 text-[9px] font-bold rounded ${zoomLevel === 1.6 ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white'}`}
-              title="Close-Up Tattoo Inspection"
+              onClick={() => {
+                setZoomFocusMode('body');
+                setZoomLevel(1.0);
+                setPanOffset({ x: 0, y: 0 });
+              }}
+              className={`px-2 py-0.5 text-[9px] font-bold rounded transition-all ${
+                zoomLevel === 1.0
+                  ? 'bg-amber-400 text-black shadow-md'
+                  : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
+              }`}
+              title="Full Body Overview"
             >
-              1.6x Close-Up
-            </button>
-            <button
-              type="button"
-              onClick={() => { setZoomLevel(2.2); setPanOffset({ x: 0, y: 0 }); }}
-              className={`px-2 py-0.5 text-[9px] font-bold rounded ${zoomLevel === 2.2 ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white'}`}
-              title="Macro Skin Detail Inspection"
-            >
-              2.2x Macro
+              1x Full Body
             </button>
           </div>
         </div>
@@ -518,7 +530,7 @@ export const Interactive3DStudio = ({
           <input
             type="range"
             min="0.8"
-            max="2.5"
+            max="2.8"
             step="0.05"
             value={zoomLevel}
             onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
@@ -550,8 +562,9 @@ export const Interactive3DStudio = ({
 
       {/* 4. CENTER STAGE: 360° ANATOMICAL HUMAN BODY TURNTABLE */}
       <div
-        className="relative w-full h-full flex items-center justify-center transition-transform duration-150 ease-out transform-gpu will-change-transform pt-10 pb-36 cursor-grab active:cursor-grabbing"
+        className="relative w-full h-full flex items-center justify-center transition-transform duration-150 ease-out transform-gpu will-change-transform pt-10 pb-44 cursor-grab active:cursor-grabbing"
         style={{
+          transformOrigin: `${zoomOriginX} ${zoomOriginY}`,
           transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
         }}
       >
@@ -580,7 +593,7 @@ export const Interactive3DStudio = ({
               }}
             />
 
-            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION WITH DIRECT DRAG & RESIZING */}
+            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION WITH DIRECT DRAG, 360° ROTATION & RESIZING */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
                 onPointerDown={(e) => {
@@ -678,19 +691,19 @@ export const Interactive3DStudio = ({
       {/* 5. BOTTOM FINE-TUNING CONTROLS & TATTOO SELECTION DOCK */}
       <div className="absolute bottom-2.5 left-2.5 right-2.5 z-30 flex flex-col gap-2 pointer-events-auto">
         
-        {/* Interactive Alignment & Size Adjustment Dock */}
+        {/* Interactive Alignment, Full 360° Rotation & Size Adjustment Dock */}
         <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-2xl gap-2">
           
           <div className="flex flex-wrap items-center gap-3">
             
-            {/* Body-Part Tailored Tattoo Size Control */}
+            {/* Body-Part Tailored Tattoo Size Zoom In / Out Control */}
             <div className="flex items-center space-x-1.5 bg-zinc-900/90 border border-white/10 px-2 py-1 rounded-lg">
               <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">
                 Tattoo Size:
               </span>
               <button
                 type="button"
-                onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.3))}
+                onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.2))}
                 className="w-5 h-5 flex items-center justify-center bg-black/60 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold transition-all text-xs"
                 title="Decrease Tattoo Size (-10%)"
               >
@@ -698,17 +711,17 @@ export const Interactive3DStudio = ({
               </button>
               <input
                 type="range"
-                min="0.3"
-                max="2.5"
+                min="0.2"
+                max="3.0"
                 step="0.05"
                 value={tattooScale}
                 onChange={(e) => setTattooScale(parseFloat(e.target.value))}
-                className="w-16 sm:w-24 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                className="w-16 sm:w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                 title="Adjust tattoo scale"
               />
               <button
                 type="button"
-                onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 2.5))}
+                onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 3.0))}
                 className="w-5 h-5 flex items-center justify-center bg-black/60 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold transition-all text-xs"
                 title="Increase Tattoo Size (+10%)"
               >
@@ -719,47 +732,56 @@ export const Interactive3DStudio = ({
               </span>
             </div>
 
-            {/* Quick Size Presets for Current Body Part */}
-            <div className="hidden sm:flex items-center space-x-1 bg-zinc-900/70 border border-white/10 rounded-lg p-0.5 text-[9px] font-bold">
+            {/* FULL 360° TATTOO ROTATION CONTROL */}
+            <div className="flex items-center space-x-1.5 bg-zinc-900/90 border border-white/10 px-2 py-1 rounded-lg">
+              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">
+                Tattoo 360°:
+              </span>
               <button
                 type="button"
-                onClick={() => handleApplyBodyPartPresetSize(0.7)}
-                className="px-1.5 py-0.5 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-                title="Small / Minimal Size Fit"
+                onClick={() => setTattooRotationOffset((prev) => (prev - 15 + 360) % 360)}
+                className="p-0.5 text-zinc-400 hover:text-amber-400"
+                title="Rotate Tattoo -15°"
               >
-                Small
+                ↺
               </button>
-              <button
-                type="button"
-                onClick={() => handleApplyBodyPartPresetSize(1.0)}
-                className="px-1.5 py-0.5 rounded text-amber-300 bg-amber-950/60 border border-amber-500/30 hover:bg-amber-500/30 transition-colors"
-                title="Standard Muscle Proportion Fit"
-              >
-                Standard
-              </button>
-              <button
-                type="button"
-                onClick={() => handleApplyBodyPartPresetSize(1.35)}
-                className="px-1.5 py-0.5 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-                title="Large / Full Muscle Coverage Fit"
-              >
-                Large
-              </button>
-            </div>
-
-            {/* Rotate Slider */}
-            <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase tracking-wider font-bold text-zinc-400">Angle:</span>
               <input
                 type="range"
-                min="-45"
-                max="45"
-                step="1"
+                min="0"
+                max="360"
+                step="5"
                 value={tattooRotationOffset}
                 onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
-                className="w-12 sm:w-16 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                className="w-14 sm:w-18 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                title="Rotate tattoo 0° to 360°"
               />
-              <span className="text-[10px] font-mono text-zinc-400">{tattooRotationOffset}°</span>
+              <button
+                type="button"
+                onClick={() => setTattooRotationOffset((prev) => (prev + 15) % 360)}
+                className="p-0.5 text-zinc-400 hover:text-amber-400"
+                title="Rotate Tattoo +15°"
+              >
+                ↻
+              </button>
+              <span className="text-[10px] font-mono text-zinc-300 w-7 text-right">
+                {tattooRotationOffset}°
+              </span>
+            </div>
+
+            {/* Quick 360° Angle Presets */}
+            <div className="hidden lg:flex items-center space-x-0.5 bg-zinc-900/70 border border-white/10 rounded-lg p-0.5 text-[8px] font-bold">
+              {[0, 90, 180, 270].map((deg) => (
+                <button
+                  key={deg}
+                  type="button"
+                  onClick={() => setTattooRotationOffset(deg)}
+                  className={`px-1.5 py-0.5 rounded transition-colors ${
+                    tattooRotationOffset === deg ? 'bg-amber-400 text-black font-bold' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {deg}°
+                </button>
+              ))}
             </div>
 
             {/* Nudge D-Pad Controls */}
@@ -824,7 +846,7 @@ export const Interactive3DStudio = ({
               type="button"
               onClick={handleReset}
               className="p-1 text-zinc-400 hover:text-white bg-zinc-900 border border-white/10 rounded-md transition-colors text-[10px] px-2.5 flex items-center space-x-1"
-              title="Reset View and Offsets"
+              title="Reset View, Sizing and Rotation"
             >
               <RefreshCcw className="w-3 h-3" />
               <span>Center</span>
