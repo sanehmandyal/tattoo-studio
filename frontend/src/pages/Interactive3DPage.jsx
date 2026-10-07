@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Interactive3DStudio } from '../components/tattoo-studio/Interactive3DStudio';
 import { designsAPI } from '../services/api';
-import { Sparkles, ArrowRight, Star, X, Image as ImageIcon, Sliders, Check, Layers, RotateCcw } from 'lucide-react';
+import { Sparkles, ArrowRight, Star, X, Image as ImageIcon, Sliders, Check, Layers, RotateCcw, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../utils/whatsapp';
 
@@ -24,10 +24,10 @@ export const Interactive3DPage = () => {
   ];
 
   const styles = [
-    'All', 'Geometric', 'Sacred Devbhoomi', 'Traditional', 'Realism', 'Fine Line', 'Mandala', 'Blackwork', 'Japanese', 'Script', 'Watercolor'
+    'All', 'Sacred Devbhoomi', 'Geometric', 'Fine Line', 'Blackwork', 'Japanese', 'Traditional', 'Mandala', 'Neo-Traditional'
   ];
 
-  // Helper to find best admin reference tattoo for a body area
+  // Helper to find best reference tattoo for a body area
   const findReferenceTattooForArea = useCallback((area, allDesigns) => {
     if (!area || !allDesigns || allDesigns.length === 0) return null;
     const lowerArea = area.toLowerCase();
@@ -39,7 +39,7 @@ export const Interactive3DPage = () => {
     );
     if (defaultRef) return defaultRef;
 
-    // 2. Look for any design tagged with this body area (DB designs first, then default catalog)
+    // 2. Look for any design tagged with this body area
     const matching = allDesigns.find(d => 
       (d.bodyAreas || []).some(a => a.toLowerCase() === lowerArea || lowerArea.includes(a.toLowerCase()) || a.toLowerCase().includes(lowerArea))
     );
@@ -67,10 +67,18 @@ export const Interactive3DPage = () => {
             isFromDB: true,
           }));
 
-          setDesigns(dbList);
+          // Merge DB designs with catalog fallback if DB has few items
+          const combined = [...dbList];
+          TATTOO_ARTWORKS_CATALOG.forEach(catalogItem => {
+            if (!combined.some(d => d.name.toLowerCase() === catalogItem.name.toLowerCase())) {
+              combined.push(catalogItem);
+            }
+          });
 
-          // Find the admin's assigned tattoo for the current body area
-          const initialDesign = findReferenceTattooForArea(selectedBodyArea, dbList) || dbList[0];
+          setDesigns(combined);
+
+          // Find the reference tattoo for the current body area
+          const initialDesign = findReferenceTattooForArea(selectedBodyArea, combined) || combined[0];
           setSelectedDesign(initialDesign);
         } else {
           setDesigns(TATTOO_ARTWORKS_CATALOG);
@@ -89,12 +97,10 @@ export const Interactive3DPage = () => {
   // When body area is clicked, load reference tattoo and open mobile sidebar drawer
   const handleSelectBodyArea = (area) => {
     setSelectedBodyArea(area);
-    const matchingAdminDesign = findReferenceTattooForArea(area, designs);
-    if (matchingAdminDesign) {
-      setSelectedDesign(matchingAdminDesign);
-      toast.success(`Testing "${matchingAdminDesign.name}" on ${area}!`);
-    } else if (selectedDesign) {
-      toast.success(`Testing "${selectedDesign.name}" on ${area}!`);
+    const matchingDesign = findReferenceTattooForArea(area, designs);
+    if (matchingDesign) {
+      setSelectedDesign(matchingDesign);
+      toast.success(`Selected ${area}! Showing tattoo options.`);
     }
 
     // On mobile screens (< 1024px), automatically open tattoo options drawer
@@ -103,14 +109,86 @@ export const Interactive3DPage = () => {
     }
   };
 
-  const filteredDesigns = designs.filter(d => {
+  // Filter designs by style
+  const styleFiltered = designs.filter(d => {
     const matchesStyle = selectedStyle === 'All' || d.style.toLowerCase() === selectedStyle.toLowerCase();
     return matchesStyle;
   });
 
+  // Split into Recommended for this body area vs other versatile options
+  const recommendedForArea = styleFiltered.filter(d => 
+    (d.bodyAreas || []).some(a => 
+      a.toLowerCase() === selectedBodyArea.toLowerCase() || 
+      selectedBodyArea.toLowerCase().includes(a.toLowerCase()) || 
+      a.toLowerCase().includes(selectedBodyArea.toLowerCase())
+    )
+  );
+
+  const otherArtworks = styleFiltered.filter(d => !recommendedForArea.includes(d));
+
   const handleProceedToBooking = () => {
     if (!selectedDesign) return;
     navigate(`/booking?style=${encodeURIComponent(selectedDesign.style)}&placement=${encodeURIComponent(selectedBodyArea)}&design=${encodeURIComponent(selectedDesign.name)}`);
+  };
+
+  const renderTattooCard = (design, isRecommended = false) => {
+    const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
+    const isDefaultRef = Boolean(design.isDefaultReference);
+
+    return (
+      <div
+        key={design._id || design.name}
+        onClick={() => {
+          setSelectedDesign(design);
+          toast.success(`Applied "${design.name}" to ${selectedBodyArea}!`);
+        }}
+        className={`group flex items-center space-x-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
+          isSelected
+            ? 'bg-amber-500/15 border-amber-400 shadow-md shadow-amber-500/15 ring-1 ring-amber-400'
+            : 'bg-zinc-950/70 border-white/5 hover:border-amber-500/40 hover:bg-zinc-900/90'
+        }`}
+      >
+        <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-lg bg-black/90 p-1 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform">
+          {design.svg ? (
+            design.svg
+          ) : (
+            <img
+              src={getFullImageUrl(design.previewImage || design.dataUri)}
+              alt={design.name}
+              className="w-full h-full object-contain"
+            />
+          )}
+        </div>
+        <div className="flex-1 min-w-0 space-y-0.5">
+          <div className="flex items-center justify-between gap-1">
+            <h4 className="font-bold text-xs text-white uppercase truncate group-hover:text-amber-300 transition-colors">
+              {design.name}
+            </h4>
+            {isSelected && (
+              <span className="bg-amber-400 text-black text-[8px] font-black uppercase px-1.5 py-0.2 rounded shrink-0">
+                Active
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between text-[10px] text-zinc-400">
+            <span className="font-semibold text-amber-400/90 truncate">
+              {design.style}
+            </span>
+            <span className="text-zinc-500 text-[9px] shrink-0 font-mono">
+              {design.estTime || '2-3 hrs'}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-1 text-[9px] text-zinc-400">
+            <span className="text-zinc-500">Fit:</span>
+            <span className="text-zinc-300 truncate">
+              {(design.bodyAreas || ['Universal']).slice(0, 3).join(', ')}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -130,30 +208,30 @@ export const Interactive3DPage = () => {
           <div className="space-y-1">
             <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-bold uppercase tracking-widest">
               <Sparkles className="w-3 h-3" />
-              <span>3D Mannequin Placement Studio</span>
+              <span>3D Anatomical Studio</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Anatomical Tattoo Simulator
+              3D Tattoo Placement Simulator
             </h1>
             <p className="text-xs sm:text-sm text-zinc-400">
-              Select any muscle group to test tattoo designs on the 360° human anatomy in real-time.
+              Select any body part to explore multiple curated tattoo options and test on 360° human anatomy.
             </p>
           </div>
 
           {/* Quick Active Selection Badge */}
           {selectedDesign && (
-            <div className="flex items-center space-x-2 bg-zinc-900/90 border border-white/10 px-3.5 py-2 rounded-xl text-xs">
-              <span className="text-zinc-400 font-medium">Testing:</span>
-              <span className="font-bold text-amber-300">{selectedDesign.name}</span>
+            <div className="flex items-center space-x-2 bg-zinc-900/90 border border-white/10 px-3.5 py-2 rounded-xl text-xs shadow-lg">
+              <span className="text-zinc-400 font-medium">Testing on:</span>
+              <span className="font-bold text-amber-300">{selectedBodyArea}</span>
               <span className="text-zinc-500">•</span>
-              <span className="text-white font-semibold">{selectedBodyArea}</span>
+              <span className="text-white font-semibold truncate max-w-[140px]">{selectedDesign.name}</span>
             </div>
           )}
         </div>
 
         {/* Anatomical Zone Filter Pills */}
         <div className="flex items-center flex-wrap gap-1.5 mb-6 bg-zinc-900/60 p-2 rounded-xl border border-white/5">
-          <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider px-2">
+          <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider px-2">
             Target Muscle:
           </span>
           {bodyAreas.map(area => {
@@ -184,21 +262,22 @@ export const Interactive3DPage = () => {
               onSelectBodyArea={handleSelectBodyArea}
               selectedDesign={selectedDesign}
               onSelectDesign={setSelectedDesign}
-              designs={filteredDesigns}
+              designs={styleFiltered}
             />
 
-            {/* Mobile Quick Trigger Bar to Re-open Tattoo Drawer */}
-            <div className="lg:hidden mt-3 w-full flex items-center justify-between bg-zinc-900/95 border border-amber-500/30 p-2.5 rounded-xl">
+            {/* Mobile Quick Trigger Bar to Open Tattoo Drawer */}
+            <div className="lg:hidden mt-3 w-full flex items-center justify-between bg-zinc-900/95 border border-amber-500/40 p-2.5 rounded-xl shadow-lg">
               <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
                 <span className="text-xs font-bold text-white">{selectedBodyArea}</span>
-                <span className="text-[10px] text-zinc-400 font-mono">({filteredDesigns.length} tattoos)</span>
+                <span className="text-[10px] text-amber-300 font-mono">({recommendedForArea.length} recommended)</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobileDrawerOpen(true)}
-                className="bg-amber-400 text-black font-bold text-xs px-3 py-1.5 rounded-lg shadow-md flex items-center space-x-1"
+                className="bg-amber-400 hover:bg-amber-300 text-black font-black text-xs px-3.5 py-1.5 rounded-lg shadow-md flex items-center space-x-1.5 transition-all"
               >
-                <span>🎨 Browse Tattoo Options</span>
+                <span>🎨 View Multiple Tattoos</span>
               </button>
             </div>
           </div>
@@ -218,7 +297,7 @@ export const Interactive3DPage = () => {
                     onClick={() => setSelectedStyle(s)}
                     className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all ${
                       selectedStyle === s
-                        ? 'bg-amber-400 text-black font-bold'
+                        ? 'bg-amber-400 text-black font-bold shadow-sm'
                         : 'bg-zinc-950/80 text-zinc-400 hover:text-white border border-white/5'
                     }`}
                   >
@@ -228,72 +307,48 @@ export const Interactive3DPage = () => {
               </div>
             </div>
 
-            {/* Design List matching selected body area */}
+            {/* Sidebar Multiple Tattoo Options */}
             <div className="bg-zinc-900/80 p-4 rounded-2xl border border-white/10 space-y-3 shadow-lg">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <span className="text-xs font-bold uppercase text-white tracking-wider">
-                  {selectedBodyArea} Artworks
-                </span>
-                <span className="text-[10px] text-zinc-400 font-mono">
-                  {filteredDesigns.length} available
-                </span>
+                <div>
+                  <h3 className="text-xs font-bold uppercase text-white tracking-wider flex items-center space-x-1.5">
+                    <span>{selectedBodyArea} Tattoo Options</span>
+                  </h3>
+                  <p className="text-[10px] text-zinc-400">
+                    {recommendedForArea.length} tailored for {selectedBodyArea} ({styleFiltered.length} total)
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1 scrollbar-thin">
-                {filteredDesigns.length === 0 ? (
-                  <div className="py-8 text-center text-xs text-zinc-500">
-                    No custom designs for style "{selectedStyle}". Select 'All' to view all artworks.
+              {/* Scrollable Tattoo Flash Cards */}
+              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
+                
+                {/* 1. Recommended for selected body area */}
+                {recommendedForArea.length > 0 && (
+                  <div className="space-y-1.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-1">
+                      <Flame className="w-3 h-3 text-amber-400" />
+                      <span>Top Curated for {selectedBodyArea}</span>
+                    </div>
+                    {recommendedForArea.map(design => renderTattooCard(design, true))}
                   </div>
-                ) : (
-                  filteredDesigns.map(design => {
-                    const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
-                    const isDefaultRef = Boolean(design.isDefaultReference);
+                )}
 
-                    return (
-                      <div
-                        key={design._id || design.name}
-                        onClick={() => setSelectedDesign(design)}
-                        className={`flex items-center space-x-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
-                          isSelected
-                            ? 'bg-amber-500/10 border-amber-400 shadow-md shadow-amber-500/10'
-                            : 'bg-zinc-950/60 border-white/5 hover:border-white/20'
-                        }`}
-                      >
-                        <div className="w-12 h-12 rounded-lg bg-black/80 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center p-1">
-                          {design.svg ? (
-                            design.svg
-                          ) : (
-                            <img
-                              src={getFullImageUrl(design.previewImage || design.dataUri)}
-                              alt={design.name}
-                              className="w-full h-full object-contain"
-                            />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0 space-y-0.5">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-xs text-white uppercase truncate">
-                              {design.name}
-                            </h4>
-                            {isDefaultRef && (
-                              <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[8px] font-black uppercase px-1.5 py-0.2 rounded shrink-0">
-                                Primary Ref
-                              </span>
-                            )}
-                          </div>
-                          
-                          <div className="flex items-center justify-between text-[10px] text-zinc-400">
-                            <span className="font-semibold text-amber-400/90">
-                              {design.style}
-                            </span>
-                            <span className="text-zinc-500 text-[9px]">
-                              {design.estTime || '2 hrs'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
+                {/* 2. Other versatile flash artworks */}
+                {otherArtworks.length > 0 && (
+                  <div className="space-y-1.5 pt-2 border-t border-white/5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-1">
+                      <Sparkles className="w-3 h-3 text-zinc-400" />
+                      <span>More Studio Flash Artworks</span>
+                    </div>
+                    {otherArtworks.map(design => renderTattooCard(design, false))}
+                  </div>
+                )}
+
+                {styleFiltered.length === 0 && (
+                  <div className="py-8 text-center text-xs text-zinc-500">
+                    No tattoos found for "{selectedStyle}". Select 'All' to browse catalog.
+                  </div>
                 )}
               </div>
 
@@ -350,10 +405,10 @@ export const Interactive3DPage = () => {
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
                 <div>
                   <h3 className="font-bold text-sm text-white uppercase tracking-wider">
-                    {selectedBodyArea} Tattoos
+                    {selectedBodyArea} Tattoo Options
                   </h3>
                   <p className="text-[10px] text-zinc-400">
-                    Tap any tattoo to test on 3D body
+                    Tap any tattoo to test on 3D mannequin
                   </p>
                 </div>
               </div>
@@ -385,57 +440,29 @@ export const Interactive3DPage = () => {
               </div>
             </div>
 
-            {/* Designs List */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-2.5 scrollbar-thin">
-              {filteredDesigns.map(design => {
-                const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
-                const isDefaultRef = Boolean(design.isDefaultReference);
-
-                return (
-                  <div
-                    key={design._id || design.name}
-                    onClick={() => {
-                      setSelectedDesign(design);
-                      toast.success(`Applied "${design.name}" to ${selectedBodyArea}!`);
-                    }}
-                    className={`flex items-center space-x-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
-                      isSelected
-                        ? 'bg-amber-500/15 border-amber-400 shadow-md ring-1 ring-amber-400'
-                        : 'bg-zinc-900/80 border-white/5 hover:border-white/20'
-                    }`}
-                  >
-                    <div className="w-14 h-14 rounded-lg bg-black p-1 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
-                      {design.svg ? (
-                        design.svg
-                      ) : (
-                        <img
-                          src={getFullImageUrl(design.previewImage || design.dataUri)}
-                          alt={design.name}
-                          className="w-full h-full object-contain"
-                        />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-bold text-xs text-white uppercase truncate">
-                          {design.name}
-                        </h4>
-                        {isSelected && (
-                          <span className="text-[9px] bg-amber-400 text-black font-black px-1.5 py-0.2 rounded">
-                            Active
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[10px] text-amber-400/90 font-semibold mt-0.5">
-                        {design.style}
-                      </div>
-                      <div className="text-[9px] text-zinc-500">
-                        Est: {design.estTime || '2 hrs'}
-                      </div>
-                    </div>
+            {/* Designs List in Mobile Drawer */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin">
+              {/* 1. Recommended for selected body area */}
+              {recommendedForArea.length > 0 && (
+                <div className="space-y-1.5">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-1">
+                    <Flame className="w-3 h-3 text-amber-400" />
+                    <span>Top Curated for {selectedBodyArea}</span>
                   </div>
-                );
-              })}
+                  {recommendedForArea.map(design => renderTattooCard(design, true))}
+                </div>
+              )}
+
+              {/* 2. Other versatile flash artworks */}
+              {otherArtworks.length > 0 && (
+                <div className="space-y-1.5 pt-2 border-t border-white/5">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-1">
+                    <Sparkles className="w-3 h-3 text-zinc-400" />
+                    <span>More Studio Flash Artworks</span>
+                  </div>
+                  {otherArtworks.map(design => renderTattooCard(design, false))}
+                </div>
+              )}
             </div>
 
             {/* Drawer Bottom Actions */}
