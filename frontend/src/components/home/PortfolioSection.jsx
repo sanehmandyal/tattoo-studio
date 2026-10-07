@@ -8,82 +8,136 @@ import { getFullImageUrl } from '../../utils/imageHelper';
 const DEFAULT_PORTFOLIO = [
   {
     _id: 'port-trishul',
-    title: 'Mahadev Trishul & Sacred Om',
-    style: 'Geometric',
-    bodyPlacement: 'Full Arm Sleeve',
-    coverImage: '/images/tattoos/mahadev_trishul.jpg',
-    description: 'Sacred Trishul emblem entwined with Damru, Crescent Moon, and Om dotwork geometry.',
+    title: 'Sacred Mahadev Trishul & Damru',
+    style: 'Sacred Devbhoomi',
+    bodyPlacement: 'Forearm / Sleeve',
+    coverImage: '/images/tattoos/mahadev_trishul.png',
+    description: 'Iconic Lord Shiva Trishul trident with Damru drum, Crescent Moon, and Sacred Om stippling.',
     likes: 490,
   },
   {
+    _id: 'port-om-shiva',
+    title: 'Om Namah Shivaya Sanskrit Mandala',
+    style: 'Sacred Devbhoomi',
+    bodyPlacement: 'Forearm / Spine',
+    coverImage: '/images/tattoos/om_shiva_calligraphy.png',
+    description: 'Sacred Trishul with Devanagari Sanskrit mantra calligraphy and radiant stippled sunburst rays.',
+    likes: 560,
+  },
+  {
+    _id: 'port-koi',
+    title: 'Ryu Dragon Koi Leaping Waves',
+    style: 'Japanese',
+    bodyPlacement: 'Forearm / Upper Arm',
+    coverImage: '/images/tattoos/japanese_koi.png',
+    description: 'Dynamic Japanese traditional dragon koi fish ascending swirling tidal waves with sharp scales and fin details.',
+    likes: 620,
+  },
+  {
+    _id: 'port-phoenix',
+    title: 'Phoenix Rising From Sacred Flames',
+    style: 'Blackwork',
+    bodyPlacement: 'Back / Chest',
+    coverImage: '/images/tattoos/phoenix_flame.png',
+    description: 'Majestic mythical phoenix bird spreading ornate dotwork wings emerging from eternal fire.',
+    likes: 580,
+  },
+  {
+    _id: 'port-wolf',
+    title: 'Nordic Howling Wolf & Moon',
+    style: 'Geometric',
+    bodyPlacement: 'Forearm / Upper Arm',
+    coverImage: '/images/tattoos/celtic_wolf.png',
+    description: 'Intricate Celtic knotwork howling wolf with celestial crescent moon, runes, and sacred geometry.',
+    likes: 510,
+  },
+  {
+    _id: 'port-butterfly',
+    title: 'Fine Line Butterfly & Botanical Lavender',
+    style: 'Fine Line',
+    bodyPlacement: 'Wrist / Forearm',
+    coverImage: '/images/tattoos/butterfly_botanical.png',
+    description: 'Delicate half-butterfly morphing into blooming wild daisies, lavender sprigs, and stardust.',
+    likes: 670,
+  },
+  {
+    _id: 'port-compass',
+    title: 'Himalayan Compass & Arrow Navigator',
+    style: 'Geometric',
+    bodyPlacement: 'Forearm / Shoulder',
+    coverImage: '/images/tattoos/compass_navigation.png',
+    description: 'Sacred compass rose with Himalayan mountain peaks, celestial constellations, and warrior arrows.',
+    likes: 495,
+  },
+  {
     _id: 'port-peony',
-    title: 'Himalayan Wild Peony & Moon',
-    style: 'Minimalist',
+    title: 'Minimalist Moon & Wild Flora',
+    style: 'Fine Line',
     bodyPlacement: 'Forearm / Wrist',
-    coverImage: '/images/tattoos/moon_flora.jpg',
+    coverImage: '/images/tattoos/moon_flora.png',
     description: 'Delicate single-needle crescent moon and wild Himalayan peony with celestial stippling.',
     likes: 540,
   },
   {
     _id: 'port-serpent',
-    title: 'Serpent & Peony Fine Line',
+    title: 'Fine Line Serpent & Peony',
     style: 'Fine Line',
     bodyPlacement: 'Forearm / Ribs',
-    coverImage: '/images/tattoos/serpent_peony.jpg',
+    coverImage: '/images/tattoos/serpent_peony.png',
     description: 'Fluid serpentine contours entwined around wild mountain flora.',
     likes: 480,
   },
   {
     _id: 'port-lotus',
-    title: 'Sacred Lotus & Unalome',
-    style: 'Spiritual',
-    bodyPlacement: 'Spine & Collarbone',
-    coverImage: '/images/tattoos/sacred_lotus.jpg',
+    title: 'Devbhoomi Sacred Lotus & Unalome',
+    style: 'Sacred Devbhoomi',
+    bodyPlacement: 'Spine / Collarbone',
+    coverImage: '/images/tattoos/sacred_lotus.png',
     description: 'Devbhoomi sacred unalome lotus bloom with dotwork chakra alignment.',
     likes: 510,
   },
   {
     _id: 'port-lion',
-    title: 'Geometric Himalayan Lion',
+    title: 'Geometric Lion King & Mountain',
     style: 'Geometric',
     bodyPlacement: 'Chest & Sternum',
-    coverImage: '/images/tattoos/geometric_lion.jpg',
+    coverImage: '/images/tattoos/geometric_lion.png',
     description: 'Polygonal geometric lion head with Himalayan mountain line art.',
     likes: 380,
   },
   {
     _id: 'port-mandala',
-    title: 'Devbhoomi Sacred Mandala',
+    title: 'Devbhoomi Sacred Radial Mandala',
     style: 'Mandala',
     bodyPlacement: 'Shoulder & Back',
-    coverImage: '/images/tattoos/sacred_mandala.jpg',
+    coverImage: '/images/tattoos/sacred_mandala.png',
     description: 'Intricate radial sacred geometry mandala with fine pointillism.',
     likes: 420,
   },
   {
     _id: 'port-rose',
-    title: 'Botanical Sacred Rose',
-    style: 'Botanical',
+    title: 'Himalayan Sacred Botanical Rose',
+    style: 'Traditional',
     bodyPlacement: 'Forearm / Wrist',
-    coverImage: '/images/tattoos/sacred_rose.jpg',
+    coverImage: '/images/tattoos/sacred_rose.png',
     description: 'Classical botanical rose with delicate thorns and layered petals.',
     likes: 460,
   },
   {
     _id: 'port-skull',
-    title: 'Gothic Blackwork Skull',
+    title: 'Gothic Obsidian Skull Filigree',
     style: 'Blackwork',
     bodyPlacement: 'Upper Arm / Calf',
-    coverImage: '/images/tattoos/gothic_skull.jpg',
+    coverImage: '/images/tattoos/gothic_skull.png',
     description: 'Detailed anatomical skull with dark baroque ornamentation and heavy blackwork shading.',
     likes: 390,
   },
   {
     _id: 'port-dagger',
-    title: 'Trishul Dagger & Sacred Heart',
+    title: 'Devbhoomi Trishul Dagger Heart',
     style: 'Neo-Traditional',
     bodyPlacement: 'Forearm / Calf',
-    coverImage: '/images/tattoos/trishul_dagger.jpg',
+    coverImage: '/images/tattoos/trishul_dagger.png',
     description: 'Ornamental sacred Trishul blade with radiant rays and mystical geometry.',
     likes: 530,
   },
@@ -94,36 +148,55 @@ const getAuthenticImageForTitle = (title, currentImage) => {
     return currentImage;
   }
   const t = (title || '').toLowerCase();
+  
+  if (t.includes('koi') || t.includes('dragon') || t.includes('japanese')) {
+    return '/images/tattoos/japanese_koi.png';
+  }
+  if (t.includes('phoenix') || t.includes('fire') || t.includes('flame')) {
+    return '/images/tattoos/phoenix_flame.png';
+  }
+  if (t.includes('wolf') || t.includes('celtic') || t.includes('nordic')) {
+    return '/images/tattoos/celtic_wolf.png';
+  }
+  if (t.includes('butterfly') || t.includes('lavender')) {
+    return '/images/tattoos/butterfly_botanical.png';
+  }
+  if (t.includes('compass') || t.includes('navigator') || t.includes('nautical') || t.includes('arrow')) {
+    return '/images/tattoos/compass_navigation.png';
+  }
+  if (t.includes('om') || t.includes('calligraphy') || t.includes('sanskrit') || t.includes('namah')) {
+    return '/images/tattoos/om_shiva_calligraphy.png';
+  }
   if (t.includes('trishul') || t.includes('shiva') || t.includes('mahadev')) {
-    if (t.includes('dagger')) return '/images/tattoos/trishul_dagger.jpg';
-    return '/images/tattoos/mahadev_trishul.jpg';
+    if (t.includes('dagger')) return '/images/tattoos/trishul_dagger.png';
+    return '/images/tattoos/mahadev_trishul.png';
   }
-  if (t.includes('moon') || t.includes('flora') || t.includes('peony')) {
-    if (t.includes('serpent') || t.includes('snake')) return '/images/tattoos/serpent_peony.jpg';
-    return '/images/tattoos/moon_flora.jpg';
+  if (t.includes('moon') || t.includes('flora')) {
+    if (t.includes('serpent') || t.includes('snake')) return '/images/tattoos/serpent_peony.png';
+    return '/images/tattoos/moon_flora.png';
   }
-  if (t.includes('serpent') || t.includes('snake')) {
-    return '/images/tattoos/serpent_peony.jpg';
+  if (t.includes('serpent') || t.includes('snake') || t.includes('peony')) {
+    return '/images/tattoos/serpent_peony.png';
   }
-  if (t.includes('lotus') || t.includes('unalome') || t.includes('watercolor')) {
-    return '/images/tattoos/sacred_lotus.jpg';
+  if (t.includes('lotus') || t.includes('unalome')) {
+    return '/images/tattoos/sacred_lotus.png';
   }
   if (t.includes('lion')) {
-    return '/images/tattoos/geometric_lion.jpg';
+    return '/images/tattoos/geometric_lion.png';
   }
   if (t.includes('mandala') || t.includes('yantra')) {
-    return '/images/tattoos/sacred_mandala.jpg';
+    return '/images/tattoos/sacred_mandala.png';
   }
   if (t.includes('rose') || t.includes('botanical')) {
-    return '/images/tattoos/sacred_rose.jpg';
+    return '/images/tattoos/sacred_rose.png';
   }
-  if (t.includes('skull') || t.includes('gothic')) {
-    return '/images/tattoos/gothic_skull.jpg';
+  if (t.includes('skull') || t.includes('gothic') || t.includes('obsidian')) {
+    return '/images/tattoos/gothic_skull.png';
   }
   if (t.includes('dagger')) {
-    return '/images/tattoos/trishul_dagger.jpg';
+    return '/images/tattoos/trishul_dagger.png';
   }
-  return currentImage || '/images/tattoos/mahadev_trishul.jpg';
+  return currentImage || '/images/tattoos/mahadev_trishul.png';
 };
 
 export const PortfolioSection = () => {

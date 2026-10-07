@@ -120,156 +120,256 @@ export const seedInitialData = async () => {
     if (designCount === 0) {
       await TattooDesign.create([
         {
-          name: 'Mahadev Trishul & Sacred Om',
-          slug: 'mahadev-trishul-sacred-om',
-          style: 'Geometric',
-          bodyAreas: ['Forearm', 'Upper Arm', 'Chest', 'Back', 'Calf'],
-          description: 'Sacred Trishul emblem entwined with the primordial Om mantra and third-eye geometry. Symbolizes divine protection, cosmic consciousness, and inner power.',
-          previewImage: '/images/tattoos/mahadev_trishul.jpg',
-          transparentOverlay: '/images/tattoos/mahadev_trishul.jpg',
-          difficulty: 'Complex',
+          name: 'Sacred Mahadev Trishul & Damru',
+          slug: 'mahadev-trishul-damru',
+          style: 'Sacred Devbhoomi',
+          bodyAreas: ['Forearm', 'Chest', 'Upper Arm', 'Back', 'Spine', 'Ribs'],
+          description: 'Iconic Lord Shiva Trishul trident with Damru drum, Crescent Moon, and Sacred Om stippling.',
+          previewImage: '/images/tattoos/mahadev_trishul.png',
+          transparentOverlay: '/images/tattoos/mahadev_trishul.png',
+          difficulty: 'Masterpiece',
           estTimeHours: 3.5,
           estPriceRange: '₹3,500 - ₹6,500',
           isFeatured: true,
           artist: 'Master Sunil (Una)',
-          tags: ['Mahadev', 'Trishul', 'Sacred Geometry', 'Om', 'Spiritual']
+          tags: ['Mahadev', 'Trishul', 'Damru', 'Sacred Devbhoomi', 'Shiva']
         },
         {
-          name: 'Himalayan Wild Peony & Moon',
-          slug: 'himalayan-wild-peony',
-          style: 'Minimalist',
-          bodyAreas: ['Forearm', 'Wrist', 'Shoulder', 'Ribs', 'Ankle'],
-          description: 'Ultra-delicate single-needle botanical peony with soft stippling gradients and micro-foliage. Represents rebirth, peace, and natural elegance.',
-          previewImage: '/images/tattoos/moon_flora.jpg',
-          transparentOverlay: '/images/tattoos/moon_flora.jpg',
-          difficulty: 'Simple',
-          estTimeHours: 2.5,
-          estPriceRange: '₹2,500 - ₹4,500',
-          isFeatured: true,
-          artist: 'Aman Verma',
-          tags: ['Botanical', 'Floral', 'Minimalist', 'Fine Line']
-        },
-        {
-          name: 'Devbhoomi Sacred Mandala',
-          slug: 'devbhoomi-sacred-mandala',
-          style: 'Mandala',
-          bodyAreas: ['Shoulder', 'Chest', 'Back', 'Thigh', 'Forearm'],
-          description: 'Concentric 12-petaled lotus mandala based on the golden ratio and ancient yantras. Radiates harmonious spiritual balance.',
-          previewImage: '/images/tattoos/sacred_mandala.jpg',
-          transparentOverlay: '/images/tattoos/sacred_mandala.jpg',
-          difficulty: 'Complex',
-          estTimeHours: 4.5,
-          estPriceRange: '₹4,500 - ₹8,000',
-          isFeatured: true,
-          artist: 'Master Sunil (Una)',
-          tags: ['Mandala', 'Lotus', 'Dotwork', 'Sacred']
-        },
-        {
-          name: 'Serpent & Peony Fine Line',
-          slug: 'serpent-peony-fine-line',
-          style: 'Fine Line',
-          bodyAreas: ['Forearm', 'Upper Arm', 'Ribs', 'Calf', 'Thigh'],
-          description: 'Fluid serpentine contours entwined around wild mountain flora. Symbol of transformation, rebirth, and inner wisdom.',
-          previewImage: '/images/tattoos/serpent_peony.jpg',
-          transparentOverlay: '/images/tattoos/serpent_peony.jpg',
-          difficulty: 'Complex',
-          estTimeHours: 4.0,
-          estPriceRange: '₹4,000 - ₹7,500',
-          isFeatured: true,
-          artist: 'Aman Verma',
-          tags: ['Serpent', 'Snake', 'Peony', 'Fine Line', 'Nature']
-        },
-        {
-          name: 'Sacred Lotus & Unalome',
-          slug: 'sacred-lotus-unalome',
-          style: 'Spiritual',
-          bodyAreas: ['Back', 'Forearm', 'Sternum', 'Spine', 'Nape'],
-          description: 'Blooming spiritual lotus rising through sacred unalome pathways. Reflects awakening, pure clarity, and enlightenment.',
-          previewImage: '/images/tattoos/sacred_lotus.jpg',
-          transparentOverlay: '/images/tattoos/sacred_lotus.jpg',
-          difficulty: 'Simple',
-          estTimeHours: 2.5,
-          estPriceRange: '₹2,500 - ₹4,500',
-          isFeatured: true,
-          artist: 'Master Sunil (Una)',
-          tags: ['Lotus', 'Unalome', 'Spiritual', 'Sacred Geometry', 'Devbhoomi']
-        },
-        {
-          name: 'Geometric Himalayan Lion',
-          slug: 'geometric-himalayan-lion',
-          style: 'Geometric',
-          bodyAreas: ['Upper Arm', 'Thigh', 'Chest', 'Back'],
-          description: 'Bold royal lion with crystalline geometric crown and dramatic blackwork depth. Symbol of fearless leadership and valor.',
-          previewImage: '/images/tattoos/geometric_lion.jpg',
-          transparentOverlay: '/images/tattoos/geometric_lion.jpg',
-          difficulty: 'Complex',
-          estTimeHours: 5.0,
-          estPriceRange: '₹5,500 - ₹9,500',
-          isFeatured: true,
-          artist: 'Vikram Thakur',
-          tags: ['Lion', 'Geometric', 'Blackwork', 'Himalayan']
-        },
-        {
-          name: 'Botanical Sacred Rose',
-          slug: 'botanical-sacred-rose',
-          style: 'Botanical',
-          bodyAreas: ['Forearm', 'Wrist', 'Shoulder', 'Ankle'],
-          description: 'Classical botanical rose with delicate thorns and layered petals. Symbol of passionate devotion and eternal beauty.',
-          previewImage: '/images/tattoos/sacred_rose.jpg',
-          transparentOverlay: '/images/tattoos/sacred_rose.jpg',
-          difficulty: 'Simple',
-          estTimeHours: 2.5,
-          estPriceRange: '₹2,500 - ₹4,500',
-          isFeatured: true,
-          artist: 'Eliza',
-          tags: ['Rose', 'Botanical', 'Floral', 'Fine Line']
-        },
-        {
-          name: 'Gothic Blackwork Skull',
-          slug: 'gothic-blackwork-skull',
-          style: 'Gothic',
-          bodyAreas: ['Forearm', 'Upper Arm', 'Calf', 'Chest'],
-          description: 'Detailed anatomical skull with dark baroque ornamentation and heavy blackwork shading. Evokes memento mori and resilience.',
-          previewImage: '/images/tattoos/gothic_skull.jpg',
-          transparentOverlay: '/images/tattoos/gothic_skull.jpg',
+          name: 'Om Namah Shivaya Sanskrit Mandala',
+          slug: 'om-namah-shivaya-mandala',
+          style: 'Sacred Devbhoomi',
+          bodyAreas: ['Forearm', 'Chest', 'Spine', 'Upper Arm', 'Neck'],
+          description: 'Sacred Trishul with Devanagari Sanskrit mantra calligraphy and radiant stippled sunburst rays.',
+          previewImage: '/images/tattoos/om_shiva_calligraphy.png',
+          transparentOverlay: '/images/tattoos/om_shiva_calligraphy.png',
           difficulty: 'Masterpiece',
-          estTimeHours: 5.5,
-          estPriceRange: '₹6,000 - ₹11,000',
+          estTimeHours: 3.0,
+          estPriceRange: '₹3,000 - ₹5,500',
           isFeatured: true,
-          artist: 'Vikram Thakur',
-          tags: ['Skull', 'Gothic', 'Blackwork', 'Dark Art']
+          artist: 'Master Sunil (Una)',
+          tags: ['Om', 'Sanskrit', 'Calligraphy', 'Mandala', 'Mantra']
         },
         {
-          name: 'Trishul Dagger & Sacred Heart',
-          slug: 'trishul-dagger-sacred-heart',
-          style: 'Neo-Traditional',
-          bodyAreas: ['Forearm', 'Calf', 'Thigh', 'Sternum'],
-          description: 'Ornamental sacred Trishul blade with radiant rays and mystical geometry. Blends traditional devotional motifs with sharp edge art.',
-          previewImage: '/images/tattoos/trishul_dagger.jpg',
-          transparentOverlay: '/images/tattoos/trishul_dagger.jpg',
+          name: 'Ryu Dragon Koi Leaping Waves',
+          slug: 'ryu-dragon-koi-leaping-waves',
+          style: 'Japanese',
+          bodyAreas: ['Forearm', 'Upper Arm', 'Thigh', 'Calf', 'Back', 'Shoulder'],
+          description: 'Dynamic Japanese traditional dragon koi fish ascending swirling tidal waves with sharp scales and fin details.',
+          previewImage: '/images/tattoos/japanese_koi.png',
+          transparentOverlay: '/images/tattoos/japanese_koi.png',
           difficulty: 'Complex',
           estTimeHours: 4.5,
           estPriceRange: '₹4,500 - ₹8,500',
           isFeatured: true,
           artist: 'Master Sunil (Una)',
-          tags: ['Trishul', 'Dagger', 'Neo-Traditional', 'Sacred']
+          tags: ['Koi', 'Dragon', 'Japanese', 'Waves', 'Sakura']
+        },
+        {
+          name: 'Phoenix Rising From Sacred Flames',
+          slug: 'phoenix-rising-sacred-flames',
+          style: 'Blackwork',
+          bodyAreas: ['Back', 'Chest', 'Shoulder', 'Thigh', 'Ribs', 'Calf'],
+          description: 'Majestic mythical phoenix bird spreading ornate dotwork wings emerging from eternal fire.',
+          previewImage: '/images/tattoos/phoenix_flame.png',
+          transparentOverlay: '/images/tattoos/phoenix_flame.png',
+          difficulty: 'Masterpiece',
+          estTimeHours: 4.0,
+          estPriceRange: '₹4,000 - ₹8,000',
+          isFeatured: true,
+          artist: 'Vikram Thakur',
+          tags: ['Phoenix', 'Flames', 'Fire', 'Mythical', 'Blackwork']
+        },
+        {
+          name: 'Nordic Howling Wolf & Moon',
+          slug: 'nordic-howling-wolf-moon',
+          style: 'Geometric',
+          bodyAreas: ['Forearm', 'Upper Arm', 'Calf', 'Thigh', 'Back', 'Shoulder'],
+          description: 'Intricate Celtic knotwork howling wolf with celestial crescent moon, runes, and sacred geometry.',
+          previewImage: '/images/tattoos/celtic_wolf.png',
+          transparentOverlay: '/images/tattoos/celtic_wolf.png',
+          difficulty: 'Intermediate',
+          estTimeHours: 3.5,
+          estPriceRange: '₹3,500 - ₹6,500',
+          isFeatured: true,
+          artist: 'Master Sunil (Una)',
+          tags: ['Wolf', 'Moon', 'Celtic', 'Nordic', 'Geometric']
+        },
+        {
+          name: 'Fine Line Butterfly & Botanical Lavender',
+          slug: 'butterfly-botanical-lavender',
+          style: 'Fine Line',
+          bodyAreas: ['Wrist', 'Ankle', 'Neck', 'Forearm', 'Shoulder'],
+          description: 'Delicate half-butterfly morphing into blooming wild daisies, lavender sprigs, and stardust.',
+          previewImage: '/images/tattoos/butterfly_botanical.png',
+          transparentOverlay: '/images/tattoos/butterfly_botanical.png',
+          difficulty: 'Delicate',
+          estTimeHours: 2.0,
+          estPriceRange: '₹2,000 - ₹4,000',
+          isFeatured: true,
+          artist: 'Aman Verma',
+          tags: ['Butterfly', 'Lavender', 'Botanical', 'Fine Line', 'Floral']
+        },
+        {
+          name: 'Himalayan Compass & Arrow Navigator',
+          slug: 'himalayan-compass-arrow-navigator',
+          style: 'Geometric',
+          bodyAreas: ['Forearm', 'Shoulder', 'Calf', 'Wrist', 'Upper Arm'],
+          description: 'Sacred compass rose with Himalayan mountain peaks, celestial constellations, and warrior arrows.',
+          previewImage: '/images/tattoos/compass_navigation.png',
+          transparentOverlay: '/images/tattoos/compass_navigation.png',
+          difficulty: 'Intermediate',
+          estTimeHours: 3.0,
+          estPriceRange: '₹3,000 - ₹6,000',
+          isFeatured: true,
+          artist: 'Master Sunil (Una)',
+          tags: ['Compass', 'Navigator', 'Himalayas', 'Mountains', 'Geometric']
+        },
+        {
+          name: 'Minimalist Moon & Wild Flora',
+          slug: 'minimalist-moon-wild-flora',
+          style: 'Fine Line',
+          bodyAreas: ['Forearm', 'Wrist', 'Ankle', 'Shoulder', 'Neck'],
+          description: 'Delicate crescent moon with wild botanical flowers, leaves, and celestial stardust.',
+          previewImage: '/images/tattoos/moon_flora.png',
+          transparentOverlay: '/images/tattoos/moon_flora.png',
+          difficulty: 'Delicate',
+          estTimeHours: 2.0,
+          estPriceRange: '₹2,000 - ₹4,000',
+          isFeatured: true,
+          artist: 'Aman Verma',
+          tags: ['Moon', 'Flora', 'Minimalist', 'Fine Line']
+        },
+        {
+          name: 'Fine Line Serpent & Peony',
+          slug: 'fine-line-serpent-peony',
+          style: 'Fine Line',
+          bodyAreas: ['Forearm', 'Upper Arm', 'Spine', 'Thigh', 'Ribs'],
+          description: 'Coiled serpent snake with detailed scales wrapped around blooming peony flowers.',
+          previewImage: '/images/tattoos/serpent_peony.png',
+          transparentOverlay: '/images/tattoos/serpent_peony.png',
+          difficulty: 'Intermediate',
+          estTimeHours: 3.0,
+          estPriceRange: '₹3,000 - ₹6,000',
+          isFeatured: true,
+          artist: 'Aman Verma',
+          tags: ['Serpent', 'Snake', 'Peony', 'Fine Line', 'Nature']
+        },
+        {
+          name: 'Devbhoomi Sacred Lotus & Unalome',
+          slug: 'devbhoomi-sacred-lotus-unalome',
+          style: 'Sacred Devbhoomi',
+          bodyAreas: ['Spine', 'Neck', 'Upper Arm', 'Back', 'Wrist', 'Ankle'],
+          description: 'Sacred unalome lotus bloom with dotwork mandala petals and vertical chakra alignment.',
+          previewImage: '/images/tattoos/sacred_lotus.png',
+          transparentOverlay: '/images/tattoos/sacred_lotus.png',
+          difficulty: 'Delicate',
+          estTimeHours: 2.5,
+          estPriceRange: '₹2,500 - ₹4,500',
+          isFeatured: true,
+          artist: 'Master Sunil (Una)',
+          tags: ['Lotus', 'Unalome', 'Sacred', 'Devbhoomi', 'Chakra']
+        },
+        {
+          name: 'Geometric Lion King & Mountain',
+          slug: 'geometric-lion-king-mountain',
+          style: 'Geometric',
+          bodyAreas: ['Chest', 'Upper Arm', 'Back', 'Shoulder', 'Thigh'],
+          description: 'Polygonal sacred geometry royal lion head with Himalayan mountain peak line art.',
+          previewImage: '/images/tattoos/geometric_lion.png',
+          transparentOverlay: '/images/tattoos/geometric_lion.png',
+          difficulty: 'Complex',
+          estTimeHours: 3.5,
+          estPriceRange: '₹4,000 - ₹7,500',
+          isFeatured: true,
+          artist: 'Vikram Thakur',
+          tags: ['Lion', 'Geometric', 'Mountain', 'King']
+        },
+        {
+          name: 'Devbhoomi Sacred Radial Mandala',
+          slug: 'devbhoomi-sacred-radial-mandala',
+          style: 'Mandala',
+          bodyAreas: ['Back', 'Shoulder', 'Chest', 'Thigh', 'Ribs'],
+          description: 'Intricate radial sacred geometry mandala with fine dotwork pointillism.',
+          previewImage: '/images/tattoos/sacred_mandala.png',
+          transparentOverlay: '/images/tattoos/sacred_mandala.png',
+          difficulty: 'Masterpiece',
+          estTimeHours: 4.5,
+          estPriceRange: '₹4,500 - ₹8,500',
+          isFeatured: true,
+          artist: 'Master Sunil (Una)',
+          tags: ['Mandala', 'Radial', 'Sacred', 'Dotwork']
+        },
+        {
+          name: 'Himalayan Sacred Botanical Rose',
+          slug: 'himalayan-sacred-botanical-rose',
+          style: 'Traditional',
+          bodyAreas: ['Shoulder', 'Forearm', 'Ankle', 'Wrist', 'Neck', 'Ribs'],
+          description: 'Blooming classical botanical rose with delicate petals and fine-line thorns.',
+          previewImage: '/images/tattoos/sacred_rose.png',
+          transparentOverlay: '/images/tattoos/sacred_rose.png',
+          difficulty: 'Intermediate',
+          estTimeHours: 2.5,
+          estPriceRange: '₹2,500 - ₹4,500',
+          isFeatured: true,
+          artist: 'Eliza',
+          tags: ['Rose', 'Botanical', 'Traditional', 'Floral']
+        },
+        {
+          name: 'Gothic Obsidian Skull Filigree',
+          slug: 'gothic-obsidian-skull-filigree',
+          style: 'Blackwork',
+          bodyAreas: ['Upper Arm', 'Chest', 'Back', 'Calf'],
+          description: 'Detailed blackwork human skull with ornate baroque filigree ornamentation and dark depth.',
+          previewImage: '/images/tattoos/gothic_skull.png',
+          transparentOverlay: '/images/tattoos/gothic_skull.png',
+          difficulty: 'Complex',
+          estTimeHours: 4.0,
+          estPriceRange: '₹4,500 - ₹8,500',
+          isFeatured: true,
+          artist: 'Vikram Thakur',
+          tags: ['Skull', 'Gothic', 'Blackwork', 'Filigree']
+        },
+        {
+          name: 'Devbhoomi Trishul Dagger Heart',
+          slug: 'devbhoomi-trishul-dagger-heart',
+          style: 'Neo-Traditional',
+          bodyAreas: ['Forearm', 'Calf', 'Spine', 'Ribs', 'Upper Arm'],
+          description: 'Ornate sacred Trishul sword dagger piercing sacred heart with radiant sacred geometry.',
+          previewImage: '/images/tattoos/trishul_dagger.png',
+          transparentOverlay: '/images/tattoos/trishul_dagger.png',
+          difficulty: 'Intermediate',
+          estTimeHours: 3.5,
+          estPriceRange: '₹3,500 - ₹7,000',
+          isFeatured: true,
+          artist: 'Master Sunil (Una)',
+          tags: ['Trishul', 'Dagger', 'Heart', 'Neo-Traditional', 'Sacred']
         }
       ]);
       console.log('[Seeder] Seeded default 3D tattoo designs.');
     } else {
-      const legacyDesigns = await TattooDesign.find({ previewImage: { $regex: 'unsplash.com' } });
-      for (const item of legacyDesigns) {
+      const allDesigns = await TattooDesign.find();
+      for (const item of allDesigns) {
         const titleLower = item.name.toLowerCase();
-        let correctImage = '/images/tattoos/mahadev_trishul.jpg';
-        if (titleLower.includes('trishul') || titleLower.includes('shiva')) correctImage = titleLower.includes('dagger') ? '/images/tattoos/trishul_dagger.jpg' : '/images/tattoos/mahadev_trishul.jpg';
-        else if (titleLower.includes('moon') || titleLower.includes('peony')) correctImage = '/images/tattoos/moon_flora.jpg';
-        else if (titleLower.includes('serpent') || titleLower.includes('snake')) correctImage = '/images/tattoos/serpent_peony.jpg';
-        else if (titleLower.includes('lotus') || titleLower.includes('watercolor')) correctImage = '/images/tattoos/sacred_lotus.jpg';
-        else if (titleLower.includes('lion')) correctImage = '/images/tattoos/geometric_lion.jpg';
-        else if (titleLower.includes('mandala') || titleLower.includes('yantra')) correctImage = '/images/tattoos/sacred_mandala.jpg';
-        else if (titleLower.includes('rose')) correctImage = '/images/tattoos/sacred_rose.jpg';
-        else if (titleLower.includes('skull')) correctImage = '/images/tattoos/gothic_skull.jpg';
-        else if (titleLower.includes('dagger')) correctImage = '/images/tattoos/trishul_dagger.jpg';
+        let correctImage = '/images/tattoos/mahadev_trishul.png';
+        if (titleLower.includes('koi') || titleLower.includes('dragon')) correctImage = '/images/tattoos/japanese_koi.png';
+        else if (titleLower.includes('phoenix') || titleLower.includes('fire')) correctImage = '/images/tattoos/phoenix_flame.png';
+        else if (titleLower.includes('wolf') || titleLower.includes('celtic')) correctImage = '/images/tattoos/celtic_wolf.png';
+        else if (titleLower.includes('butterfly') || titleLower.includes('lavender')) correctImage = '/images/tattoos/butterfly_botanical.png';
+        else if (titleLower.includes('compass') || titleLower.includes('navigator')) correctImage = '/images/tattoos/compass_navigation.png';
+        else if (titleLower.includes('om') || titleLower.includes('calligraphy')) correctImage = '/images/tattoos/om_shiva_calligraphy.png';
+        else if (titleLower.includes('trishul') || titleLower.includes('shiva') || titleLower.includes('mahadev')) {
+          correctImage = titleLower.includes('dagger') ? '/images/tattoos/trishul_dagger.png' : '/images/tattoos/mahadev_trishul.png';
+        }
+        else if (titleLower.includes('moon') || titleLower.includes('flora')) {
+          correctImage = (titleLower.includes('serpent') || titleLower.includes('snake')) ? '/images/tattoos/serpent_peony.png' : '/images/tattoos/moon_flora.png';
+        }
+        else if (titleLower.includes('serpent') || titleLower.includes('snake')) correctImage = '/images/tattoos/serpent_peony.png';
+        else if (titleLower.includes('lotus') || titleLower.includes('unalome')) correctImage = '/images/tattoos/sacred_lotus.png';
+        else if (titleLower.includes('lion')) correctImage = '/images/tattoos/geometric_lion.png';
+        else if (titleLower.includes('mandala') || titleLower.includes('yantra')) correctImage = '/images/tattoos/sacred_mandala.png';
+        else if (titleLower.includes('rose')) correctImage = '/images/tattoos/sacred_rose.png';
+        else if (titleLower.includes('skull')) correctImage = '/images/tattoos/gothic_skull.png';
+        else if (titleLower.includes('dagger')) correctImage = '/images/tattoos/trishul_dagger.png';
 
         await TattooDesign.updateOne({ _id: item._id }, { $set: { previewImage: correctImage, transparentOverlay: correctImage } });
       }
@@ -281,13 +381,13 @@ export const seedInitialData = async () => {
     if (portfolioCount === 0) {
       await Portfolio.create([
         {
-          title: 'Mahadev Trishul Sleeve',
-          slug: 'mahadev-trishul-sleeve',
+          title: 'Sacred Mahadev Trishul & Damru',
+          slug: 'mahadev-trishul-damru',
           description: 'Full arm sleeve composition incorporating Lord Shiva, Trishul, Damru, and sacred Himalayan geometry.',
-          style: 'Geometric',
+          style: 'Sacred Devbhoomi',
           category: 'Spiritual',
           bodyPlacement: 'Full Arm / Sleeve',
-          coverImage: '/images/tattoos/mahadev_trishul.jpg',
+          coverImage: '/images/tattoos/mahadev_trishul.png',
           artist: defaultArtistId,
           sessionHours: 12,
           likes: 490,
@@ -295,13 +395,97 @@ export const seedInitialData = async () => {
           tags: ['Sleeve', 'Mahadev', 'Trishul', 'Sacred Geometry'],
         },
         {
-          title: 'Trishul Dagger & Sacred Heart',
-          slug: 'trishul-dagger-sacred-heart',
+          title: 'Om Namah Shivaya Sanskrit Mandala',
+          slug: 'om-namah-shivaya-mandala',
+          description: 'Sacred Trishul with Devanagari Sanskrit mantra calligraphy and radiant stippled sunburst rays.',
+          style: 'Sacred Devbhoomi',
+          category: 'Spiritual',
+          bodyPlacement: 'Forearm / Spine',
+          coverImage: '/images/tattoos/om_shiva_calligraphy.png',
+          artist: defaultArtistId,
+          sessionHours: 3.0,
+          likes: 560,
+          isFeatured: true,
+          tags: ['Om', 'Sanskrit', 'Calligraphy', 'Mandala', 'Mantra'],
+        },
+        {
+          title: 'Ryu Dragon Koi Leaping Waves',
+          slug: 'ryu-dragon-koi-leaping-waves',
+          description: 'Dynamic Japanese traditional dragon koi fish ascending swirling tidal waves with sharp scales and fin details.',
+          style: 'Japanese',
+          category: 'Japanese',
+          bodyPlacement: 'Forearm / Upper Arm',
+          coverImage: '/images/tattoos/japanese_koi.png',
+          artist: defaultArtistId,
+          sessionHours: 4.5,
+          likes: 620,
+          isFeatured: true,
+          tags: ['Koi', 'Dragon', 'Japanese', 'Waves', 'Sakura'],
+        },
+        {
+          title: 'Phoenix Rising From Sacred Flames',
+          slug: 'phoenix-rising-sacred-flames',
+          description: 'Majestic mythical phoenix bird spreading ornate dotwork wings emerging from eternal fire.',
+          style: 'Blackwork',
+          category: 'Blackwork',
+          bodyPlacement: 'Back / Chest',
+          coverImage: '/images/tattoos/phoenix_flame.png',
+          artist: artists[3]?._id || defaultArtistId,
+          sessionHours: 4.0,
+          likes: 580,
+          isFeatured: true,
+          tags: ['Phoenix', 'Flames', 'Fire', 'Mythical', 'Blackwork'],
+        },
+        {
+          title: 'Nordic Howling Wolf & Moon',
+          slug: 'nordic-howling-wolf-moon',
+          description: 'Intricate Celtic knotwork howling wolf with celestial crescent moon, runes, and sacred geometry.',
+          style: 'Geometric',
+          category: 'Geometric',
+          bodyPlacement: 'Forearm / Upper Arm',
+          coverImage: '/images/tattoos/celtic_wolf.png',
+          artist: defaultArtistId,
+          sessionHours: 3.5,
+          likes: 510,
+          isFeatured: true,
+          tags: ['Wolf', 'Moon', 'Celtic', 'Nordic', 'Geometric'],
+        },
+        {
+          title: 'Fine Line Butterfly & Botanical Lavender',
+          slug: 'butterfly-botanical-lavender',
+          description: 'Delicate half-butterfly morphing into blooming wild daisies, lavender sprigs, and stardust.',
+          style: 'Fine Line',
+          category: 'Fine Line',
+          bodyPlacement: 'Wrist / Forearm',
+          coverImage: '/images/tattoos/butterfly_botanical.png',
+          artist: artists[1]?._id || defaultArtistId,
+          sessionHours: 2.0,
+          likes: 670,
+          isFeatured: true,
+          tags: ['Butterfly', 'Lavender', 'Botanical', 'Fine Line', 'Floral'],
+        },
+        {
+          title: 'Himalayan Compass & Arrow Navigator',
+          slug: 'himalayan-compass-arrow-navigator',
+          description: 'Sacred compass rose with Himalayan mountain peaks, celestial constellations, and warrior arrows.',
+          style: 'Geometric',
+          category: 'Geometric',
+          bodyPlacement: 'Forearm / Shoulder',
+          coverImage: '/images/tattoos/compass_navigation.png',
+          artist: defaultArtistId,
+          sessionHours: 3.0,
+          likes: 495,
+          isFeatured: true,
+          tags: ['Compass', 'Navigator', 'Himalayas', 'Mountains', 'Geometric'],
+        },
+        {
+          title: 'Devbhoomi Trishul Dagger Heart',
+          slug: 'devbhoomi-trishul-dagger-heart',
           description: 'Ornamental sacred Trishul blade with radiant rays and mystical geometry.',
           style: 'Neo-Traditional',
           category: 'Neo-Traditional',
           bodyPlacement: 'Forearm / Calf',
-          coverImage: '/images/tattoos/trishul_dagger.jpg',
+          coverImage: '/images/tattoos/trishul_dagger.png',
           artist: defaultArtistId,
           sessionHours: 4.5,
           likes: 580,
@@ -309,13 +493,13 @@ export const seedInitialData = async () => {
           tags: ['Trishul', 'Dagger', 'Neo-Traditional', 'Sacred'],
         },
         {
-          title: 'Sacred Mandala & Dotwork Yantra',
-          slug: 'sacred-mandala-yantra',
+          title: 'Devbhoomi Sacred Radial Mandala',
+          slug: 'devbhoomi-sacred-radial-mandala',
           description: 'Concentric 12-fold sacred geometry yantra with hypnotic stippled dotwork gradients.',
           style: 'Mandala',
           category: 'Geometric',
           bodyPlacement: 'Upper Back / Shoulder',
-          coverImage: '/images/tattoos/sacred_mandala.jpg',
+          coverImage: '/images/tattoos/sacred_mandala.png',
           artist: defaultArtistId,
           sessionHours: 5,
           likes: 420,
@@ -323,13 +507,13 @@ export const seedInitialData = async () => {
           tags: ['Mandala', 'Dotwork', 'Sacred Geometry'],
         },
         {
-          title: 'Himalayan Wild Peony & Moon',
-          slug: 'himalayan-wild-peony-moon',
+          title: 'Minimalist Moon & Wild Flora',
+          slug: 'minimalist-moon-wild-flora',
           description: 'Delicate fine-line Himalayan botanical floral and crescent moon with micro-shadowing on collarbone.',
-          style: 'Minimalist',
+          style: 'Fine Line',
           category: 'Fine Line',
           bodyPlacement: 'Collarbone / Wrist',
-          coverImage: '/images/tattoos/moon_flora.jpg',
+          coverImage: '/images/tattoos/moon_flora.png',
           artist: artists[1]?._id || defaultArtistId,
           sessionHours: 2.5,
           likes: 640,
@@ -337,13 +521,13 @@ export const seedInitialData = async () => {
           tags: ['Fine Line', 'Botanical', 'Floral', 'Moon'],
         },
         {
-          title: 'Geometric Himalayan Lion',
-          slug: 'mountain-lion-blackwork',
+          title: 'Geometric Lion King & Mountain',
+          slug: 'geometric-lion-king-mountain',
           description: 'Deep saturated black ink composition with intense contrast and sharp needlework.',
           style: 'Geometric',
           category: 'Geometric',
           bodyPlacement: 'Chest & Sternum',
-          coverImage: '/images/tattoos/geometric_lion.jpg',
+          coverImage: '/images/tattoos/geometric_lion.png',
           artist: artists[3]?._id || defaultArtistId,
           sessionHours: 4.5,
           likes: 380,
@@ -351,13 +535,13 @@ export const seedInitialData = async () => {
           tags: ['Geometric', 'Lion', 'Blackwork'],
         },
         {
-          title: 'Sacred Lotus & Unalome',
-          slug: 'sacred-lotus-unalome',
+          title: 'Devbhoomi Sacred Lotus & Unalome',
+          slug: 'devbhoomi-sacred-lotus-unalome',
           description: 'Blooming spiritual lotus rising through sacred unalome pathways. Reflects awakening, pure clarity, and enlightenment.',
-          style: 'Spiritual',
+          style: 'Sacred Devbhoomi',
           category: 'Spiritual',
           bodyPlacement: 'Shoulder & Ribs',
-          coverImage: '/images/tattoos/sacred_lotus.jpg',
+          coverImage: '/images/tattoos/sacred_lotus.png',
           artist: artists[2]?._id || defaultArtistId,
           sessionHours: 3.5,
           likes: 510,
@@ -365,13 +549,13 @@ export const seedInitialData = async () => {
           tags: ['Lotus', 'Unalome', 'Spiritual'],
         },
         {
-          title: 'Serpent & Peony Fine Line',
-          slug: 'serpent-peony-fine-line',
+          title: 'Fine Line Serpent & Peony',
+          slug: 'fine-line-serpent-peony',
           description: 'Fluid serpentine contours entwined around wild mountain flora.',
           style: 'Fine Line',
           category: 'Fine Line',
           bodyPlacement: 'Forearm / Ribs',
-          coverImage: '/images/tattoos/serpent_peony.jpg',
+          coverImage: '/images/tattoos/serpent_peony.png',
           artist: artists[1]?._id || defaultArtistId,
           sessionHours: 4.0,
           likes: 475,
@@ -379,13 +563,13 @@ export const seedInitialData = async () => {
           tags: ['Serpent', 'Snake', 'Peony', 'Fine Line'],
         },
         {
-          title: 'Botanical Sacred Rose',
-          slug: 'botanical-sacred-rose',
+          title: 'Himalayan Sacred Botanical Rose',
+          slug: 'himalayan-sacred-botanical-rose',
           description: 'Classical botanical rose with delicate thorns and layered petals.',
-          style: 'Botanical',
+          style: 'Traditional',
           category: 'Botanical',
           bodyPlacement: 'Forearm / Wrist',
-          coverImage: '/images/tattoos/sacred_rose.jpg',
+          coverImage: '/images/tattoos/sacred_rose.png',
           artist: artists[2]?._id || defaultArtistId,
           sessionHours: 2.5,
           likes: 460,
@@ -393,13 +577,13 @@ export const seedInitialData = async () => {
           tags: ['Rose', 'Botanical', 'Floral'],
         },
         {
-          title: 'Gothic Blackwork Skull',
-          slug: 'gothic-blackwork-skull',
+          title: 'Gothic Obsidian Skull Filigree',
+          slug: 'gothic-obsidian-skull-filigree',
           description: 'Detailed anatomical skull with dark baroque ornamentation and heavy blackwork shading.',
           style: 'Blackwork',
           category: 'Blackwork',
           bodyPlacement: 'Upper Arm / Calf',
-          coverImage: '/images/tattoos/gothic_skull.jpg',
+          coverImage: '/images/tattoos/gothic_skull.png',
           artist: artists[3]?._id || defaultArtistId,
           sessionHours: 5.0,
           likes: 410,
@@ -409,20 +593,29 @@ export const seedInitialData = async () => {
       ]);
       console.log('[Seeder] Seeded default portfolio pieces.');
     } else {
-      // Auto-update any legacy unsplash URLs to authentic artwork
-      const legacyPortfolios = await Portfolio.find({ coverImage: { $regex: 'unsplash.com' } });
-      for (const item of legacyPortfolios) {
+      const allPortfolios = await Portfolio.find();
+      for (const item of allPortfolios) {
         const titleLower = item.title.toLowerCase();
-        let correctImage = '/images/tattoos/mahadev_trishul.jpg';
-        if (titleLower.includes('trishul') || titleLower.includes('shiva')) correctImage = titleLower.includes('dagger') ? '/images/tattoos/trishul_dagger.jpg' : '/images/tattoos/mahadev_trishul.jpg';
-        else if (titleLower.includes('moon') || titleLower.includes('peony')) correctImage = '/images/tattoos/moon_flora.jpg';
-        else if (titleLower.includes('serpent') || titleLower.includes('snake')) correctImage = '/images/tattoos/serpent_peony.jpg';
-        else if (titleLower.includes('lotus') || titleLower.includes('watercolor')) correctImage = '/images/tattoos/sacred_lotus.jpg';
-        else if (titleLower.includes('lion')) correctImage = '/images/tattoos/geometric_lion.jpg';
-        else if (titleLower.includes('mandala') || titleLower.includes('yantra')) correctImage = '/images/tattoos/sacred_mandala.jpg';
-        else if (titleLower.includes('rose')) correctImage = '/images/tattoos/sacred_rose.jpg';
-        else if (titleLower.includes('skull')) correctImage = '/images/tattoos/gothic_skull.jpg';
-        else if (titleLower.includes('dagger')) correctImage = '/images/tattoos/trishul_dagger.jpg';
+        let correctImage = '/images/tattoos/mahadev_trishul.png';
+        if (titleLower.includes('koi') || titleLower.includes('dragon')) correctImage = '/images/tattoos/japanese_koi.png';
+        else if (titleLower.includes('phoenix') || titleLower.includes('fire')) correctImage = '/images/tattoos/phoenix_flame.png';
+        else if (titleLower.includes('wolf') || titleLower.includes('celtic')) correctImage = '/images/tattoos/celtic_wolf.png';
+        else if (titleLower.includes('butterfly') || titleLower.includes('lavender')) correctImage = '/images/tattoos/butterfly_botanical.png';
+        else if (titleLower.includes('compass') || titleLower.includes('navigator')) correctImage = '/images/tattoos/compass_navigation.png';
+        else if (titleLower.includes('om') || titleLower.includes('calligraphy')) correctImage = '/images/tattoos/om_shiva_calligraphy.png';
+        else if (titleLower.includes('trishul') || titleLower.includes('shiva') || titleLower.includes('mahadev')) {
+          correctImage = titleLower.includes('dagger') ? '/images/tattoos/trishul_dagger.png' : '/images/tattoos/mahadev_trishul.png';
+        }
+        else if (titleLower.includes('moon') || titleLower.includes('flora')) {
+          correctImage = (titleLower.includes('serpent') || titleLower.includes('snake')) ? '/images/tattoos/serpent_peony.png' : '/images/tattoos/moon_flora.png';
+        }
+        else if (titleLower.includes('serpent') || titleLower.includes('snake')) correctImage = '/images/tattoos/serpent_peony.png';
+        else if (titleLower.includes('lotus') || titleLower.includes('unalome')) correctImage = '/images/tattoos/sacred_lotus.png';
+        else if (titleLower.includes('lion')) correctImage = '/images/tattoos/geometric_lion.png';
+        else if (titleLower.includes('mandala') || titleLower.includes('yantra')) correctImage = '/images/tattoos/sacred_mandala.png';
+        else if (titleLower.includes('rose')) correctImage = '/images/tattoos/sacred_rose.png';
+        else if (titleLower.includes('skull')) correctImage = '/images/tattoos/gothic_skull.png';
+        else if (titleLower.includes('dagger')) correctImage = '/images/tattoos/trishul_dagger.png';
 
         await Portfolio.updateOne({ _id: item._id }, { $set: { coverImage: correctImage } });
       }

@@ -36,36 +36,55 @@ const getAuthenticImageForTitle = (title, currentImage) => {
     return currentImage;
   }
   const t = (title || '').toLowerCase();
+  
+  if (t.includes('koi') || t.includes('dragon') || t.includes('japanese')) {
+    return '/images/tattoos/japanese_koi.png';
+  }
+  if (t.includes('phoenix') || t.includes('fire') || t.includes('flame')) {
+    return '/images/tattoos/phoenix_flame.png';
+  }
+  if (t.includes('wolf') || t.includes('celtic') || t.includes('nordic')) {
+    return '/images/tattoos/celtic_wolf.png';
+  }
+  if (t.includes('butterfly') || t.includes('lavender')) {
+    return '/images/tattoos/butterfly_botanical.png';
+  }
+  if (t.includes('compass') || t.includes('navigator') || t.includes('nautical') || t.includes('arrow')) {
+    return '/images/tattoos/compass_navigation.png';
+  }
+  if (t.includes('om') || t.includes('calligraphy') || t.includes('sanskrit') || t.includes('namah')) {
+    return '/images/tattoos/om_shiva_calligraphy.png';
+  }
   if (t.includes('trishul') || t.includes('shiva') || t.includes('mahadev')) {
-    if (t.includes('dagger')) return '/images/tattoos/trishul_dagger.jpg';
-    return '/images/tattoos/mahadev_trishul.jpg';
+    if (t.includes('dagger')) return '/images/tattoos/trishul_dagger.png';
+    return '/images/tattoos/mahadev_trishul.png';
   }
-  if (t.includes('moon') || t.includes('flora') || t.includes('peony')) {
-    if (t.includes('serpent') || t.includes('snake')) return '/images/tattoos/serpent_peony.jpg';
-    return '/images/tattoos/moon_flora.jpg';
+  if (t.includes('moon') || t.includes('flora')) {
+    if (t.includes('serpent') || t.includes('snake')) return '/images/tattoos/serpent_peony.png';
+    return '/images/tattoos/moon_flora.png';
   }
-  if (t.includes('serpent') || t.includes('snake')) {
-    return '/images/tattoos/serpent_peony.jpg';
+  if (t.includes('serpent') || t.includes('snake') || t.includes('peony')) {
+    return '/images/tattoos/serpent_peony.png';
   }
-  if (t.includes('lotus') || t.includes('unalome') || t.includes('watercolor')) {
-    return '/images/tattoos/sacred_lotus.jpg';
+  if (t.includes('lotus') || t.includes('unalome')) {
+    return '/images/tattoos/sacred_lotus.png';
   }
   if (t.includes('lion')) {
-    return '/images/tattoos/geometric_lion.jpg';
+    return '/images/tattoos/geometric_lion.png';
   }
   if (t.includes('mandala') || t.includes('yantra')) {
-    return '/images/tattoos/sacred_mandala.jpg';
+    return '/images/tattoos/sacred_mandala.png';
   }
   if (t.includes('rose') || t.includes('botanical')) {
-    return '/images/tattoos/sacred_rose.jpg';
+    return '/images/tattoos/sacred_rose.png';
   }
-  if (t.includes('skull') || t.includes('gothic')) {
-    return '/images/tattoos/gothic_skull.jpg';
+  if (t.includes('skull') || t.includes('gothic') || t.includes('obsidian')) {
+    return '/images/tattoos/gothic_skull.png';
   }
   if (t.includes('dagger')) {
-    return '/images/tattoos/trishul_dagger.jpg';
+    return '/images/tattoos/trishul_dagger.png';
   }
-  return currentImage || '/images/tattoos/mahadev_trishul.jpg';
+  return currentImage || '/images/tattoos/mahadev_trishul.png';
 };
 
   useEffect(() => {
