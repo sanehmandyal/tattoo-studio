@@ -207,7 +207,7 @@ export const Interactive3DStudio = ({
   const [isDraggingTattoo, setIsDraggingTattoo] = useState(false);
   const [tattooDragStart, setTattooDragStart] = useState({ x: 0, y: 0 });
 
-  // Powerful Interactive Zoom State (0.8x to 2.5x)
+  // Powerful Interactive Zoom State (0.8x to 2.8x)
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -215,6 +215,8 @@ export const Interactive3DStudio = ({
 
   // Focus Mode: 'body' (center zoom) or 'tattoo' (focus zoom directly on tattoo part)
   const [zoomFocusMode, setZoomFocusMode] = useState('tattoo');
+  const [hoveredPart, setHoveredPart] = useState(null);
+  const [highlightPulse, setHighlightPulse] = useState(true);
 
   // Custom Fine Tuning for Tattoo Placement, Size & 360° Rotation
   const [tattooScale, setTattooScale] = useState(1.10);
