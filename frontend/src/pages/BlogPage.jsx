@@ -12,18 +12,18 @@ export const getArticleCoverImage = (blog) => {
 
   // 1. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry
   if (t.includes('mahadev') || t.includes('shiva') || t.includes('trishul') || s.includes('mahadev') || s.includes('sacred-geometry') || t.includes('geometry')) {
-    return '/images/tattoos/mahadev_trishul.png';
+    return '/images/tattoos/mahadev_trishul.jpg';
   }
   // 2. Tattoo Preparation / Session Prep / Hydration / Skin Prep
   if (t.includes('prep') || t.includes('prepare') || s.includes('prep') || c.includes('prep') || t.includes('session')) {
-    return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80';
+    return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80';
   }
   // 3. Aftercare / Contrast / Longevity / Healing / Science
   if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity') || s.includes('contrast') || s.includes('aftercare') || c.includes('aftercare') || t.includes('science')) {
-    return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80';
+    return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
   }
 
-  return blog?.coverImage || '/images/tattoos/mahadev_trishul.png';
+  return blog?.coverImage || '/images/tattoos/mahadev_trishul.jpg';
 };
 
 export const BlogPage = () => {
@@ -140,20 +140,18 @@ export const BlogPage = () => {
                 key={blog._id}
                 className="glass-card rounded-xl overflow-hidden border border-studio-border/40 hover:border-studio-bronze transition-all duration-300 flex flex-col justify-between group shadow-xl"
               >
-                <div className="relative h-56 overflow-hidden bg-black/90 flex items-center justify-center p-2">
+                <div className="relative h-56 overflow-hidden bg-black flex items-center justify-center">
                   <img
-                    src={getFullImageUrl(blog.coverImage)}
+                    src={getFullImageUrl(getArticleCoverImage(blog))}
                     alt={blog.title}
-                    className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
-                      blog.coverImage?.includes('/tattoos/') ? 'object-contain p-2' : 'object-cover'
-                    }`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = '/images/tattoos/mahadev_trishul.png';
+                      e.target.src = '/images/tattoos/mahadev_trishul.jpg';
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-studio-card/80 via-transparent to-transparent opacity-70 pointer-events-none" />
-                  <span className="absolute top-3 left-3 bg-studio-darker/90 text-[10px] font-bold text-studio-bronzeLight uppercase tracking-wider px-2.5 py-1 rounded border border-studio-border/40">
+                  <div className="absolute inset-0 bg-gradient-to-t from-studio-card/80 via-transparent to-transparent opacity-60 pointer-events-none" />
+                  <span className="absolute top-3 left-3 bg-black/85 backdrop-blur-md text-[10px] font-bold text-amber-300 uppercase tracking-wider px-2.5 py-1 rounded border border-amber-500/30 shadow">
                     {blog.category}
                   </span>
                 </div>

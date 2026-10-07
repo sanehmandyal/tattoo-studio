@@ -19,10 +19,10 @@ export const BlogDetailPage = () => {
         if (res.success && res.blog) {
           const mapImg = (b) => {
             const t = (b.title || '').toLowerCase();
-            if (t.includes('mahadev') || t.includes('geometry') || t.includes('shiva') || t.includes('trishul')) return '/images/tattoos/mahadev_trishul.png';
-            if (t.includes('prep') || t.includes('session')) return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80';
-            if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity')) return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80';
-            return b.coverImage || '/images/tattoos/mahadev_trishul.png';
+            if (t.includes('mahadev') || t.includes('geometry') || t.includes('shiva') || t.includes('trishul')) return '/images/tattoos/mahadev_trishul.jpg';
+            if (t.includes('prep') || t.includes('session')) return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80';
+            if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity')) return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
+            return b.coverImage || '/images/tattoos/mahadev_trishul.jpg';
           };
 
           setBlog({

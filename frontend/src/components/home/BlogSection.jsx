@@ -4,13 +4,34 @@ import { blogsAPI } from '../../services/api';
 import { Clock, User, ArrowRight, BookOpen } from 'lucide-react';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
+export const getArticleCoverImage = (blog) => {
+  const t = (blog?.title || '').toLowerCase();
+  const s = (blog?.slug || '').toLowerCase();
+  const c = (blog?.category || '').toLowerCase();
+
+  // 1. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry
+  if (t.includes('mahadev') || t.includes('shiva') || t.includes('trishul') || s.includes('mahadev') || s.includes('sacred-geometry') || t.includes('geometry')) {
+    return '/images/tattoos/mahadev_trishul.jpg';
+  }
+  // 2. Tattoo Preparation / Session Prep / Hydration / Skin Prep
+  if (t.includes('prep') || t.includes('prepare') || s.includes('prep') || c.includes('prep') || t.includes('session')) {
+    return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80';
+  }
+  // 3. Aftercare / Contrast / Longevity / Healing / Science
+  if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity') || s.includes('contrast') || s.includes('aftercare') || c.includes('aftercare') || t.includes('science')) {
+    return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
+  }
+
+  return blog?.coverImage || '/images/tattoos/mahadev_trishul.jpg';
+};
+
 const DEFAULT_BLOGS = [
   {
     _id: 'b1',
     title: 'How to Prepare Your Body and Skin for a Multi-Hour Tattoo Session',
     slug: 'prep-your-body-for-tattoo-session',
     excerpt: 'Hydration, nutrition, skin prep, and breathing techniques to maximize endurance and comfort in the chair.',
-    coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80',
     category: 'Tattoo Preparation',
     readTimeMinutes: 5,
     author: 'Master Sunil',
@@ -20,7 +41,7 @@ const DEFAULT_BLOGS = [
     title: 'The Sacred Architecture of Mahadev Trishul & Devbhoomi Geometry',
     slug: 'sacred-geometry-devbhoomi-art',
     excerpt: 'Exploring the spiritual symbolism of Lord Shiva, the cosmic trident, and sacred golden-ratio yantras.',
-    coverImage: '/images/tattoos/mahadev_trishul.png',
+    coverImage: '/images/tattoos/mahadev_trishul.jpg',
     category: 'Sacred Devbhoomi',
     readTimeMinutes: 4,
     author: 'Master Sunil',
@@ -30,7 +51,7 @@ const DEFAULT_BLOGS = [
     title: 'Medical Aftercare: Preserving Long-Term Ink Contrast and Sharpness',
     slug: 'preserving-contrast-tattoo-longevity',
     excerpt: 'Understanding UV photodegradation, proper skin barrier healing, and lifetime tattoo vibrance.',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80',
     category: 'Tattoo Aftercare',
     readTimeMinutes: 6,
     author: 'Aman Verma',
@@ -47,13 +68,7 @@ export const BlogSection = () => {
         if (res.success && res.blogs?.length > 0) {
           const mapped = res.blogs.map(b => ({
             ...b,
-            coverImage: b.coverImage?.includes('images.unsplash.com') && (b.title?.toLowerCase().includes('mahadev') || b.title?.toLowerCase().includes('geometry'))
-              ? '/images/tattoos/mahadev_trishul.png'
-              : b.title?.toLowerCase().includes('prep')
-              ? 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=800&q=80'
-              : b.title?.toLowerCase().includes('aftercare') || b.title?.toLowerCase().includes('contrast')
-              ? 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80'
-              : b.coverImage || '/images/tattoos/mahadev_trishul.png'
+            coverImage: getArticleCoverImage(b)
           }));
           setBlogs(mapped);
         }
@@ -97,16 +112,14 @@ export const BlogSection = () => {
               key={blog._id}
               className="bg-zinc-900/80 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-400/40 transition-all flex flex-col justify-between group shadow-md"
             >
-              <div className="relative h-48 overflow-hidden bg-black/90 flex items-center justify-center p-2">
+              <div className="relative h-48 overflow-hidden bg-black flex items-center justify-center">
                 <img
-                  src={getFullImageUrl(blog.coverImage)}
+                  src={getFullImageUrl(getArticleCoverImage(blog))}
                   alt={blog.title}
-                  className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
-                    blog.coverImage?.includes('/tattoos/') ? 'object-contain p-2' : 'object-cover'
-                  }`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/images/tattoos/mahadev_trishul.png';
+                    e.target.src = '/images/tattoos/mahadev_trishul.jpg';
                   }}
                 />
                 <span className="absolute top-3 left-3 bg-black/85 backdrop-blur-md text-[10px] font-bold text-amber-300 uppercase tracking-wider px-2.5 py-1 rounded-md border border-amber-500/30">
