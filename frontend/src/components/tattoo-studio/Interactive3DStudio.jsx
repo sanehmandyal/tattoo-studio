@@ -454,19 +454,19 @@ export const Interactive3DStudio = ({
   const getInkImageStyle = () => {
     if (blendMode === 'high-contrast') {
       return {
-        filter: 'contrast(1.6) brightness(0.9) drop-shadow(0 0 1px rgba(0,0,0,0.95))',
+        filter: 'contrast(1.2) saturate(1.25) brightness(1.02) drop-shadow(0 0 2px rgba(0,0,0,0.85))',
         opacity: tattooOpacity,
       };
     }
     if (blendMode === 'natural-skin') {
       return {
-        filter: 'contrast(1.2) brightness(0.95) drop-shadow(0 0 1px rgba(0,0,0,0.7))',
-        opacity: tattooOpacity * 0.9,
+        filter: 'contrast(1.1) saturate(1.15) brightness(0.98) drop-shadow(0 0 1px rgba(0,0,0,0.65))',
+        opacity: tattooOpacity * 0.95,
       };
     }
     // Direct Sharp Stencil
     return {
-      filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.8))',
+      filter: 'saturate(1.2) drop-shadow(0 0 2px rgba(0,0,0,0.8))',
       opacity: tattooOpacity,
     };
   };
