@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair, X, Flame, ArrowRight } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair, X, Flame, ArrowRight, Palette } from 'lucide-react';
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
@@ -199,6 +199,11 @@ export const Interactive3DStudio = ({
   // Interaction Mode: 'tattoo' (Move/Rotate Tattoo) vs 'body' (Orbit 3D Mannequin)
   const [interactionMode, setInteractionMode] = useState('tattoo');
 
+  // Track if user has chosen a tattoo (once chosen, switching body parts won't show popup bar again)
+  const [hasUserChosenTattoo, setHasUserChosenTattoo] = useState(false);
+  const [showTattooPicker, setShowTattooPicker] = useState(false);
+  const [pickerStyleFilter, setPickerStyleFilter] = useState('All');
+
   // Continuous 360-degree body rotation state (0° to 360°)
   const [rotationDeg, setRotationDeg] = useState(0);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
@@ -214,10 +219,6 @@ export const Interactive3DStudio = ({
   const tattooCenterRef = useRef({ x: 0, y: 0 });
   const tattooElemRef = useRef(null);
 
-  // In-Studio Reference Sidebar Slide-Out State (Opens on body part click)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [sidebarStyleFilter, setSidebarStyleFilter] = useState('All');
-
   // Interactive Zoom State (0.8x to 2.8x)
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [zoomFocusMode, setZoomFocusMode] = useState('tattoo');
@@ -232,7 +233,7 @@ export const Interactive3DStudio = ({
   const [offsetNudgeY, setOffsetNudgeY] = useState(0);
   const [blendMode, setBlendMode] = useState('multiply'); // 'multiply' gives true skin ink absorption
 
-  // Active Control Panel Tab: 'transform' (size/rotate) | 'position' (drag/nudge) | 'designs' (tattoos)
+  // Active Control Panel Tab: 'transform' (size/rotate) | 'position' (drag/nudge)
   const [activeTab, setActiveTab] = useState('transform');
 
   const studioContainerRef = useRef(null);
@@ -258,7 +259,7 @@ export const Interactive3DStudio = ({
     return () => el.removeEventListener('wheel', handleWheelNonPassive);
   }, []);
 
-  // Automatically rotate toward chosen body area and open reference sidebar
+  // Automatically rotate toward chosen body area
   useEffect(() => {
     if (!selectedBodyArea) return;
     const lower = selectedBodyArea.toLowerCase();
@@ -275,11 +276,16 @@ export const Interactive3DStudio = ({
       setOffsetNudgeX(0);
       setOffsetNudgeY(0);
       setHighlightPulse(true);
-      setIsSidebarOpen(true); // Open reference sidebar on body part select
+
+      // Only open horizontal picker if user has not picked a tattoo yet
+      if (!hasUserChosenTattoo && !selectedDesign) {
+        setShowTattooPicker(true);
+      }
+
       const timer = setTimeout(() => setHighlightPulse(false), 1200);
       return () => clearTimeout(timer);
     }
-  }, [selectedBodyArea]);
+  }, [selectedBodyArea, hasUserChosenTattoo, selectedDesign]);
 
   // Smooth Auto-rotate 360 animation loop
   useEffect(() => {
@@ -359,6 +365,14 @@ export const Interactive3DStudio = ({
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
   };
 
+  // Handle Tattoo Selection: Selects tattoo and closes the selector so user can test on all body parts
+  const handleSelectTattooArtwork = (design) => {
+    if (onSelectDesign) onSelectDesign(design);
+    setHasUserChosenTattoo(true);
+    setShowTattooPicker(false); // Close selector bar immediately!
+    toast.success(`Selected "${design.name}". Tap any body part to test!`);
+  };
+
   // Normalized 0 to 360 angle
   const normalizedAngle = ((rotationDeg % 360) + 360) % 360;
 
@@ -419,23 +433,12 @@ export const Interactive3DStudio = ({
     toast.info(`Centered on ${placementConfig?.label || selectedBodyArea}`);
   };
 
-  // Filter tattoo reference options for sidebar
-  const matchingDesigns = designs.filter(d => {
-    const matchesStyle = sidebarStyleFilter === 'All' || d.style.toLowerCase() === sidebarStyleFilter.toLowerCase();
+  // Filter designs for the horizontal transparent picker
+  const filteredPickerDesigns = designs.filter(d => {
+    const matchesStyle = pickerStyleFilter === 'All' || d.style.toLowerCase() === pickerStyleFilter.toLowerCase();
     return matchesStyle;
   });
 
-  const recommendedTattoos = matchingDesigns.filter(d => 
-    (d.bodyAreas || []).some(a => 
-      a.toLowerCase() === selectedBodyArea.toLowerCase() || 
-      selectedBodyArea.toLowerCase().includes(a.toLowerCase()) || 
-      a.toLowerCase().includes(selectedBodyArea.toLowerCase())
-    )
-  );
-
-  const otherTattoos = matchingDesigns.filter(d => !recommendedTattoos.includes(d));
-
-  // Focus Origin: if 'tattoo' mode, pivot zoom right on the tattoo coordinates!
   const zoomOriginX = zoomFocusMode === 'tattoo' && frameCoords ? `${frameCoords.left + offsetNudgeX}%` : '50%';
   const zoomOriginY = zoomFocusMode === 'tattoo' && frameCoords ? `${frameCoords.top + offsetNudgeY}%` : '50%';
 
@@ -445,18 +448,18 @@ export const Interactive3DStudio = ({
   return (
     <div
       ref={studioContainerRef}
-      className={`relative w-full ${compact ? 'h-[540px] sm:h-[600px]' : 'h-[600px] sm:h-[680px] md:h-[740px]'} flex flex-col justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-all`}
+      className={`relative w-full ${compact ? 'h-[540px] sm:h-[600px]' : 'h-[600px] sm:h-[680px] md:h-[740px]'} flex flex-col justify-between select-none overflow-hidden rounded-3xl bg-[#090b0e] border border-white/10 shadow-2xl transition-all`}
       onPointerDown={handleStagePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
       
-      {/* 1. TOP HEADER BAR: MODE TOGGLE, ANGLE, & STATUS */}
-      <div className="absolute top-2.5 left-2.5 right-2.5 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
+      {/* 1. TOP HEADER BAR: INTERACTION MODES, CHANGE TATTOO BUTTON & ANGLE */}
+      <div className="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
         
-        {/* Interaction Mode Switcher */}
-        <div className="flex items-center bg-black/90 backdrop-blur-md border border-white/15 p-1 rounded-full shadow-xl">
+        {/* Left Controls: Mode Switcher & Change Tattoo Button */}
+        <div className="flex items-center space-x-1.5 bg-black/60 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-xl">
           <button
             type="button"
             onClick={() => {
@@ -484,22 +487,37 @@ export const Interactive3DStudio = ({
                 ? 'bg-cyan-400 text-black shadow-md'
                 : 'text-zinc-400 hover:text-white'
             }`}
-            title="Drag anywhere to rotate 3D human body"
+            title="Drag anywhere to rotate 3D mannequin"
           >
             <span>🧍 Orbit 3D Body</span>
           </button>
+
+          {/* Transparent Glass Button to Change Tattoo Design */}
+          <button
+            type="button"
+            onClick={() => setShowTattooPicker(!showTattooPicker)}
+            className={`flex items-center space-x-1 px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
+              showTattooPicker
+                ? 'bg-amber-400 text-black font-black'
+                : 'bg-white/10 hover:bg-white/20 text-amber-300 border border-amber-400/30'
+            }`}
+            title="Open horizontal tattoo picker"
+          >
+            <Palette className="w-3 h-3" />
+            <span>{showTattooPicker ? '✕ Close' : 'Change Tattoo'}</span>
+          </button>
         </div>
 
-        {/* 360 Angle Presets & Auto Orbit */}
-        <div className="flex items-center space-x-1.5 bg-black/85 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-lg">
+        {/* 360 Angle Controls & Focus */}
+        <div className="flex items-center space-x-1.5 bg-black/60 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-lg">
           <button
             type="button"
             onClick={() => setRotationDeg((prev) => (prev + 45) % 360)}
-            className="flex items-center space-x-1 px-2.5 py-1 text-[10px] font-bold text-amber-300 hover:text-white bg-amber-950/50 border border-amber-500/30 rounded-full transition-colors"
+            className="flex items-center space-x-1 px-2.5 py-1 text-[10px] font-bold text-amber-300 hover:text-white bg-amber-950/40 border border-amber-500/30 rounded-full transition-colors"
             title="Turn Mannequin 45°"
           >
             <Compass className="w-3 h-3 text-amber-400" />
-            <span>{Math.round(normalizedAngle)}° Body</span>
+            <span>{Math.round(normalizedAngle)}°</span>
           </button>
 
           <button
@@ -508,51 +526,43 @@ export const Interactive3DStudio = ({
             className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-full transition-all ${
               isAutoRotating
                 ? 'bg-amber-400 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
+                : 'text-zinc-400 hover:text-white bg-zinc-900/80 border border-white/5'
             }`}
             title="Auto 360 Turntable Orbit"
           >
-            {isAutoRotating ? '⏸ Stop' : '▶ 360° Spin'}
+            {isAutoRotating ? '⏸ Stop' : '▶ 360°'}
           </button>
 
-          {/* Tattoo Reference Sidebar Toggle Button */}
           <button
             type="button"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className={`px-2.5 py-1 text-[10px] font-bold rounded-full transition-all flex items-center space-x-1 ${
-              isSidebarOpen
-                ? 'bg-amber-400 text-black font-black shadow-md'
-                : 'bg-zinc-900 text-amber-300 border border-amber-500/30 hover:bg-zinc-800'
+            onClick={() => {
+              const nextMode = zoomFocusMode === 'tattoo' ? 'body' : 'tattoo';
+              setZoomFocusMode(nextMode);
+              setZoomLevel(nextMode === 'tattoo' ? 1.6 : 1.0);
+            }}
+            className={`px-2 py-1 text-[10px] font-bold rounded-full transition-all ${
+              zoomFocusMode === 'tattoo' && zoomLevel > 1.1
+                ? 'bg-amber-400/20 text-amber-300 border border-amber-500/40'
+                : 'text-zinc-400 hover:text-white bg-zinc-900/80 border border-white/5'
             }`}
-            title="Toggle Tattoo References Sidebar"
+            title="Toggle zoom focus"
           >
-            <Flame className="w-3 h-3" />
-            <span>{isSidebarOpen ? 'Close Tattoos' : `🎨 ${selectedBodyArea} References (${recommendedTattoos.length || matchingDesigns.length})`}</span>
+            {zoomFocusMode === 'tattoo' ? '🔍 Tattoo' : '🌐 Body'}
           </button>
-        </div>
-
-        {/* Status Badge & Reset */}
-        <div className="flex items-center space-x-1.5">
-          <div className="bg-black/85 backdrop-blur-md border border-amber-400/40 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold text-amber-300 flex items-center space-x-1.5 shadow-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="truncate max-w-[120px] sm:max-w-none">
-              {placementConfig?.label || selectedBodyArea}
-            </span>
-          </div>
 
           <button
             type="button"
             onClick={handleReset}
-            className="p-1.5 bg-black/85 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/10 rounded-full shadow-md transition-colors"
-            title="Reset view and tattoo position"
+            className="p-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-full transition-colors"
+            title="Reset position"
           >
-            <RefreshCcw className="w-3.5 h-3.5" />
+            <RefreshCcw className="w-3 h-3" />
           </button>
         </div>
       </div>
 
-      {/* 2. COMPACT FLOATING ZOOM HUD (TOP LEFT/RIGHT) */}
-      <div className="absolute left-2.5 top-16 z-30 flex flex-col items-center bg-black/80 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg pointer-events-auto space-y-1">
+      {/* 2. COMPACT FLOATING ZOOM HUD (TOP LEFT) */}
+      <div className="absolute left-3 top-16 z-30 flex flex-col items-center bg-black/60 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg pointer-events-auto space-y-1">
         <button
           type="button"
           onClick={handleZoomIn}
@@ -639,7 +649,6 @@ export const Interactive3DStudio = ({
               >
                 {/* Visual Rotating Bounding Box Indicator & Direct Rotation Handle */}
                 <div className="absolute inset-[-4px] border border-dashed border-amber-400/60 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                  {/* Top Rotate Handle */}
                   <div
                     onPointerDown={(e) => {
                       e.stopPropagation();
@@ -678,7 +687,7 @@ export const Interactive3DStudio = ({
               </div>
             )}
 
-            {/* Clickable Muscle Hotspots (Opens Tattoo Reference Sidebar on click) */}
+            {/* Clickable Muscle Hotspots (Seamless body part switching for testing on all body parts) */}
             {Object.entries(ANATOMICAL_PLACEMENTS).map(([key, config]) => {
               const activeCoords = config.frames?.[currentFrame.angle];
               if (!activeCoords || (activeCoords.opacity ?? 1) < 0.4) return null;
@@ -695,8 +704,12 @@ export const Interactive3DStudio = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onSelectBodyArea) onSelectBodyArea(key);
-                    setIsSidebarOpen(true); // Open Tattoo Reference Sidebar
-                    toast.success(`Selected ${config.name}! Showing tattoo references.`);
+                    
+                    // If user hasn't selected a tattoo yet, show the horizontal picker
+                    if (!hasUserChosenTattoo && !selectedDesign) {
+                      setShowTattooPicker(true);
+                    }
+                    toast.info(`Testing on ${config.name}!`);
                   }}
                   onMouseEnter={() => setHoveredPart(key)}
                   onMouseLeave={() => setHoveredPart(null)}
@@ -730,186 +743,93 @@ export const Interactive3DStudio = ({
 
       </div>
 
-      {/* 4. IN-STUDIO SLIDE-OVER TATTOO REFERENCE SIDEBAR */}
-      {isSidebarOpen && (
-        <div className="absolute top-0 right-0 bottom-0 w-72 sm:w-80 md:w-88 max-w-[85%] bg-[#0b0e14]/95 backdrop-blur-xl border-l border-white/10 z-40 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200 pointer-events-auto">
+      {/* 4. SLEEK HORIZONTAL TRANSPARENT TATTOO PICKER DOCK (ONLY APPEARS ON INITIAL TOUCH OR WHEN CHANGING TATTOO) */}
+      {showTattooPicker && (
+        <div className="absolute top-14 left-3 right-3 z-40 bg-black/65 backdrop-blur-xl border border-white/15 rounded-2xl p-2.5 shadow-2xl animate-in fade-in zoom-in-95 duration-200 pointer-events-auto">
           
-          {/* Sidebar Header */}
-          <div className="p-3 sm:p-3.5 border-b border-white/10 flex items-center justify-between bg-black/60">
+          {/* Header of Horizontal Bar */}
+          <div className="flex items-center justify-between pb-2 border-b border-white/10 mb-2">
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-              <div>
-                <h3 className="font-bold text-xs sm:text-sm text-white uppercase tracking-wider flex items-center space-x-1.5">
-                  <span>{selectedBodyArea} Tattoo References</span>
-                </h3>
-                <p className="text-[10px] text-zinc-400">
-                  {recommendedTattoos.length} tailored for {selectedBodyArea}
-                </p>
-              </div>
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">
+                Select Tattoo for {selectedBodyArea}
+              </span>
+              <span className="text-[10px] text-zinc-400 font-mono">
+                ({filteredPickerDesigns.length} available)
+              </span>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsSidebarOpen(false)}
-              className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-lg border border-white/10 hover:bg-zinc-800 transition-colors"
-              title="Close Sidebar"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
 
-          {/* Style Filter Chips in Sidebar */}
-          <div className="p-2 border-b border-white/5 bg-zinc-950/60">
-            <div className="flex items-center space-x-1 overflow-x-auto pb-1 scrollbar-thin">
+            {/* Filter Styles in Horizontal Bar */}
+            <div className="flex items-center space-x-1 overflow-x-auto max-w-[50%] scrollbar-none">
               {['All', 'Sacred Devbhoomi', 'Geometric', 'Fine Line', 'Blackwork', 'Japanese'].map(s => (
                 <button
                   key={s}
-                  onClick={() => setSidebarStyleFilter(s)}
+                  onClick={() => setPickerStyleFilter(s)}
                   className={`shrink-0 px-2 py-0.5 text-[9px] font-bold rounded-md transition-all ${
-                    sidebarStyleFilter === s
-                      ? 'bg-amber-400 text-black shadow-sm'
-                      : 'bg-zinc-900 text-zinc-400 hover:text-white border border-white/5'
+                    pickerStyleFilter === s
+                      ? 'bg-amber-400 text-black'
+                      : 'bg-zinc-900/70 text-zinc-400 hover:text-white border border-white/5'
                   }`}
                 >
                   {s}
                 </button>
               ))}
             </div>
-          </div>
 
-          {/* Tattoo References List */}
-          <div className="flex-1 overflow-y-auto p-2.5 sm:p-3 space-y-2.5 scrollbar-thin">
-            
-            {/* Recommended Artworks */}
-            {recommendedTattoos.length > 0 && (
-              <div className="space-y-1.5">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-1">
-                  <Flame className="w-3 h-3 text-amber-400" />
-                  <span>Top References for {selectedBodyArea}</span>
-                </div>
-                {recommendedTattoos.map(design => {
-                  const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
-                  const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
-
-                  return (
-                    <div
-                      key={design._id || design.name}
-                      onClick={() => {
-                        if (onSelectDesign) onSelectDesign(design);
-                        toast.success(`Applied "${design.name}" to ${selectedBodyArea}!`);
-                      }}
-                      className={`flex items-center space-x-2.5 p-2 rounded-xl cursor-pointer transition-all border ${
-                        isSelected
-                          ? 'bg-amber-500/20 border-amber-400 shadow-md ring-1 ring-amber-400'
-                          : 'bg-zinc-900/80 border-white/5 hover:border-amber-500/30 hover:bg-zinc-900'
-                      }`}
-                    >
-                      <div className="w-12 h-12 rounded-lg bg-black p-1 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
-                        {design.svg ? (
-                          design.svg
-                        ) : (
-                          <img src={imgSrc} alt={design.name} className="w-full h-full object-contain" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-bold text-[11px] text-white uppercase truncate">
-                            {design.name}
-                          </h4>
-                          {isSelected && (
-                            <span className="text-[8px] bg-amber-400 text-black font-black px-1.5 py-0.2 rounded">
-                              Active
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[9px] text-amber-400/90 font-semibold">
-                          {design.style}
-                        </div>
-                        <div className="text-[8px] text-zinc-400 truncate">
-                          {design.estTime || '2-3 hrs'} • {design.difficulty || 'Custom'}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Other Artworks */}
-            {otherTattoos.length > 0 && (
-              <div className="space-y-1.5 pt-2 border-t border-white/5">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-1">
-                  <Sparkles className="w-3 h-3 text-zinc-400" />
-                  <span>Other Studio Flash Artworks</span>
-                </div>
-                {otherTattoos.map(design => {
-                  const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
-                  const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
-
-                  return (
-                    <div
-                      key={design._id || design.name}
-                      onClick={() => {
-                        if (onSelectDesign) onSelectDesign(design);
-                        toast.success(`Applied "${design.name}" to ${selectedBodyArea}!`);
-                      }}
-                      className={`flex items-center space-x-2.5 p-2 rounded-xl cursor-pointer transition-all border ${
-                        isSelected
-                          ? 'bg-amber-500/20 border-amber-400 shadow-md ring-1 ring-amber-400'
-                          : 'bg-zinc-900/80 border-white/5 hover:border-amber-500/30 hover:bg-zinc-900'
-                      }`}
-                    >
-                      <div className="w-12 h-12 rounded-lg bg-black p-1 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
-                        {design.svg ? (
-                          design.svg
-                        ) : (
-                          <img src={imgSrc} alt={design.name} className="w-full h-full object-contain" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-bold text-[11px] text-white uppercase truncate">
-                            {design.name}
-                          </h4>
-                          {isSelected && (
-                            <span className="text-[8px] bg-amber-400 text-black font-black px-1.5 py-0.2 rounded">
-                              Active
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[9px] text-amber-400/90 font-semibold">
-                          {design.style}
-                        </div>
-                        <div className="text-[8px] text-zinc-400 truncate">
-                          {design.estTime || '2-3 hrs'}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-          </div>
-
-          {/* Sidebar Footer Action */}
-          <div className="p-2.5 border-t border-white/10 bg-black/70">
             <button
               type="button"
-              onClick={() => setIsSidebarOpen(false)}
-              className="w-full bg-amber-400 hover:bg-amber-300 text-black font-black py-2 px-3 text-[11px] uppercase tracking-wider rounded-xl shadow-md transition-all"
+              onClick={() => setShowTattooPicker(false)}
+              className="p-1 text-zinc-400 hover:text-white bg-zinc-900/80 rounded-lg border border-white/10"
+              title="Close picker"
             >
-              Done Testing (Close Sidebar)
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
+          {/* Horizontal Scrollable Row of Transparent Tattoo Cards */}
+          <div className="flex items-center space-x-2.5 overflow-x-auto py-1 scrollbar-thin">
+            {filteredPickerDesigns.map(design => {
+              const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
+              const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
+
+              return (
+                <button
+                  key={design._id || design.name}
+                  type="button"
+                  onClick={() => handleSelectTattooArtwork(design)}
+                  className={`shrink-0 flex items-center space-x-2 p-1.5 pr-3 rounded-xl transition-all border ${
+                    isSelected
+                      ? 'bg-amber-500/25 border-amber-400 shadow-md ring-1 ring-amber-400'
+                      : 'bg-zinc-950/50 hover:bg-zinc-900/80 border-white/10 hover:border-amber-400/40 text-left'
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-lg bg-black/80 p-0.5 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
+                    {design.svg ? (
+                      design.svg
+                    ) : (
+                      <img src={imgSrc} alt={design.name} className="w-full h-full object-contain" />
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[11px] font-bold text-white uppercase truncate max-w-[110px]">
+                      {design.name}
+                    </div>
+                    <div className="text-[9px] text-amber-400/90 font-semibold">
+                      {design.style}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* 5. CLEAN BOTTOM STUDIO DOCK */}
+      {/* 5. CLEAN BOTTOM STUDIO DOCK (CONTROLS ONLY, NON-BLOCKING) */}
       <div className="absolute bottom-2 left-2 right-2 z-30 flex flex-col gap-1.5 pointer-events-auto">
         
         {/* Navigation Tabs for Clean Organization */}
-        <div className="flex items-center justify-between bg-black/90 backdrop-blur-md border border-white/10 p-1.5 rounded-xl text-xs text-zinc-300 shadow-xl">
+        <div className="flex items-center justify-between bg-black/60 backdrop-blur-md border border-white/10 p-1.5 rounded-xl text-xs text-zinc-300 shadow-xl">
           
           {/* Tab Switchers */}
           <div className="flex items-center space-x-1">
@@ -955,7 +875,7 @@ export const Interactive3DStudio = ({
 
         {/* Tab Content 1: Tattoo Size & 360° Rotation */}
         {activeTab === 'transform' && (
-          <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
+          <div className="flex flex-wrap items-center justify-between bg-black/75 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
             
             {/* Tattoo Size */}
             <div className="flex items-center space-x-1.5">
@@ -1048,7 +968,7 @@ export const Interactive3DStudio = ({
 
         {/* Tab Content 2: Position Nudge & Skin Ink Blend */}
         {activeTab === 'position' && (
-          <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
+          <div className="flex flex-wrap items-center justify-between bg-black/75 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
             
             {/* Nudge D-Pad */}
             <div className="flex items-center space-x-1">
