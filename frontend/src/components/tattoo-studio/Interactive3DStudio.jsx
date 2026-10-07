@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
-// 8 Anatomical Perspectives for Full 360° Volumetric Rotation (No glitches, all clean 3D renders)
+// 8 Anatomical Perspectives for Full 360° Volumetric Rotation
 const ANATOMY_360_FRAMES = [
   { angle: 0, label: 'Front View (0°)', src: '/images/masculine_front.jpg', flip: false },
   { angle: 45, label: 'Front-Right 3/4 (45°)', src: '/images/masculine_front_right.jpg', flip: false },
@@ -196,17 +196,23 @@ export const Interactive3DStudio = ({
   designs = [],
   compact = false,
 }) => {
-  // Continuous 360-degree rotation state (0° to 360°)
+  // Interaction Mode: 'tattoo' (Move/Rotate Tattoo) vs 'body' (Orbit 3D Mannequin)
+  const [interactionMode, setInteractionMode] = useState('tattoo');
+
+  // Continuous 360-degree body rotation state (0° to 360°)
   const [rotationDeg, setRotationDeg] = useState(0);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingBody, setIsDraggingBody] = useState(false);
   const dragStartXRef = useRef(0);
   const dragStartAngleRef = useRef(0);
   const animFrameRef = useRef(null);
 
-  // Direct Tattoo Dragging State
+  // Direct Tattoo Dragging & Rotating State
   const [isDraggingTattoo, setIsDraggingTattoo] = useState(false);
+  const [isRotatingTattooHandle, setIsRotatingTattooHandle] = useState(false);
   const tattooDragStartRef = useRef({ x: 0, y: 0 });
+  const tattooCenterRef = useRef({ x: 0, y: 0 });
+  const tattooElemRef = useRef(null);
 
   // Interactive Zoom State (0.8x to 2.8x)
   const [zoomLevel, setZoomLevel] = useState(1.0);
@@ -285,21 +291,42 @@ export const Interactive3DStudio = ({
     return () => cancelAnimationFrame(animId);
   }, [isAutoRotating]);
 
-  // 60FPS Pointer Drag Handlers with RAF Throttle
-  const handlePointerDown = (e) => {
-    if (isDraggingTattoo) return;
-    setIsDragging(true);
-    setIsAutoRotating(false);
+  // Unified Pointer Handlers
+  const handleStagePointerDown = (e) => {
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-    dragStartXRef.current = clientX;
-    dragStartAngleRef.current = rotationDeg;
+    const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+
+    if (interactionMode === 'tattoo') {
+      // In Tattoo Mode: pointer down starts moving the tattoo directly across the muscle
+      setIsDraggingTattoo(true);
+      tattooDragStartRef.current = { x: clientX, y: clientY };
+    } else {
+      // In Body Orbit Mode: pointer down spins the 3D human mannequin
+      setIsDraggingBody(true);
+      setIsAutoRotating(false);
+      dragStartXRef.current = clientX;
+      dragStartAngleRef.current = rotationDeg;
+    }
   };
 
   const handlePointerMove = (e) => {
+    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+
+    // 1. Interactive Rotation Handle Drag
+    if (isRotatingTattooHandle && tattooCenterRef.current) {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = requestAnimationFrame(() => {
+        const rad = Math.atan2(clientY - tattooCenterRef.current.y, clientX - tattooCenterRef.current.x);
+        let deg = Math.round((rad * 180) / Math.PI + 90);
+        deg = ((deg % 360) + 360) % 360;
+        setTattooRotationOffset(deg);
+      });
+      return;
+    }
+
+    // 2. Tattoo Position Drag (Move Tattoo)
     if (isDraggingTattoo) {
-      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-      
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       animFrameRef.current = requestAnimationFrame(() => {
         const deltaX = (clientX - tattooDragStartRef.current.x) * (0.22 / zoomLevel);
@@ -311,20 +338,21 @@ export const Interactive3DStudio = ({
       return;
     }
 
-    if (!isDragging) return;
-    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-    
-    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    animFrameRef.current = requestAnimationFrame(() => {
-      const deltaX = clientX - dragStartXRef.current;
-      const newAngle = (dragStartAngleRef.current - deltaX * 0.65 + 3600) % 360;
-      setRotationDeg(newAngle);
-    });
+    // 3. Body Model 360 Orbit Drag (Spin Human Body)
+    if (isDraggingBody) {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = requestAnimationFrame(() => {
+        const deltaX = clientX - dragStartXRef.current;
+        const newAngle = (dragStartAngleRef.current - deltaX * 0.65 + 3600) % 360;
+        setRotationDeg(newAngle);
+      });
+    }
   };
 
   const handlePointerUp = () => {
-    setIsDragging(false);
+    setIsDraggingBody(false);
     setIsDraggingTattoo(false);
+    setIsRotatingTattooHandle(false);
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
   };
 
@@ -384,6 +412,7 @@ export const Interactive3DStudio = ({
     setOffsetNudgeX(0);
     setOffsetNudgeY(0);
     setBlendMode('multiply');
+    setInteractionMode('tattoo');
     toast.info(`Centered on ${placementConfig?.label || selectedBodyArea}`);
   };
 
@@ -393,29 +422,67 @@ export const Interactive3DStudio = ({
 
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
 
+  // Calculate total rotation applied to the tattoo
+  const totalTattooRotation = ((frameCoords?.rotate || 0) + tattooRotationOffset) % 360;
+
   return (
     <div
       ref={studioContainerRef}
       className={`relative w-full ${compact ? 'h-[520px] sm:h-[580px]' : 'h-[580px] sm:h-[660px] md:h-[720px]'} flex flex-col justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-all`}
-      onPointerDown={handlePointerDown}
+      onPointerDown={handleStagePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
       
-      {/* 1. TOP HEADER BAR: ANGLE, ORBIT & ZOOM MODE */}
-      <div className="absolute top-2.5 left-2.5 right-2.5 z-30 flex items-center justify-between gap-2 pointer-events-auto">
+      {/* 1. TOP HEADER BAR: MODE TOGGLE, ANGLE, & STATUS */}
+      <div className="absolute top-2.5 left-2.5 right-2.5 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
         
-        {/* Angle & Orbit Controls */}
+        {/* Interaction Mode Switcher (Isolates Tattoo Move/Rotate vs Body Orbit) */}
+        <div className="flex items-center bg-black/90 backdrop-blur-md border border-white/15 p-1 rounded-full shadow-xl">
+          <button
+            type="button"
+            onClick={() => {
+              setInteractionMode('tattoo');
+              toast.info('Mode: Move & Rotate Tattoo (Person is locked)');
+            }}
+            className={`flex items-center space-x-1.5 px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
+              interactionMode === 'tattoo'
+                ? 'bg-amber-400 text-black shadow-md'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+            title="Move and rotate the tattoo directly without rotating the body"
+          >
+            <span>🎨 Adjust Tattoo</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setInteractionMode('body');
+              toast.info('Mode: Orbit 3D Body (Drag anywhere to spin mannequin)');
+            }}
+            className={`flex items-center space-x-1.5 px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
+              interactionMode === 'body'
+                ? 'bg-cyan-400 text-black shadow-md'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+            title="Drag across the screen to rotate the 3D human body turntable"
+          >
+            <span>🧍 Orbit 3D Body</span>
+          </button>
+        </div>
+
+        {/* 360 Angle Presets & Auto Orbit */}
         <div className="flex items-center space-x-1.5 bg-black/85 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-lg">
           <button
             type="button"
             onClick={() => setRotationDeg((prev) => (prev + 45) % 360)}
             className="flex items-center space-x-1 px-2.5 py-1 text-[10px] font-bold text-amber-300 hover:text-white bg-amber-950/50 border border-amber-500/30 rounded-full transition-colors"
-            title="Turn 45°"
+            title="Turn Mannequin 45°"
           >
             <Compass className="w-3 h-3 text-amber-400" />
-            <span>{Math.round(normalizedAngle)}°</span>
+            <span>{Math.round(normalizedAngle)}° Body</span>
           </button>
 
           <button
@@ -426,7 +493,7 @@ export const Interactive3DStudio = ({
                 ? 'bg-amber-400 text-black shadow-md'
                 : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
             }`}
-            title="Auto 360 Orbit"
+            title="Auto 360 Turntable Orbit"
           >
             {isAutoRotating ? '⏸ Stop' : '▶ 360° Spin'}
           </button>
@@ -472,7 +539,7 @@ export const Interactive3DStudio = ({
       </div>
 
       {/* 2. COMPACT FLOATING ZOOM HUD (TOP RIGHT) */}
-      <div className="absolute right-2.5 top-14 z-30 flex flex-col items-center bg-black/80 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg pointer-events-auto space-y-1">
+      <div className="absolute right-2.5 top-16 z-30 flex flex-col items-center bg-black/80 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg pointer-events-auto space-y-1">
         <button
           type="button"
           onClick={handleZoomIn}
@@ -501,11 +568,13 @@ export const Interactive3DStudio = ({
 
       {/* 3. CENTER 3D TURNTABLE VIEWPORT */}
       <div
-        className="relative w-full h-full flex items-center justify-center pt-8 pb-32 cursor-grab active:cursor-grabbing transform-gpu will-change-transform"
+        className={`relative w-full h-full flex items-center justify-center pt-10 pb-36 transform-gpu will-change-transform ${
+          interactionMode === 'tattoo' ? 'cursor-move' : 'cursor-grab active:cursor-grabbing'
+        }`}
         style={{
           transformOrigin: `${zoomOriginX} ${zoomOriginY}`,
           transform: `scale(${zoomLevel})`,
-          transition: isDragging || isDraggingTattoo ? 'none' : 'transform 0.15s ease-out',
+          transition: isDraggingBody || isDraggingTattoo || isRotatingTattooHandle ? 'none' : 'transform 0.15s ease-out',
         }}
       >
         <div className="relative h-[90%] max-h-[580px] aspect-[2/3] flex items-center justify-center transform-gpu">
@@ -515,7 +584,7 @@ export const Interactive3DStudio = ({
             style={{
               transform: `perspective(1000px) rotateY(${subAngle * 0.3}deg)`,
               transformStyle: 'preserve-3d',
-              transition: isDragging || isAutoRotating ? 'none' : 'transform 0.15s ease-out',
+              transition: isDraggingBody || isAutoRotating ? 'none' : 'transform 0.15s ease-out',
             }}
           >
             {/* 3D Mannequin Frame */}
@@ -527,9 +596,10 @@ export const Interactive3DStudio = ({
               style={{ transform: currentFrame.flip ? 'scaleX(-1)' : 'none' }}
             />
 
-            {/* REALISTIC INKED-ON-SKIN TATTOO OVERLAY */}
+            {/* REALISTIC INKED-ON-SKIN TATTOO WITH 360° ROTATING BOUNDING BOX */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
+                ref={tattooElemRef}
                 onPointerDown={(e) => {
                   e.stopPropagation();
                   setIsDraggingTattoo(true);
@@ -537,7 +607,7 @@ export const Interactive3DStudio = ({
                   const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
                   tattooDragStartRef.current = { x: clientX, y: clientY };
                 }}
-                className={`absolute z-30 pointer-events-auto flex items-center justify-center transform-gpu will-change-transform cursor-move ${
+                className={`absolute z-30 pointer-events-auto flex items-center justify-center transform-gpu will-change-transform cursor-move group ${
                   highlightPulse ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-black rounded-lg animate-pulse' : ''
                 }`}
                 style={{
@@ -545,17 +615,40 @@ export const Interactive3DStudio = ({
                   top: `calc(${frameCoords.top + offsetNudgeY}%)`,
                   width: `${frameCoords.width}%`,
                   height: `${frameCoords.height}%`,
-                  transform: `translate3d(-50%, -50%, 0) scaleX(${(frameCoords.scaleX || 1) * tattooScale}) scaleY(${tattooScale}) rotate(${((frameCoords.rotate || 0) + tattooRotationOffset)}deg) skewY(${frameCoords.skewY || 0}deg)`,
+                  transform: `translate3d(-50%, -50%, 0) scaleX(${(frameCoords.scaleX || 1) * tattooScale}) scaleY(${tattooScale}) rotate(${totalTattooRotation}deg) skewY(${frameCoords.skewY || 0}deg)`,
                   opacity: tattooOpacity * (frameCoords.opacity || 1),
                   mixBlendMode: blendMode === 'multiply' ? 'multiply' : 'normal',
                   filter: blendMode === 'multiply' 
                     ? 'contrast(1.2) brightness(0.92) drop-shadow(0 0 1px rgba(0,0,0,0.7))'
                     : 'drop-shadow(0 0 4px rgba(0,0,0,0.5))',
                 }}
-                title="Drag to position tattoo"
+                title="Drag anywhere to move tattoo • Drag top handle to rotate"
               >
+                {/* Visual Rotating Bounding Box Indicator & Direct Rotation Handle */}
+                <div className="absolute inset-[-4px] border border-dashed border-amber-400/60 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* Top Rotate Handle */}
+                  <div
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      setIsRotatingTattooHandle(true);
+                      if (tattooElemRef.current) {
+                        const rect = tattooElemRef.current.getBoundingClientRect();
+                        tattooCenterRef.current = {
+                          x: rect.left + rect.width / 2,
+                          y: rect.top + rect.height / 2,
+                        };
+                      }
+                    }}
+                    className="absolute -top-6 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-400 text-black flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg pointer-events-auto hover:scale-110 transition-transform"
+                    title="Drag to Rotate Tattoo 360°"
+                  >
+                    <RotateCw className="w-3 h-3" />
+                  </div>
+                </div>
+
+                {/* Tattoo Artwork Rendering */}
                 {selectedDesign.svg ? (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold">
+                  <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold pointer-events-none">
                     {selectedDesign.svg}
                   </div>
                 ) : imageSrc ? (
@@ -565,14 +658,14 @@ export const Interactive3DStudio = ({
                     className="w-full h-full object-contain pointer-events-none filter contrast-115"
                   />
                 ) : (
-                  <div className="text-[10px] text-amber-300 font-bold text-center bg-black/70 px-2 py-1 rounded">
+                  <div className="text-[10px] text-amber-300 font-bold text-center bg-black/70 px-2 py-1 rounded pointer-events-none">
                     {selectedDesign.name}
                   </div>
                 )}
               </div>
             )}
 
-            {/* Clickable Muscle Hotspots */}
+            {/* Clickable Muscle Hotspots (Cleaned so active tattoo area doesn't render overlapping static yellow box) */}
             {Object.entries(ANATOMICAL_PLACEMENTS).map(([key, config]) => {
               const activeCoords = config.frames?.[currentFrame.angle];
               if (!activeCoords || (activeCoords.opacity ?? 1) < 0.4) return null;
@@ -580,6 +673,9 @@ export const Interactive3DStudio = ({
               const isSelected = selectedBodyArea.toLowerCase() === key.toLowerCase() || 
                                  selectedBodyArea.toLowerCase().includes(key.toLowerCase());
               const isHovered = hoveredPart === key;
+
+              // If this body part already has an active tattoo placed, don't draw an unrotated yellow block over it
+              if (isSelected && selectedDesign) return null;
 
               return (
                 <div
@@ -591,9 +687,9 @@ export const Interactive3DStudio = ({
                   }}
                   onMouseEnter={() => setHoveredPart(key)}
                   onMouseLeave={() => setHoveredPart(null)}
-                  className={`absolute z-25 cursor-pointer rounded-xl transition-all border pointer-events-auto ${
+                  className={`absolute z-20 cursor-pointer rounded-xl transition-all border pointer-events-auto ${
                     isSelected
-                      ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]'
+                      ? 'bg-amber-500/10 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
                       : isHovered
                       ? 'bg-cyan-500/15 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
                       : 'border-transparent hover:border-white/20'
@@ -607,7 +703,7 @@ export const Interactive3DStudio = ({
                   }}
                 >
                   {(isSelected || isHovered) && (
-                    <span className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-black/95 text-amber-300 border border-amber-500/40 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30">
+                    <span className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-black/95 text-amber-300 border border-amber-500/40 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30 pointer-events-none">
                       {config.name}
                     </span>
                   )}
@@ -636,7 +732,7 @@ export const Interactive3DStudio = ({
                 activeTab === 'transform' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
               }`}
             >
-              Size &amp; 360° Angle
+              Tattoo 360° Rotate &amp; Size
             </button>
             <button
               type="button"
@@ -645,7 +741,7 @@ export const Interactive3DStudio = ({
                 activeTab === 'position' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
               }`}
             >
-              Nudge &amp; Skin Ink
+              Fine Nudge &amp; Skin Ink
             </button>
             <button
               type="button"
@@ -658,8 +754,9 @@ export const Interactive3DStudio = ({
             </button>
           </div>
 
-          {/* Angle Presets */}
+          {/* Quick Body Angle Jumpers */}
           <div className="hidden sm:flex items-center space-x-0.5 text-[9px]">
+            <span className="text-zinc-500 font-bold uppercase mr-1">Body Angle:</span>
             {ANATOMY_360_FRAMES.map((f) => (
               <button
                 key={f.angle}
@@ -677,7 +774,7 @@ export const Interactive3DStudio = ({
           </div>
         </div>
 
-        {/* Tab Content 1: Size & 360° Rotation */}
+        {/* Tab Content 1: Tattoo Size & 360° Rotation */}
         {activeTab === 'transform' && (
           <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
             
@@ -688,6 +785,7 @@ export const Interactive3DStudio = ({
                 type="button"
                 onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.2))}
                 className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
+                title="Decrease Tattoo Size"
               >
                 -
               </button>
@@ -704,6 +802,7 @@ export const Interactive3DStudio = ({
                 type="button"
                 onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 3.0))}
                 className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
+                title="Increase Tattoo Size"
               >
                 +
               </button>
@@ -712,13 +811,17 @@ export const Interactive3DStudio = ({
               </span>
             </div>
 
-            {/* Tattoo 360° Rotation */}
+            {/* Tattoo 360° Rotation (Full control of Tattoo Angle without moving person) */}
             <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase font-bold text-zinc-400">360° Rotate:</span>
+              <span className="text-[10px] uppercase font-bold text-amber-400 flex items-center space-x-1">
+                <RotateCw className="w-3 h-3 text-amber-400 inline" />
+                <span>Tattoo Rotate:</span>
+              </span>
               <button
                 type="button"
                 onClick={() => setTattooRotationOffset((prev) => (prev - 15 + 360) % 360)}
-                className="p-1 text-zinc-400 hover:text-white"
+                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+                title="Rotate -15°"
               >
                 ↺
               </button>
@@ -729,28 +832,33 @@ export const Interactive3DStudio = ({
                 step="5"
                 value={tattooRotationOffset}
                 onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
-                className="w-18 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                className="w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <button
                 type="button"
                 onClick={() => setTattooRotationOffset((prev) => (prev + 15) % 360)}
-                className="p-1 text-zinc-400 hover:text-white"
+                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+                title="Rotate +15°"
               >
                 ↻
               </button>
-              <span className="text-[10px] font-mono text-zinc-300 w-8 text-right">
+              <span className="text-[10px] font-mono text-amber-300 font-bold w-9 text-right">
                 {tattooRotationOffset}°
               </span>
             </div>
 
-            {/* Quick Angle Buttons */}
-            <div className="hidden md:flex items-center space-x-1 text-[8px] font-bold">
-              {[0, 90, 180, 270].map((deg) => (
+            {/* Quick Tattoo Angle Buttons */}
+            <div className="flex items-center space-x-1 text-[8px] font-bold">
+              {[0, 45, 90, 180, 270].map((deg) => (
                 <button
                   key={deg}
                   type="button"
                   onClick={() => setTattooRotationOffset(deg)}
-                  className={`px-1.5 py-0.5 rounded ${tattooRotationOffset === deg ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900 hover:text-white'}`}
+                  className={`px-1.5 py-0.5 rounded transition-colors ${
+                    tattooRotationOffset === deg 
+                      ? 'bg-amber-400 text-black' 
+                      : 'text-zinc-400 bg-zinc-900 hover:text-white'
+                  }`}
                 >
                   {deg}°
                 </button>
@@ -770,6 +878,7 @@ export const Interactive3DStudio = ({
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev - 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+                title="Nudge Left"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
@@ -777,6 +886,7 @@ export const Interactive3DStudio = ({
                 type="button"
                 onClick={() => setOffsetNudgeY((prev) => prev - 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+                title="Nudge Up"
               >
                 <ChevronUp className="w-3.5 h-3.5" />
               </button>
@@ -784,6 +894,7 @@ export const Interactive3DStudio = ({
                 type="button"
                 onClick={() => setOffsetNudgeY((prev) => prev + 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+                title="Nudge Down"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
@@ -791,6 +902,7 @@ export const Interactive3DStudio = ({
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev + 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+                title="Nudge Right"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
