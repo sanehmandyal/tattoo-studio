@@ -15,42 +15,42 @@ const ANATOMY_360_FRAMES = [
   { angle: 315, label: 'Front-Left 3/4 (315°)', src: '/images/masculine_front_right.jpg', flip: true },
 ];
 
-// Pixel-perfect anatomical coordinate mapping per viewing angle frame
+// Pixel-perfect anatomical coordinate mapping per viewing angle frame directly onto muscle bodies
 const ANATOMICAL_PLACEMENTS = {
   Forearm: {
     name: 'Forearm (Right)',
     label: 'Right Forearm',
-    defaultTheta: 45,
+    defaultTheta: 0,
     frames: {
-      0: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: -14, opacity: 1, scaleX: 0.95, skewY: 2 },
-      45: { left: 35.0, top: 49.5, width: 12.5, height: 18.5, rotate: -8, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 65.5, top: 47.0, width: 12.0, height: 18.0, rotate: 6, opacity: 1, scaleX: 0.95, skewY: 1 },
-      135: { left: 39.0, top: 50.0, width: 12.0, height: 18.0, rotate: 8, opacity: 0.95, scaleX: 0.85, skewY: -2 },
-      180: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: 14, opacity: 0.9, scaleX: 0.95, skewY: -2 }
+      0: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: -26, opacity: 1, scaleX: 0.95, skewY: 1 },
+      45: { left: 29.5, top: 42.0, width: 11.5, height: 16.5, rotate: -15, opacity: 1, scaleX: 1.0, skewY: 0 },
+      90: { left: 54.0, top: 43.5, width: 11.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
+      135: { left: 33.0, top: 42.0, width: 11.0, height: 16.0, rotate: 12, opacity: 0.95, scaleX: 0.9, skewY: -1 },
+      180: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: 26, opacity: 0.95, scaleX: 0.95, skewY: -1 }
     }
   },
   'Upper Arm': {
     name: 'Upper Arm (Right)',
     label: 'Right Bicep / Deltoid',
-    defaultTheta: 45,
+    defaultTheta: 0,
     frames: {
-      0: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: -10, opacity: 1, scaleX: 0.95, skewY: -2 },
-      45: { left: 37.0, top: 37.0, width: 13.5, height: 16.5, rotate: -6, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 63.5, top: 37.0, width: 13.5, height: 16.5, rotate: 4, opacity: 1, scaleX: 0.95, skewY: 0 },
-      135: { left: 41.0, top: 38.0, width: 13.0, height: 16.0, rotate: 6, opacity: 0.95, scaleX: 0.85, skewY: 2 },
-      180: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: 10, opacity: 0.9, scaleX: 0.95, skewY: 2 }
+      0: { left: 25.0, top: 29.5, width: 11.5, height: 14.5, rotate: -22, opacity: 1, scaleX: 0.95, skewY: 0 },
+      45: { left: 33.0, top: 31.5, width: 12.0, height: 14.5, rotate: -12, opacity: 1, scaleX: 1.0, skewY: 0 },
+      90: { left: 54.0, top: 32.5, width: 12.0, height: 15.0, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
+      135: { left: 36.5, top: 31.5, width: 12.0, height: 14.5, rotate: 10, opacity: 0.95, scaleX: 0.9, skewY: 0 },
+      180: { left: 25.0, top: 29.5, width: 11.5, height: 14.5, rotate: 22, opacity: 0.95, scaleX: 0.95, skewY: 0 }
     }
   },
   Shoulder: {
     name: 'Shoulder (Right)',
     label: 'Right Shoulder Cap',
-    defaultTheta: 45,
+    defaultTheta: 0,
     frames: {
-      0: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: -12, opacity: 1, scaleX: 0.95 },
-      45: { left: 39.0, top: 28.0, width: 14.5, height: 13.5, rotate: -6, opacity: 1, scaleX: 1.0 },
-      90: { left: 62.0, top: 29.0, width: 14.5, height: 13.5, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 43.0, top: 29.0, width: 14.0, height: 13.0, rotate: 8, opacity: 0.95, scaleX: 0.9 },
-      180: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: 12, opacity: 0.9, scaleX: 0.95 }
+      0: { left: 31.0, top: 22.5, width: 12.5, height: 12.0, rotate: -12, opacity: 1, scaleX: 0.95 },
+      45: { left: 36.5, top: 23.5, width: 13.0, height: 12.5, rotate: -8, opacity: 1, scaleX: 1.0 },
+      90: { left: 54.0, top: 23.5, width: 13.0, height: 13.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 40.0, top: 23.5, width: 13.0, height: 12.5, rotate: 8, opacity: 0.95, scaleX: 0.9 },
+      180: { left: 31.0, top: 22.5, width: 12.5, height: 12.0, rotate: 12, opacity: 0.95, scaleX: 0.95 }
     }
   },
   Chest: {
@@ -58,11 +58,11 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Pectoral Chest & Sternum',
     defaultTheta: 0,
     frames: {
-      0: { left: 50.0, top: 31.0, width: 26.0, height: 15.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 52.0, top: 30.0, width: 22.0, height: 14.0, rotate: -4, opacity: 0.95, scaleX: 0.8 },
-      90: { left: 46.0, top: 34.0, width: 14.0, height: 13.0, rotate: -4, opacity: 0.7, scaleX: 0.5 },
-      315: { left: 48.0, top: 30.0, width: 22.0, height: 14.0, rotate: 4, opacity: 0.95, scaleX: 0.8 },
-      270: { left: 54.0, top: 34.0, width: 14.0, height: 13.0, rotate: 4, opacity: 0.7, scaleX: 0.5 }
+      0: { left: 50.0, top: 26.5, width: 24.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 52.0, top: 26.5, width: 20.0, height: 14.0, rotate: -4, opacity: 0.95, scaleX: 0.8 },
+      90: { left: 46.0, top: 28.0, width: 12.0, height: 13.0, rotate: -4, opacity: 0.7, scaleX: 0.5 },
+      315: { left: 48.0, top: 26.5, width: 20.0, height: 14.0, rotate: 4, opacity: 0.95, scaleX: 0.8 },
+      270: { left: 54.0, top: 28.0, width: 12.0, height: 13.0, rotate: 4, opacity: 0.7, scaleX: 0.5 }
     }
   },
   Back: {
@@ -70,11 +70,11 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Upper Back & Lats',
     defaultTheta: 180,
     frames: {
-      180: { left: 50.0, top: 31.0, width: 28.0, height: 18.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      135: { left: 52.0, top: 31.0, width: 24.0, height: 17.0, rotate: 4, opacity: 0.95, scaleX: 0.85 },
-      225: { left: 48.0, top: 31.0, width: 24.0, height: 17.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 42.0, top: 34.0, width: 14.0, height: 15.0, rotate: 4, opacity: 0.4, scaleX: 0.4 },
-      270: { left: 58.0, top: 34.0, width: 14.0, height: 15.0, rotate: -4, opacity: 0.4, scaleX: 0.4 }
+      180: { left: 50.0, top: 26.5, width: 26.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      135: { left: 52.0, top: 26.5, width: 22.0, height: 16.0, rotate: 4, opacity: 0.95, scaleX: 0.85 },
+      225: { left: 48.0, top: 26.5, width: 22.0, height: 16.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
+      90: { left: 42.0, top: 28.0, width: 12.0, height: 14.0, rotate: 4, opacity: 0.4, scaleX: 0.4 },
+      270: { left: 58.0, top: 28.0, width: 12.0, height: 14.0, rotate: -4, opacity: 0.4, scaleX: 0.4 }
     }
   },
   Spine: {
@@ -82,20 +82,20 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Full Vertebral Spine Line',
     defaultTheta: 180,
     frames: {
-      180: { left: 50.0, top: 36.0, width: 12.0, height: 30.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      135: { left: 52.0, top: 36.0, width: 9.0, height: 29.0, rotate: 2, opacity: 0.9, scaleX: 0.8 },
-      225: { left: 48.0, top: 36.0, width: 9.0, height: 29.0, rotate: -2, opacity: 0.9, scaleX: 0.8 }
+      180: { left: 50.0, top: 32.0, width: 10.0, height: 30.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      135: { left: 52.0, top: 32.0, width: 9.0, height: 28.0, rotate: 2, opacity: 0.9, scaleX: 0.8 },
+      225: { left: 48.0, top: 32.0, width: 9.0, height: 28.0, rotate: -2, opacity: 0.9, scaleX: 0.8 }
     }
   },
   Ribs: {
     name: 'Ribs',
     label: 'Ribcage & Flank',
-    defaultTheta: 45,
+    defaultTheta: 0,
     frames: {
-      0: { left: 44.0, top: 41.0, width: 17.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      45: { left: 49.0, top: 41.5, width: 17.0, height: 16.0, rotate: -3, opacity: 1, scaleX: 1.0 },
-      90: { left: 48.0, top: 43.0, width: 16.0, height: 16.0, rotate: 0, opacity: 0.8, scaleX: 0.8 },
-      315: { left: 51.0, top: 41.0, width: 14.0, height: 15.0, rotate: 4, opacity: 0.8, scaleX: 0.8 }
+      0: { left: 50.0, top: 36.0, width: 18.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      45: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: -4, opacity: 1, scaleX: 1.0 },
+      90: { left: 47.0, top: 36.5, width: 14.0, height: 15.0, rotate: 0, opacity: 0.85, scaleX: 0.8 },
+      315: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: 4, opacity: 1, scaleX: 1.0 }
     }
   },
   Thigh: {
@@ -103,14 +103,14 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Quadriceps / Thigh',
     defaultTheta: 0,
     frames: {
-      0: { left: 42.0, top: 60.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 46.0, top: 60.5, width: 16.0, height: 20.0, rotate: -2, opacity: 1, scaleX: 0.95 },
-      90: { left: 56.0, top: 61.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 52.0, top: 61.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
-      180: { left: 42.0, top: 62.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      225: { left: 48.0, top: 61.0, width: 16.0, height: 20.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 44.0, top: 61.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 54.0, top: 60.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
+      0: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 46.0, top: 57.5, width: 15.0, height: 19.0, rotate: -2, opacity: 1, scaleX: 0.95 },
+      90: { left: 52.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 50.0, top: 58.0, width: 15.0, height: 19.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
+      180: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      225: { left: 50.0, top: 58.0, width: 15.0, height: 19.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
+      270: { left: 48.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      315: { left: 54.0, top: 57.5, width: 15.0, height: 19.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
     }
   },
   Calf: {
@@ -118,26 +118,26 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Calf & Shin',
     defaultTheta: 0,
     frames: {
-      0: { left: 40.0, top: 79.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 44.0, top: 79.0, width: 14.0, height: 17.0, rotate: -1, opacity: 1, scaleX: 0.95 },
-      90: { left: 58.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 51.0, top: 79.5, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 },
-      180: { left: 40.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      225: { left: 49.0, top: 79.5, width: 14.0, height: 17.0, rotate: -1, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 42.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 56.0, top: 79.0, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 }
+      0: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 43.5, top: 76.5, width: 13.0, height: 17.0, rotate: -2, opacity: 1, scaleX: 0.95 },
+      90: { left: 52.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 48.0, top: 77.0, width: 13.0, height: 17.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
+      180: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      225: { left: 52.0, top: 77.0, width: 13.0, height: 17.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
+      270: { left: 48.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      315: { left: 56.5, top: 76.5, width: 13.0, height: 17.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
     }
   },
   Wrist: {
     name: 'Wrist',
     label: 'Wrist & Hand',
-    defaultTheta: 45,
+    defaultTheta: 0,
     frames: {
-      0: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: -16, opacity: 1, scaleX: 1.0 },
-      45: { left: 33.0, top: 61.0, width: 10.0, height: 10.0, rotate: -10, opacity: 1, scaleX: 1.0 },
-      90: { left: 67.0, top: 57.0, width: 10.0, height: 10.0, rotate: 6, opacity: 1, scaleX: 0.95 },
-      135: { left: 36.0, top: 62.0, width: 10.0, height: 10.0, rotate: 8, opacity: 0.9, scaleX: 0.9 },
-      180: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: 16, opacity: 0.9, scaleX: 1.0 }
+      0: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: -28, opacity: 1, scaleX: 1.0 },
+      45: { left: 27.0, top: 51.5, width: 9.0, height: 9.0, rotate: -18, opacity: 1, scaleX: 1.0 },
+      90: { left: 54.0, top: 53.0, width: 9.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 30.5, top: 51.5, width: 9.0, height: 9.0, rotate: 14, opacity: 0.9, scaleX: 0.9 },
+      180: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: 28, opacity: 0.9, scaleX: 1.0 }
     }
   },
   Neck: {
@@ -145,11 +145,11 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Neck & Throat',
     defaultTheta: 0,
     frames: {
-      0: { left: 50.0, top: 22.5, width: 12.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 51.0, top: 23.0, width: 11.0, height: 9.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 50.0, top: 24.0, width: 10.0, height: 9.0, rotate: 0, opacity: 0.8, scaleX: 0.7 },
-      180: { left: 50.0, top: 22.5, width: 12.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      315: { left: 49.0, top: 23.0, width: 11.0, height: 9.0, rotate: 4, opacity: 0.95, scaleX: 0.85 }
+      0: { left: 50.0, top: 17.5, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 51.0, top: 18.0, width: 11.0, height: 8.0, rotate: -3, opacity: 0.95, scaleX: 0.85 },
+      90: { left: 50.0, top: 18.5, width: 10.0, height: 8.0, rotate: 0, opacity: 0.8, scaleX: 0.7 },
+      180: { left: 50.0, top: 17.5, width: 11.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      315: { left: 49.0, top: 18.0, width: 11.0, height: 8.0, rotate: 3, opacity: 0.95, scaleX: 0.85 }
     }
   },
   Ankle: {
@@ -157,9 +157,9 @@ const ANATOMICAL_PLACEMENTS = {
     label: 'Ankle & Foot',
     defaultTheta: 0,
     frames: {
-      0: { left: 39.0, top: 92.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      90: { left: 54.0, top: 92.0, width: 11.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      180: { left: 40.0, top: 92.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 }
+      0: { left: 39.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      90: { left: 52.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      180: { left: 39.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 }
     }
   }
 };
