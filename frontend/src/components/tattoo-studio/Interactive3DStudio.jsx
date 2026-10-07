@@ -3,7 +3,7 @@ import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, L
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
-// 8 Anatomical Perspectives for Full 360° Volumetric Rotation (No flat card effect)
+// 8 Anatomical Perspectives for Full 360° Volumetric Rotation
 const ANATOMY_360_FRAMES = [
   { angle: 0, label: 'Front View (0°)', src: '/images/masculine_front.jpg', flip: false },
   { angle: 45, label: 'Front-Right 3/4 (45°)', src: '/images/masculine_front_right.jpg', flip: false },
@@ -15,162 +15,156 @@ const ANATOMY_360_FRAMES = [
   { angle: 315, label: 'Front-Left 3/4 (315°)', src: '/images/masculine_front_right.jpg', flip: true },
 ];
 
-// High-precision anatomical calibrations per angle frame for lifelike skin wrapping
+// Pixel-perfect anatomical coordinate mapping per viewing angle frame
+// Every body zone is positioned exactly over its real anatomical location in each photo
 const ANATOMICAL_PLACEMENTS = {
   Forearm: {
     name: 'Forearm (Right)',
-    label: 'Right Forearm (Radial/Anterior)',
+    label: 'Right Forearm',
     defaultTheta: 45,
     frames: {
-      0: { left: 20.5, top: 43.5, width: 14, height: 21, rotate: -14, opacity: 1, scaleX: 0.95, skewY: 2 },
-      45: { left: 30.5, top: 45.0, width: 15, height: 22, rotate: -9, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 47.0, top: 47.0, width: 16, height: 23, rotate: -3, opacity: 1, scaleX: 0.95, skewY: -2 },
-      135: { left: 57.5, top: 45.0, width: 14, height: 21, rotate: 8, opacity: 0.9, scaleX: 0.85, skewY: -3 },
-      315: { left: 16.0, top: 42.0, width: 11, height: 18, rotate: -18, opacity: 0.6, scaleX: 0.7, skewY: 3 }
-    },
-    hotspot: { x: 14, y: 35, width: 13, height: 18 }
+      0: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: -14, opacity: 1, scaleX: 0.95, skewY: 2 },
+      45: { left: 36.0, top: 50.0, width: 12.5, height: 18.5, rotate: -8, opacity: 1, scaleX: 1.0, skewY: 0 },
+      90: { left: 51.0, top: 56.5, width: 12.5, height: 18.5, rotate: -3, opacity: 1, scaleX: 0.95, skewY: -1 },
+      135: { left: 39.0, top: 50.0, width: 12.0, height: 18.0, rotate: 8, opacity: 0.95, scaleX: 0.85, skewY: -2 },
+      180: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: 14, opacity: 0.9, scaleX: 0.95, skewY: -2 },
+      315: { left: 18.0, top: 46.0, width: 9.0, height: 15.0, rotate: -18, opacity: 0.45, scaleX: 0.65, skewY: 3 }
+    }
   },
   'Upper Arm': {
-    name: 'Upper Arm',
-    label: 'Right Bicep & Deltoid',
+    name: 'Upper Arm (Right)',
+    label: 'Right Bicep / Deltoid',
     defaultTheta: 60,
     frames: {
-      0: { left: 24.5, top: 29.5, width: 15, height: 19, rotate: -10, opacity: 1, scaleX: 0.95, skewY: -2 },
-      45: { left: 32.5, top: 29.5, width: 16, height: 20, rotate: -6, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 48.0, top: 28.0, width: 17, height: 21, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
-      135: { left: 58.0, top: 28.5, width: 15, height: 19, rotate: 6, opacity: 0.9, scaleX: 0.85, skewY: 2 },
-      315: { left: 19.0, top: 29.0, width: 12, height: 17, rotate: -14, opacity: 0.6, scaleX: 0.7, skewY: -3 }
-    },
-    hotspot: { x: 18, y: 23, width: 13, height: 15 }
+      0: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: -10, opacity: 1, scaleX: 0.95, skewY: -2 },
+      45: { left: 38.0, top: 37.0, width: 13.5, height: 16.5, rotate: -6, opacity: 1, scaleX: 1.0, skewY: 0 },
+      90: { left: 50.5, top: 43.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
+      135: { left: 41.0, top: 38.0, width: 13.0, height: 16.0, rotate: 6, opacity: 0.95, scaleX: 0.85, skewY: 2 },
+      180: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: 10, opacity: 0.9, scaleX: 0.95, skewY: 2 },
+      315: { left: 21.0, top: 35.0, width: 10.0, height: 14.0, rotate: -14, opacity: 0.45, scaleX: 0.7, skewY: -3 }
+    }
   },
   Shoulder: {
-    name: 'Shoulder',
-    label: 'Right Shoulder / Deltoid Cap',
+    name: 'Shoulder (Right)',
+    label: 'Right Shoulder Cap',
     defaultTheta: 70,
     frames: {
-      0: { left: 29.0, top: 21.0, width: 16, height: 15, rotate: -12, opacity: 1, scaleX: 0.95 },
-      45: { left: 35.0, top: 20.5, width: 17, height: 16, rotate: -6, opacity: 1, scaleX: 1.0 },
-      90: { left: 48.5, top: 19.5, width: 18, height: 16, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 57.0, top: 20.5, width: 16, height: 15, rotate: 8, opacity: 0.95, scaleX: 0.9 },
-      315: { left: 24.0, top: 21.0, width: 13, height: 14, rotate: -16, opacity: 0.7, scaleX: 0.75 }
-    },
-    hotspot: { x: 23, y: 15, width: 14, height: 12 }
+      0: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: -12, opacity: 1, scaleX: 0.95 },
+      45: { left: 40.0, top: 28.0, width: 14.5, height: 13.5, rotate: -6, opacity: 1, scaleX: 1.0 },
+      90: { left: 52.0, top: 34.0, width: 15.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 43.0, top: 29.0, width: 14.0, height: 13.0, rotate: 8, opacity: 0.95, scaleX: 0.9 },
+      180: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: 12, opacity: 0.9, scaleX: 0.95 },
+      315: { left: 26.0, top: 27.0, width: 10.0, height: 11.0, rotate: -16, opacity: 0.5, scaleX: 0.75 }
+    }
   },
   Chest: {
     name: 'Chest',
     label: 'Pectoral Chest & Sternum',
     defaultTheta: 0,
     frames: {
-      0: { left: 50.0, top: 24.5, width: 28, height: 18, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 44.0, top: 24.5, width: 23, height: 17, rotate: -4, opacity: 0.95, scaleX: 0.8 },
-      90: { left: 38.0, top: 25.0, width: 15, height: 16, rotate: -6, opacity: 0.4, scaleX: 0.4 },
-      315: { left: 56.0, top: 24.5, width: 23, height: 17, rotate: 4, opacity: 0.95, scaleX: 0.8 },
-      270: { left: 62.0, top: 25.0, width: 15, height: 16, rotate: 6, opacity: 0.4, scaleX: 0.4 }
-    },
-    hotspot: { x: 34, y: 18, width: 32, height: 14 }
+      0: { left: 50.0, top: 31.0, width: 26.0, height: 15.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 52.0, top: 30.0, width: 22.0, height: 14.0, rotate: -4, opacity: 0.95, scaleX: 0.8 },
+      90: { left: 64.0, top: 36.0, width: 14.0, height: 13.0, rotate: -6, opacity: 0.5, scaleX: 0.45 },
+      315: { left: 48.0, top: 30.0, width: 22.0, height: 14.0, rotate: 4, opacity: 0.95, scaleX: 0.8 },
+      270: { left: 36.0, top: 36.0, width: 14.0, height: 13.0, rotate: 6, opacity: 0.5, scaleX: 0.45 }
+    }
   },
   Back: {
     name: 'Back',
     label: 'Upper Back & Lats',
     defaultTheta: 180,
     frames: {
-      180: { left: 50.0, top: 26.0, width: 32, height: 22, rotate: 0, opacity: 1, scaleX: 1.0 },
-      135: { left: 55.0, top: 26.0, width: 26, height: 21, rotate: 4, opacity: 0.95, scaleX: 0.85 },
-      225: { left: 45.0, top: 26.0, width: 26, height: 21, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 58.0, top: 26.0, width: 15, height: 20, rotate: 6, opacity: 0.35, scaleX: 0.4 },
-      270: { left: 42.0, top: 26.0, width: 15, height: 20, rotate: -6, opacity: 0.35, scaleX: 0.4 }
-    },
-    hotspot: { x: 30, y: 16, width: 40, height: 22 }
+      180: { left: 50.0, top: 31.0, width: 28.0, height: 18.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      135: { left: 52.0, top: 31.0, width: 24.0, height: 17.0, rotate: 4, opacity: 0.95, scaleX: 0.85 },
+      225: { left: 48.0, top: 31.0, width: 24.0, height: 17.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
+      90: { left: 42.0, top: 36.0, width: 14.0, height: 15.0, rotate: 6, opacity: 0.4, scaleX: 0.4 },
+      270: { left: 58.0, top: 36.0, width: 14.0, height: 15.0, rotate: -6, opacity: 0.4, scaleX: 0.4 }
+    }
   },
   Spine: {
     name: 'Spine',
     label: 'Full Vertebral Spine Line',
     defaultTheta: 180,
     frames: {
-      180: { left: 50.0, top: 32.0, width: 14, height: 34, rotate: 0, opacity: 1, scaleX: 1.0 },
-      135: { left: 52.0, top: 32.0, width: 10, height: 33, rotate: 2, opacity: 0.9, scaleX: 0.8 },
-      225: { left: 48.0, top: 32.0, width: 10, height: 33, rotate: -2, opacity: 0.9, scaleX: 0.8 }
-    },
-    hotspot: { x: 44, y: 16, width: 12, height: 34 }
+      180: { left: 50.0, top: 36.0, width: 12.0, height: 30.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      135: { left: 52.0, top: 36.0, width: 9.0, height: 29.0, rotate: 2, opacity: 0.9, scaleX: 0.8 },
+      225: { left: 48.0, top: 36.0, width: 9.0, height: 29.0, rotate: -2, opacity: 0.9, scaleX: 0.8 }
+    }
   },
   Ribs: {
     name: 'Ribs',
     label: 'Ribcage & Flank',
     defaultTheta: 30,
     frames: {
-      0: { left: 43.0, top: 35.0, width: 19, height: 19, rotate: 0, opacity: 1, scaleX: 0.95 },
-      45: { left: 39.0, top: 35.5, width: 19, height: 19, rotate: -3, opacity: 1, scaleX: 1.0 },
-      90: { left: 45.0, top: 36.0, width: 18, height: 19, rotate: 0, opacity: 1, scaleX: 0.9 },
-      315: { left: 47.0, top: 35.0, width: 15, height: 18, rotate: 4, opacity: 0.8, scaleX: 0.8 }
-    },
-    hotspot: { x: 36, y: 28, width: 28, height: 16 }
+      0: { left: 44.0, top: 41.0, width: 17.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      45: { left: 49.0, top: 41.5, width: 17.0, height: 16.0, rotate: -3, opacity: 1, scaleX: 1.0 },
+      90: { left: 58.0, top: 45.0, width: 16.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.9 },
+      315: { left: 51.0, top: 41.0, width: 14.0, height: 15.0, rotate: 4, opacity: 0.8, scaleX: 0.8 }
+    }
   },
   Thigh: {
     name: 'Thigh',
     label: 'Quadriceps / Thigh',
     defaultTheta: 0,
     frames: {
-      0: { left: 40.0, top: 58.0, width: 19, height: 23, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 44.0, top: 58.0, width: 19, height: 23, rotate: -2, opacity: 1, scaleX: 0.95 },
-      90: { left: 48.0, top: 58.0, width: 20, height: 23, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 54.0, top: 58.0, width: 19, height: 23, rotate: 2, opacity: 0.95, scaleX: 0.95 },
-      180: { left: 58.0, top: 58.0, width: 19, height: 23, rotate: 0, opacity: 1, scaleX: 1.0 },
-      225: { left: 46.0, top: 58.0, width: 19, height: 23, rotate: -2, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 52.0, top: 58.0, width: 20, height: 23, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 38.0, top: 58.0, width: 19, height: 23, rotate: 2, opacity: 0.95, scaleX: 0.95 }
-    },
-    hotspot: { x: 33, y: 47, width: 17, height: 22 }
+      0: { left: 42.0, top: 60.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 47.0, top: 61.0, width: 16.0, height: 20.0, rotate: -2, opacity: 1, scaleX: 0.95 },
+      90: { left: 63.0, top: 64.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 52.0, top: 61.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
+      180: { left: 42.0, top: 62.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      225: { left: 48.0, top: 61.0, width: 16.0, height: 20.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
+      270: { left: 37.0, top: 64.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      315: { left: 53.0, top: 61.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
+    }
   },
   Calf: {
     name: 'Calf',
     label: 'Calf & Shin',
     defaultTheta: 0,
     frames: {
-      0: { left: 39.0, top: 79.0, width: 16, height: 19, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 43.0, top: 79.0, width: 16, height: 19, rotate: -1, opacity: 1, scaleX: 0.95 },
-      90: { left: 47.0, top: 79.0, width: 17, height: 19, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 53.0, top: 79.0, width: 16, height: 19, rotate: 1, opacity: 0.95, scaleX: 0.95 },
-      180: { left: 60.0, top: 79.0, width: 16, height: 19, rotate: 0, opacity: 1, scaleX: 1.0 },
-      225: { left: 47.0, top: 79.0, width: 16, height: 19, rotate: -1, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 53.0, top: 79.0, width: 17, height: 19, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 37.0, top: 79.0, width: 16, height: 19, rotate: 1, opacity: 0.95, scaleX: 0.95 }
-    },
-    hotspot: { x: 33, y: 71, width: 15, height: 18 }
+      0: { left: 40.0, top: 79.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 45.0, top: 79.5, width: 14.0, height: 17.0, rotate: -1, opacity: 1, scaleX: 0.95 },
+      90: { left: 62.0, top: 82.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      135: { left: 51.0, top: 79.5, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 },
+      180: { left: 40.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      225: { left: 49.0, top: 79.5, width: 14.0, height: 17.0, rotate: -1, opacity: 0.95, scaleX: 0.95 },
+      270: { left: 38.0, top: 82.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      315: { left: 55.0, top: 79.5, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 }
+    }
   },
   Wrist: {
     name: 'Wrist',
     label: 'Wrist & Hand',
     defaultTheta: 35,
     frames: {
-      0: { left: 16.5, top: 51.0, width: 11, height: 11, rotate: -16, opacity: 1, scaleX: 1.0 },
-      45: { left: 28.0, top: 53.0, width: 12, height: 12, rotate: -10, opacity: 1, scaleX: 1.0 },
-      90: { left: 46.0, top: 55.0, width: 13, height: 13, rotate: -4, opacity: 1, scaleX: 0.95 },
-      135: { left: 57.0, top: 53.0, width: 12, height: 12, rotate: 8, opacity: 0.9, scaleX: 0.9 }
-    },
-    hotspot: { x: 12, y: 47, width: 10, height: 8 }
+      0: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: -16, opacity: 1, scaleX: 1.0 },
+      45: { left: 34.0, top: 62.0, width: 10.0, height: 10.0, rotate: -10, opacity: 1, scaleX: 1.0 },
+      90: { left: 51.0, top: 68.0, width: 10.0, height: 10.0, rotate: -4, opacity: 1, scaleX: 0.95 },
+      135: { left: 36.0, top: 62.0, width: 10.0, height: 10.0, rotate: 8, opacity: 0.9, scaleX: 0.9 },
+      180: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: 16, opacity: 0.9, scaleX: 1.0 }
+    }
   },
   Neck: {
     name: 'Neck',
     label: 'Neck & Throat',
     defaultTheta: 0,
     frames: {
-      0: { left: 50.0, top: 14.5, width: 13, height: 11, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 47.0, top: 14.5, width: 12, height: 11, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 45.0, top: 14.5, width: 11, height: 11, rotate: 0, opacity: 0.8, scaleX: 0.7 },
-      315: { left: 53.0, top: 14.5, width: 12, height: 11, rotate: 4, opacity: 0.95, scaleX: 0.85 }
-    },
-    hotspot: { x: 43, y: 11, width: 14, height: 8 }
+      0: { left: 50.0, top: 22.5, width: 12.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      45: { left: 51.0, top: 23.0, width: 11.0, height: 9.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
+      90: { left: 55.0, top: 28.0, width: 10.0, height: 9.0, rotate: 0, opacity: 0.8, scaleX: 0.7 },
+      180: { left: 50.0, top: 22.5, width: 12.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      315: { left: 49.0, top: 23.0, width: 11.0, height: 9.0, rotate: 4, opacity: 0.95, scaleX: 0.85 }
+    }
   },
   Ankle: {
     name: 'Ankle',
     label: 'Ankle & Foot',
     defaultTheta: 0,
     frames: {
-      0: { left: 38.0, top: 92.0, width: 11, height: 10, rotate: 0, opacity: 1, scaleX: 1.0 },
-      90: { left: 46.0, top: 92.0, width: 12, height: 10, rotate: 0, opacity: 1, scaleX: 1.0 },
-      180: { left: 60.0, top: 92.0, width: 11, height: 10, rotate: 0, opacity: 1, scaleX: 1.0 }
-    },
-    hotspot: { x: 32, y: 88, width: 13, height: 8 }
+      0: { left: 39.0, top: 92.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      90: { left: 62.0, top: 92.0, width: 11.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      180: { left: 40.0, top: 92.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 }
+    }
   }
 };
 
@@ -183,7 +177,7 @@ export const Interactive3DStudio = ({
   compact = false,
 }) => {
   // Continuous 360-degree rotation state (0° to 360°)
-  const [rotationDeg, setRotationDeg] = useState(0);
+  const [rotationDeg, setRotationDeg] = useState(45);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
@@ -296,12 +290,11 @@ export const Interactive3DStudio = ({
 
   const placementConfig = ANATOMICAL_PLACEMENTS[activeZoneKey];
 
-  // Resolve frame-specific position
-  const frameCoords = placementConfig?.frames[currentFrame.angle] || 
-                      placementConfig?.frames[Object.keys(placementConfig.frames)[0]];
+  // Resolve frame-specific position for current angle
+  const frameCoords = placementConfig?.frames?.[currentFrame.angle];
 
   // Calculate visibility based on whether frame coordinates exist for this view
-  const isTattooVisibleInAngle = Boolean(frameCoords && frameCoords.opacity > 0.2);
+  const isTattooVisibleInAngle = Boolean(frameCoords && (frameCoords.opacity ?? 1) > 0.2);
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.2, 1.6));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.85));
@@ -315,7 +308,7 @@ export const Interactive3DStudio = ({
     setOffsetNudgeX(0);
     setOffsetNudgeY(0);
     setBlendMode('multiply');
-    toast.info('Reset 3D mannequin to default alignment');
+    toast.info('Reset 3D mannequin to calibrated alignment');
   };
 
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
@@ -469,15 +462,10 @@ export const Interactive3DStudio = ({
               </div>
             )}
 
-            {/* Clickable Hotspot Zones on Body */}
+            {/* Dynamic Clickable Hotspot Zones Matching Current View */}
             {Object.entries(ANATOMICAL_PLACEMENTS).map(([key, config]) => {
-              const hotspot = config.hotspot;
-              if (!hotspot) return null;
-
-              // Only show hotspot when facing camera
-              const zoneDiff = ((config.defaultTheta - normalizedAngle + 540) % 360) - 180;
-              const isZoneFacingCamera = Math.abs(zoneDiff) < 85;
-              if (!isZoneFacingCamera) return null;
+              const activeCoords = config.frames?.[currentFrame.angle];
+              if (!activeCoords || (activeCoords.opacity ?? 1) < 0.4) return null;
 
               const isSelected = selectedBodyArea.toLowerCase() === key.toLowerCase() || 
                                  selectedBodyArea.toLowerCase().includes(key.toLowerCase());
@@ -500,10 +488,11 @@ export const Interactive3DStudio = ({
                       : 'border-transparent hover:border-white/20'
                   }`}
                   style={{
-                    left: `${hotspot.x}%`,
-                    top: `${hotspot.y}%`,
-                    width: `${hotspot.width}%`,
-                    height: `${hotspot.height}%`,
+                    left: `${activeCoords.left}%`,
+                    top: `${activeCoords.top}%`,
+                    width: `${activeCoords.width}%`,
+                    height: `${activeCoords.height}%`,
+                    transform: 'translate3d(-50%, -50%, 0)',
                   }}
                 >
                   {(isSelected || isHovered) && (
