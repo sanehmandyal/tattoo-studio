@@ -200,31 +200,30 @@ export const Interactive3DStudio = ({
   const [rotationDeg, setRotationDeg] = useState(0);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [dragStartAngle, setDragStartAngle] = useState(0);
+  const dragStartXRef = useRef(0);
+  const dragStartAngleRef = useRef(0);
+  const animFrameRef = useRef(null);
 
   // Direct Tattoo Dragging State
   const [isDraggingTattoo, setIsDraggingTattoo] = useState(false);
-  const [tattooDragStart, setTattooDragStart] = useState({ x: 0, y: 0 });
+  const tattooDragStartRef = useRef({ x: 0, y: 0 });
 
-  // Powerful Interactive Zoom State (0.8x to 2.8x)
+  // Interactive Zoom State (0.8x to 2.8x)
   const [zoomLevel, setZoomLevel] = useState(1.0);
-  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
-  const [isPanning, setIsPanning] = useState(false);
-  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-
-  // Focus Mode: 'body' (center zoom) or 'tattoo' (focus zoom directly on tattoo part)
   const [zoomFocusMode, setZoomFocusMode] = useState('tattoo');
   const [hoveredPart, setHoveredPart] = useState(null);
   const [highlightPulse, setHighlightPulse] = useState(true);
 
-  // Custom Fine Tuning for Tattoo Placement, Size & 360° Rotation
+  // Fine Tuning for Tattoo Placement, Size & 360° Rotation
   const [tattooScale, setTattooScale] = useState(1.10);
   const [tattooOpacity, setTattooOpacity] = useState(0.95);
   const [tattooRotationOffset, setTattooRotationOffset] = useState(0); // Full 0° to 360°
   const [offsetNudgeX, setOffsetNudgeX] = useState(0);
   const [offsetNudgeY, setOffsetNudgeY] = useState(0);
   const [blendMode, setBlendMode] = useState('multiply'); // 'multiply' gives true skin ink absorption
+
+  // Active Control Panel Tab: 'transform' (size/rotate) | 'position' (drag/nudge) | 'designs' (tattoos)
+  const [activeTab, setActiveTab] = useState('transform');
 
   const studioContainerRef = useRef(null);
 
@@ -266,81 +265,73 @@ export const Interactive3DStudio = ({
       setOffsetNudgeX(0);
       setOffsetNudgeY(0);
       setHighlightPulse(true);
-      const timer = setTimeout(() => setHighlightPulse(false), 1400);
+      const timer = setTimeout(() => setHighlightPulse(false), 1200);
       return () => clearTimeout(timer);
     }
   }, [selectedBodyArea]);
 
-  // Auto-rotate 360 animation loop
+  // Smooth Auto-rotate 360 animation loop
   useEffect(() => {
     if (!isAutoRotating) return;
     let animId;
-    const animate = () => {
-      setRotationDeg((prev) => (prev + 0.6) % 360);
+    let lastTime = performance.now();
+    const animate = (time) => {
+      const delta = time - lastTime;
+      lastTime = time;
+      setRotationDeg((prev) => (prev + (delta * 0.035)) % 360);
+      animId = requestAnimationFrame(animate);
     };
     animId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animId);
   }, [isAutoRotating]);
 
-  // Pointer drag on turntable to spin in 360° or pan when zoomed in
+  // 60FPS Pointer Drag Handlers with RAF Throttle
   const handlePointerDown = (e) => {
     if (isDraggingTattoo) return;
-    
-    // If zoomed in significantly (> 1.2x) and right click or space/shift held, enable pan
-    if (zoomLevel > 1.2 && (e.button === 2 || e.shiftKey)) {
-      setIsPanning(true);
-      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-      setPanStart({ x: clientX - panOffset.x, y: clientY - panOffset.y });
-      return;
-    }
-
     setIsDragging(true);
     setIsAutoRotating(false);
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-    setDragStartX(clientX);
-    setDragStartAngle(rotationDeg);
+    dragStartXRef.current = clientX;
+    dragStartAngleRef.current = rotationDeg;
   };
 
   const handlePointerMove = (e) => {
     if (isDraggingTattoo) {
       const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
       const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-      const deltaX = (clientX - tattooDragStart.x) * (0.2 / zoomLevel);
-      const deltaY = (clientY - tattooDragStart.y) * (0.2 / zoomLevel);
-      setOffsetNudgeX((prev) => prev + deltaX);
-      setOffsetNudgeY((prev) => prev + deltaY);
-      setTattooDragStart({ x: clientX, y: clientY });
-      return;
-    }
-
-    if (isPanning) {
-      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-      setPanOffset({
-        x: clientX - panStart.x,
-        y: clientY - panStart.y,
+      
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = requestAnimationFrame(() => {
+        const deltaX = (clientX - tattooDragStartRef.current.x) * (0.22 / zoomLevel);
+        const deltaY = (clientY - tattooDragStartRef.current.y) * (0.22 / zoomLevel);
+        setOffsetNudgeX((prev) => prev + deltaX);
+        setOffsetNudgeY((prev) => prev + deltaY);
+        tattooDragStartRef.current = { x: clientX, y: clientY };
       });
       return;
     }
 
     if (!isDragging) return;
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-    const deltaX = clientX - dragStartX;
-    const newAngle = (dragStartAngle - deltaX * 0.7 + 3600) % 360;
-    setRotationDeg(newAngle);
+    
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    animFrameRef.current = requestAnimationFrame(() => {
+      const deltaX = clientX - dragStartXRef.current;
+      const newAngle = (dragStartAngleRef.current - deltaX * 0.65 + 3600) % 360;
+      setRotationDeg(newAngle);
+    });
   };
 
   const handlePointerUp = () => {
     setIsDragging(false);
     setIsDraggingTattoo(false);
-    setIsPanning(false);
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
   };
 
   // Normalized 0 to 360 angle
   const normalizedAngle = ((rotationDeg % 360) + 360) % 360;
 
-  // Find the exact active 360 frame based on angle (closest of the 8 perspective views)
+  // Find the exact active 360 frame based on angle
   const getClosestFrame = (deg) => {
     let bestFrame = ANATOMY_360_FRAMES[0];
     let minDiff = 360;
@@ -359,7 +350,7 @@ export const Interactive3DStudio = ({
 
   const currentFrame = getClosestFrame(normalizedAngle);
 
-  // Sub-angle delta within current view quadrant for smooth subtle perspective shift (-22.5 to +22.5)
+  // Sub-angle delta within current view quadrant
   let subAngle = normalizedAngle - currentFrame.angle;
   if (subAngle > 180) subAngle -= 360;
   if (subAngle < -180) subAngle += 360;
@@ -372,11 +363,7 @@ export const Interactive3DStudio = ({
   ) || 'Forearm';
 
   const placementConfig = ANATOMICAL_PLACEMENTS[activeZoneKey];
-
-  // Resolve frame-specific position for current angle
   const frameCoords = placementConfig?.frames?.[currentFrame.angle];
-
-  // Calculate visibility based on whether frame coordinates exist for this view
   const isTattooVisibleInAngle = Boolean(frameCoords && (frameCoords.opacity ?? 1) > 0.2);
 
   // Zoom handlers
@@ -384,21 +371,11 @@ export const Interactive3DStudio = ({
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(parseFloat((prev - 0.3).toFixed(2)), 0.8));
   const handleResetZoom = () => {
     setZoomLevel(1.0);
-    setPanOffset({ x: 0, y: 0 });
     toast.info('Zoom reset to 100%');
-  };
-
-  // Body Part Specific Sizing Helper
-  const handleApplyBodyPartPresetSize = (multiplier = 1.0) => {
-    const base = placementConfig?.defaultScale || 1.10;
-    const newScale = parseFloat((base * multiplier).toFixed(2));
-    setTattooScale(newScale);
-    toast.success(`Size adjusted for ${placementConfig?.name}: ${(multiplier * 100).toFixed(0)}% fit`);
   };
 
   const handleReset = () => {
     setZoomLevel(1.0);
-    setPanOffset({ x: 0, y: 0 });
     setRotationDeg(placementConfig?.defaultTheta ?? 0);
     setIsAutoRotating(false);
     setTattooScale(placementConfig?.defaultScale || 1.10);
@@ -407,7 +384,7 @@ export const Interactive3DStudio = ({
     setOffsetNudgeX(0);
     setOffsetNudgeY(0);
     setBlendMode('multiply');
-    toast.info(`Centered and reset on ${placementConfig?.label || selectedBodyArea}`);
+    toast.info(`Centered on ${placementConfig?.label || selectedBodyArea}`);
   };
 
   // Focus Origin: if 'tattoo' mode, pivot zoom right on the tattoo coordinates!
@@ -419,23 +396,23 @@ export const Interactive3DStudio = ({
   return (
     <div
       ref={studioContainerRef}
-      className={`relative w-full ${compact ? 'h-[560px] sm:h-[620px] md:h-[680px]' : 'h-[620px] sm:h-[700px] md:h-[800px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-colors`}
+      className={`relative w-full ${compact ? 'h-[520px] sm:h-[580px]' : 'h-[580px] sm:h-[660px] md:h-[720px]'} flex flex-col justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-all`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
       
-      {/* 1. TOP 360° CONTROL & VIEW STATUS BAR */}
+      {/* 1. TOP HEADER BAR: ANGLE, ORBIT & ZOOM MODE */}
       <div className="absolute top-2.5 left-2.5 right-2.5 z-30 flex items-center justify-between gap-2 pointer-events-auto">
         
-        {/* Angle Indicator & Orbit Controls */}
-        <div className="flex items-center space-x-1 sm:space-x-1.5 bg-black/90 backdrop-blur-md border border-amber-400/30 p-1 sm:p-1.5 rounded-full shadow-xl">
+        {/* Angle & Orbit Controls */}
+        <div className="flex items-center space-x-1.5 bg-black/85 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-lg">
           <button
             type="button"
             onClick={() => setRotationDeg((prev) => (prev + 45) % 360)}
-            className="flex items-center space-x-1 px-2.5 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-300 hover:text-amber-200 bg-amber-950/60 border border-amber-500/40 rounded-full transition-colors"
-            title="Turn 45° clockwise"
+            className="flex items-center space-x-1 px-2.5 py-1 text-[10px] font-bold text-amber-300 hover:text-white bg-amber-950/50 border border-amber-500/30 rounded-full transition-colors"
+            title="Turn 45°"
           >
             <Compass className="w-3 h-3 text-amber-400" />
             <span>{Math.round(normalizedAngle)}°</span>
@@ -444,166 +421,113 @@ export const Interactive3DStudio = ({
           <button
             type="button"
             onClick={() => setIsAutoRotating(!isAutoRotating)}
-            className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition-all ${
+            className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-full transition-all ${
               isAutoRotating
-                ? 'bg-amber-400 text-black shadow-[0_0_10px_#f59e0b]'
+                ? 'bg-amber-400 text-black shadow-md'
                 : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
             }`}
             title="Auto 360 Orbit"
           >
-            {isAutoRotating ? '⏸ Stop Orbit' : '▶ 360° Spin'}
+            {isAutoRotating ? '⏸ Stop' : '▶ 360° Spin'}
           </button>
 
-          {/* Zoom Target Focus Mode (Tattoo vs Body) */}
-          <div className="hidden sm:flex items-center space-x-1 border-l border-white/10 pl-1.5 ml-1">
-            <button
-              type="button"
-              onClick={() => {
-                setZoomFocusMode('tattoo');
-                setZoomLevel(1.8);
-                toast.success(`Zooming in on ${placementConfig?.name}!`);
-              }}
-              className={`px-2 py-0.5 text-[9px] font-bold rounded transition-all ${
-                zoomFocusMode === 'tattoo' && zoomLevel > 1.2
-                  ? 'bg-amber-400 text-black shadow-md'
-                  : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
-              }`}
-              title="Zoom directly onto the tattoo & muscle area"
-            >
-              🔍 Focus Tattoo
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setZoomFocusMode('body');
-                setZoomLevel(1.0);
-                setPanOffset({ x: 0, y: 0 });
-              }}
-              className={`px-2 py-0.5 text-[9px] font-bold rounded transition-all ${
-                zoomLevel === 1.0
-                  ? 'bg-amber-400 text-black shadow-md'
-                  : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
-              }`}
-              title="Full Body Overview"
-            >
-              1x Full Body
-            </button>
+          {/* Focus Toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              const nextMode = zoomFocusMode === 'tattoo' ? 'body' : 'tattoo';
+              setZoomFocusMode(nextMode);
+              setZoomLevel(nextMode === 'tattoo' ? 1.6 : 1.0);
+              toast.info(nextMode === 'tattoo' ? 'Zoom focused on Tattoo' : 'Zoom focused on Full Body');
+            }}
+            className={`px-2 py-1 text-[10px] font-bold rounded-full transition-all ${
+              zoomFocusMode === 'tattoo' && zoomLevel > 1.1
+                ? 'bg-amber-400/20 text-amber-300 border border-amber-500/40'
+                : 'text-zinc-400 hover:text-white bg-zinc-900 border border-white/10'
+            }`}
+            title="Toggle focus zoom between Tattoo and Full Body"
+          >
+            {zoomFocusMode === 'tattoo' ? '🔍 Tattoo Focus' : '🌐 Body Focus'}
+          </button>
+        </div>
+
+        {/* Status Badge & Reset */}
+        <div className="flex items-center space-x-1.5">
+          <div className="bg-black/85 backdrop-blur-md border border-amber-400/40 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold text-amber-300 flex items-center space-x-1.5 shadow-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="truncate max-w-[120px] sm:max-w-none">
+              {placementConfig?.label || selectedBodyArea}
+            </span>
           </div>
-        </div>
 
-        {/* Anatomical Calibration Badge */}
-        <div className="bg-black/90 backdrop-blur-md border border-amber-400/50 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-amber-300 flex items-center space-x-1.5 shadow-lg shrink-0">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
-          <span className="truncate max-w-[140px] sm:max-w-none">
-            {placementConfig?.label || selectedBodyArea} • {currentFrame.label}
-          </span>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="p-1.5 bg-black/85 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-white/10 rounded-full shadow-md transition-colors"
+            title="Reset view and tattoo position"
+          >
+            <RefreshCcw className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
-      {/* 2. ALL 8 ANGLE PRESET BUTTONS BAR */}
-      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-25 flex items-center space-x-1 bg-black/85 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded-full text-[9px] text-zinc-300 pointer-events-auto">
-        {ANATOMY_360_FRAMES.map((f) => {
-          const isActive = Math.abs(normalizedAngle - f.angle) < 22.5 || (f.angle === 0 && normalizedAngle >= 337.5);
-          return (
-            <button
-              key={f.angle}
-              type="button"
-              onClick={() => setRotationDeg(f.angle)}
-              className={`px-1.5 py-0.5 rounded transition-colors ${
-                isActive ? 'text-amber-300 font-bold bg-amber-500/20 shadow-sm' : 'hover:text-white text-zinc-400'
-              }`}
-            >
-              {f.angle}°
-            </button>
-          );
-        })}
-      </div>
-
-      {/* 3. FLOATING INTERACTIVE ZOOM HUD (LEFT SIDE) */}
-      <div className="absolute left-2.5 top-20 z-30 flex flex-col items-center bg-black/80 backdrop-blur-md border border-amber-500/30 p-1 rounded-xl shadow-2xl pointer-events-auto space-y-1">
-        <div className="text-[8px] font-black uppercase text-amber-400 tracking-wider">
-          Zoom
-        </div>
-
-        {/* Zoom In Button */}
+      {/* 2. COMPACT FLOATING ZOOM HUD (TOP RIGHT) */}
+      <div className="absolute right-2.5 top-14 z-30 flex flex-col items-center bg-black/80 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg pointer-events-auto space-y-1">
         <button
           type="button"
           onClick={handleZoomIn}
-          className="p-1 bg-zinc-900/90 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all border border-white/10 shadow-sm"
-          title="Zoom In (Inspect Details)"
+          className="p-1 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all"
+          title="Zoom In"
         >
           <ZoomIn className="w-3.5 h-3.5" />
         </button>
-
-        {/* Vertical Zoom Level Slider (hidden on extra small screens to save space) */}
-        <div className="relative py-1 hidden sm:flex items-center justify-center">
-          <input
-            type="range"
-            min="0.8"
-            max="2.8"
-            step="0.05"
-            value={zoomLevel}
-            onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
-            className="w-14 accent-amber-400 cursor-pointer h-1 bg-zinc-800 rounded-lg -rotate-90 my-5"
-            title="Drag to zoom"
-          />
-        </div>
-
-        {/* Zoom Out Button */}
-        <button
-          type="button"
-          onClick={handleZoomOut}
-          className="p-1 bg-zinc-900/90 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all border border-white/10 shadow-sm"
-          title="Zoom Out (Full Body)"
-        >
-          <ZoomOut className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Live Zoom Percentage Badge / Reset */}
         <button
           type="button"
           onClick={handleResetZoom}
-          className="px-1 py-0.5 bg-amber-500/20 hover:bg-amber-400 hover:text-black text-amber-300 font-mono text-[8px] font-bold rounded border border-amber-500/30 transition-all"
-          title="Click to reset zoom to 100%"
+          className="px-1 py-0.5 text-[8px] font-mono font-bold text-amber-300 bg-amber-950/40 rounded border border-amber-500/30"
+          title="Reset Zoom"
         >
           {Math.round(zoomLevel * 100)}%
         </button>
+        <button
+          type="button"
+          onClick={handleZoomOut}
+          className="p-1 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all"
+          title="Zoom Out"
+        >
+          <ZoomOut className="w-3.5 h-3.5" />
+        </button>
       </div>
 
-      {/* 4. CENTER STAGE: 360° ANATOMICAL HUMAN BODY TURNTABLE */}
+      {/* 3. CENTER 3D TURNTABLE VIEWPORT */}
       <div
-        className="relative w-full h-full flex items-center justify-center transition-transform duration-150 ease-out transform-gpu will-change-transform pt-10 pb-44 cursor-grab active:cursor-grabbing"
+        className="relative w-full h-full flex items-center justify-center pt-8 pb-32 cursor-grab active:cursor-grabbing transform-gpu will-change-transform"
         style={{
           transformOrigin: `${zoomOriginX} ${zoomOriginY}`,
-          transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
+          transform: `scale(${zoomLevel})`,
+          transition: isDragging || isDraggingTattoo ? 'none' : 'transform 0.15s ease-out',
         }}
       >
-        {/* Soft studio vignette glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.05)_0%,transparent_75%)] pointer-events-none" />
-
-        {/* 3D Model Viewport with Real Muscular Body Contours */}
-        <div className="relative h-[88%] max-h-[620px] aspect-[2/3] flex items-center justify-center transform-gpu transition-all duration-100">
+        <div className="relative h-[90%] max-h-[580px] aspect-[2/3] flex items-center justify-center transform-gpu">
           
           <div
             className="relative w-full h-full flex items-center justify-center transform-gpu will-change-transform"
             style={{
               transform: `perspective(1000px) rotateY(${subAngle * 0.3}deg)`,
               transformStyle: 'preserve-3d',
-              transition: isDragging || isAutoRotating ? 'none' : 'transform 0.2s ease-out',
+              transition: isDragging || isAutoRotating ? 'none' : 'transform 0.15s ease-out',
             }}
           >
-            {/* Real 3D Full Body Anatomical Model Frame */}
+            {/* 3D Mannequin Frame */}
             <img
               key={currentFrame.src + (currentFrame.flip ? '_flip' : '')}
               src={currentFrame.src}
-              alt="360-Degree Muscular Anatomical Human Model"
-              className="w-full h-full object-contain filter brightness-100 contrast-110 drop-shadow-[0_20px_45px_rgba(0,0,0,0.95)] pointer-events-none transform-gpu transition-opacity duration-150"
-              style={{
-                transform: currentFrame.flip ? 'scaleX(-1)' : 'none',
-              }}
+              alt="360 Body Model"
+              className="w-full h-full object-contain filter brightness-100 contrast-110 drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)] pointer-events-none transform-gpu"
+              style={{ transform: currentFrame.flip ? 'scaleX(-1)' : 'none' }}
             />
 
-            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION WITH DIRECT DRAG, 360° ROTATION & RESIZING */}
+            {/* REALISTIC INKED-ON-SKIN TATTOO OVERLAY */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
                 onPointerDown={(e) => {
@@ -611,9 +535,9 @@ export const Interactive3DStudio = ({
                   setIsDraggingTattoo(true);
                   const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
                   const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-                  setTattooDragStart({ x: clientX, y: clientY });
+                  tattooDragStartRef.current = { x: clientX, y: clientY };
                 }}
-                className={`absolute z-30 pointer-events-auto flex items-center justify-center transform-gpu will-change-transform cursor-move group ${
+                className={`absolute z-30 pointer-events-auto flex items-center justify-center transform-gpu will-change-transform cursor-move ${
                   highlightPulse ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-black rounded-lg animate-pulse' : ''
                 }`}
                 style={{
@@ -627,9 +551,8 @@ export const Interactive3DStudio = ({
                   filter: blendMode === 'multiply' 
                     ? 'contrast(1.2) brightness(0.92) drop-shadow(0 0 1px rgba(0,0,0,0.7))'
                     : 'drop-shadow(0 0 4px rgba(0,0,0,0.5))',
-                  transition: isDragging || isDraggingTattoo ? 'none' : 'opacity 0.15s ease-out, transform 0.08s ease-out',
                 }}
-                title="Click and drag tattoo to adjust placement on skin"
+                title="Drag to position tattoo"
               >
                 {selectedDesign.svg ? (
                   <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold">
@@ -642,14 +565,14 @@ export const Interactive3DStudio = ({
                     className="w-full h-full object-contain pointer-events-none filter contrast-115"
                   />
                 ) : (
-                  <div className="text-[10px] text-amber-300 font-bold uppercase tracking-wider text-center bg-black/70 px-2 py-1 rounded">
+                  <div className="text-[10px] text-amber-300 font-bold text-center bg-black/70 px-2 py-1 rounded">
                     {selectedDesign.name}
                   </div>
                 )}
               </div>
             )}
 
-            {/* Dynamic Clickable Hotspot Zones Matching Current View */}
+            {/* Clickable Muscle Hotspots */}
             {Object.entries(ANATOMICAL_PLACEMENTS).map(([key, config]) => {
               const activeCoords = config.frames?.[currentFrame.angle];
               if (!activeCoords || (activeCoords.opacity ?? 1) < 0.4) return null;
@@ -664,15 +587,15 @@ export const Interactive3DStudio = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onSelectBodyArea) onSelectBodyArea(key);
-                    toast.success(`Testing design on ${config.name}!`);
+                    toast.success(`Selected ${config.name}!`);
                   }}
                   onMouseEnter={() => setHoveredPart(key)}
                   onMouseLeave={() => setHoveredPart(null)}
                   className={`absolute z-25 cursor-pointer rounded-xl transition-all border pointer-events-auto ${
                     isSelected
-                      ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
+                      ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]'
                       : isHovered
-                      ? 'bg-cyan-500/15 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
+                      ? 'bg-cyan-500/15 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
                       : 'border-transparent hover:border-white/20'
                   }`}
                   style={{
@@ -684,7 +607,7 @@ export const Interactive3DStudio = ({
                   }}
                 >
                   {(isSelected || isHovered) && (
-                    <span className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-black/95 backdrop-blur-md text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30">
+                    <span className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-black/95 text-amber-300 border border-amber-500/40 text-[9px] font-bold uppercase px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30">
                       {config.name}
                     </span>
                   )}
@@ -698,24 +621,73 @@ export const Interactive3DStudio = ({
 
       </div>
 
-      {/* 5. BOTTOM FINE-TUNING CONTROLS & TATTOO SELECTION DOCK */}
-      <div className="absolute bottom-2.5 left-2.5 right-2.5 z-30 flex flex-col gap-2 pointer-events-auto">
+      {/* 4. CLEAN STREAMLINED STUDIO DOCK */}
+      <div className="absolute bottom-2 left-2 right-2 z-30 flex flex-col gap-1.5 pointer-events-auto">
         
-        {/* Interactive Alignment, Full 360° Rotation & Size Adjustment Dock */}
-        <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-2xl gap-2">
+        {/* Navigation Tabs for Clean Organization */}
+        <div className="flex items-center justify-between bg-black/90 backdrop-blur-md border border-white/10 p-1.5 rounded-xl text-xs text-zinc-300 shadow-xl">
           
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Tab Switchers */}
+          <div className="flex items-center space-x-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('transform')}
+              className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-lg transition-all ${
+                activeTab === 'transform' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
+              }`}
+            >
+              Size &amp; 360° Angle
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('position')}
+              className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-lg transition-all ${
+                activeTab === 'position' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
+              }`}
+            >
+              Nudge &amp; Skin Ink
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('designs')}
+              className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-lg transition-all ${
+                activeTab === 'designs' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
+              }`}
+            >
+              Tattoos ({designs.length})
+            </button>
+          </div>
+
+          {/* Angle Presets */}
+          <div className="hidden sm:flex items-center space-x-0.5 text-[9px]">
+            {ANATOMY_360_FRAMES.map((f) => (
+              <button
+                key={f.angle}
+                type="button"
+                onClick={() => setRotationDeg(f.angle)}
+                className={`px-1.5 py-0.5 rounded transition-colors ${
+                  Math.abs(normalizedAngle - f.angle) < 22.5 || (f.angle === 0 && normalizedAngle >= 337.5)
+                    ? 'text-amber-300 font-bold bg-amber-500/20'
+                    : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {f.angle}°
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Content 1: Size & 360° Rotation */}
+        {activeTab === 'transform' && (
+          <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
             
-            {/* Body-Part Tailored Tattoo Size Zoom In / Out Control */}
-            <div className="flex items-center space-x-1.5 bg-zinc-900/90 border border-white/10 px-2 py-1 rounded-lg">
-              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">
-                Tattoo Size:
-              </span>
+            {/* Tattoo Size */}
+            <div className="flex items-center space-x-1.5">
+              <span className="text-[10px] uppercase font-bold text-amber-400">Size:</span>
               <button
                 type="button"
                 onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.2))}
-                className="w-5 h-5 flex items-center justify-center bg-black/60 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold transition-all text-xs"
-                title="Decrease Tattoo Size (-10%)"
+                className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
               >
                 -
               </button>
@@ -726,32 +698,27 @@ export const Interactive3DStudio = ({
                 step="0.05"
                 value={tattooScale}
                 onChange={(e) => setTattooScale(parseFloat(e.target.value))}
-                className="w-16 sm:w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-                title="Adjust tattoo scale"
+                className="w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <button
                 type="button"
                 onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 3.0))}
-                className="w-5 h-5 flex items-center justify-center bg-black/60 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold transition-all text-xs"
-                title="Increase Tattoo Size (+10%)"
+                className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
               >
                 +
               </button>
-              <span className="text-[10px] font-mono text-amber-300 font-bold">
+              <span className="text-[10px] font-mono text-amber-300 font-bold w-10">
                 {Math.round(tattooScale * 100)}%
               </span>
             </div>
 
-            {/* FULL 360° TATTOO ROTATION CONTROL */}
-            <div className="flex items-center space-x-1.5 bg-zinc-900/90 border border-white/10 px-2 py-1 rounded-lg">
-              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">
-                Tattoo 360°:
-              </span>
+            {/* Tattoo 360° Rotation */}
+            <div className="flex items-center space-x-1.5">
+              <span className="text-[10px] uppercase font-bold text-zinc-400">360° Rotate:</span>
               <button
                 type="button"
                 onClick={() => setTattooRotationOffset((prev) => (prev - 15 + 360) % 360)}
-                className="p-0.5 text-zinc-400 hover:text-amber-400"
-                title="Rotate Tattoo -15°"
+                className="p-1 text-zinc-400 hover:text-white"
               >
                 ↺
               </button>
@@ -762,115 +729,98 @@ export const Interactive3DStudio = ({
                 step="5"
                 value={tattooRotationOffset}
                 onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
-                className="w-14 sm:w-18 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-                title="Rotate tattoo 0° to 360°"
+                className="w-18 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <button
                 type="button"
                 onClick={() => setTattooRotationOffset((prev) => (prev + 15) % 360)}
-                className="p-0.5 text-zinc-400 hover:text-amber-400"
-                title="Rotate Tattoo +15°"
+                className="p-1 text-zinc-400 hover:text-white"
               >
                 ↻
               </button>
-              <span className="text-[10px] font-mono text-zinc-300 w-7 text-right">
+              <span className="text-[10px] font-mono text-zinc-300 w-8 text-right">
                 {tattooRotationOffset}°
               </span>
             </div>
 
-            {/* Quick 360° Angle Presets */}
-            <div className="hidden lg:flex items-center space-x-0.5 bg-zinc-900/70 border border-white/10 rounded-lg p-0.5 text-[8px] font-bold">
+            {/* Quick Angle Buttons */}
+            <div className="hidden md:flex items-center space-x-1 text-[8px] font-bold">
               {[0, 90, 180, 270].map((deg) => (
                 <button
                   key={deg}
                   type="button"
                   onClick={() => setTattooRotationOffset(deg)}
-                  className={`px-1.5 py-0.5 rounded transition-colors ${
-                    tattooRotationOffset === deg ? 'bg-amber-400 text-black font-bold' : 'text-zinc-400 hover:text-white'
-                  }`}
+                  className={`px-1.5 py-0.5 rounded ${tattooRotationOffset === deg ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900 hover:text-white'}`}
                 >
                   {deg}°
                 </button>
               ))}
             </div>
+          </div>
+        )}
 
-            {/* Nudge D-Pad Controls */}
-            <div className="flex items-center space-x-0.5 bg-zinc-900 border border-white/10 rounded-lg p-0.5">
+        {/* Tab Content 2: Position Nudge & Skin Ink Blend */}
+        {activeTab === 'position' && (
+          <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
+            
+            {/* Nudge D-Pad */}
+            <div className="flex items-center space-x-1">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 mr-1">Fine Nudge:</span>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev - 1)}
-                className="p-1 text-zinc-400 hover:text-amber-400 hover:bg-zinc-800 rounded"
-                title="Nudge Left"
+                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeY((prev) => prev - 1)}
-                className="p-1 text-zinc-400 hover:text-amber-400 hover:bg-zinc-800 rounded"
-                title="Nudge Up"
+                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
               >
                 <ChevronUp className="w-3.5 h-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeY((prev) => prev + 1)}
-                className="p-1 text-zinc-400 hover:text-amber-400 hover:bg-zinc-800 rounded"
-                title="Nudge Down"
+                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev + 1)}
-                className="p-1 text-zinc-400 hover:text-amber-400 hover:bg-zinc-800 rounded"
-                title="Nudge Right"
+                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            {/* Ink Depth Mode */}
-            <div className="flex items-center space-x-1 text-[10px]">
-              <span className="text-zinc-500 uppercase font-bold hidden sm:inline">Ink:</span>
+            {/* Ink Blend Mode */}
+            <div className="flex items-center space-x-1.5">
+              <span className="text-[10px] uppercase font-bold text-zinc-400">Ink Absorption:</span>
               <button
                 type="button"
                 onClick={() => setBlendMode('multiply')}
-                className={`px-2 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'multiply' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900'}`}
+                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold ${blendMode === 'multiply' ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900'}`}
               >
                 Real Skin
               </button>
               <button
                 type="button"
                 onClick={() => setBlendMode('normal')}
-                className={`px-2 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'normal' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900'}`}
+                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold ${blendMode === 'normal' ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900'}`}
               >
                 Direct
               </button>
             </div>
-
           </div>
+        )}
 
-          <div className="flex items-center space-x-1.5">
-            <button
-              type="button"
-              onClick={handleReset}
-              className="p-1 text-zinc-400 hover:text-white bg-zinc-900 border border-white/10 rounded-md transition-colors text-[10px] px-2.5 flex items-center space-x-1"
-              title="Reset View, Sizing and Rotation"
-            >
-              <RefreshCcw className="w-3 h-3" />
-              <span>Center</span>
-            </button>
-          </div>
-        </div>
-
-        {/* In-Viewport Tattoo Selection Carousel */}
-        {designs && designs.length > 0 && (
-          <div className="bg-black/95 backdrop-blur-xl border border-white/10 p-1.5 rounded-xl shadow-2xl">
+        {/* Tab Content 3: In-Studio Tattoo Carousel */}
+        {activeTab === 'designs' && designs && designs.length > 0 && (
+          <div className="bg-black/95 backdrop-blur-md border border-white/10 p-1.5 rounded-xl shadow-xl">
             <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-thin">
-              <span className="text-[9px] uppercase tracking-widest font-black text-amber-400 px-1 shrink-0">
-                Tattoos ({designs.length}):
-              </span>
               {designs.map((design) => {
                 const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
                 const imgSrc = getFullImageUrl(design.previewImage || design.dataUri || design.image);
@@ -881,23 +831,19 @@ export const Interactive3DStudio = ({
                     type="button"
                     onClick={() => {
                       if (onSelectDesign) onSelectDesign(design);
-                      toast.success(`Testing "${design.name}" on 3D Body!`);
+                      toast.success(`Selected "${design.name}"`);
                     }}
                     className={`relative shrink-0 flex items-center space-x-1.5 px-2 py-1 rounded-lg transition-all border ${
                       isSelected
-                        ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)] scale-105'
+                        ? 'bg-amber-500/20 border-amber-400 shadow-md'
                         : 'bg-zinc-900/80 border-white/10 hover:border-amber-500/40 text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded bg-black p-0.5 overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
+                    <div className="w-7 h-7 rounded bg-black p-0.5 overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
                       {design.svg ? (
                         design.svg
                       ) : (
-                        <img
-                          src={imgSrc}
-                          alt={design.name}
-                          className="w-full h-full object-contain"
-                        />
+                        <img src={imgSrc} alt={design.name} className="w-full h-full object-contain" />
                       )}
                     </div>
                     <div className="text-left">
