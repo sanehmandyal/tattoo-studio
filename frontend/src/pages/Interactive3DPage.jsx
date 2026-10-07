@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Interactive3DStudio } from '../components/tattoo-studio/Interactive3DStudio';
 import { designsAPI } from '../services/api';
-import { Sparkles, ArrowRight, Star, Sliders, Check, Layers, RotateCcw } from 'lucide-react';
+import { Sparkles, ArrowRight, Star, X, Image as ImageIcon, Sliders, Check, Layers, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../utils/whatsapp';
 
@@ -16,6 +16,7 @@ export const Interactive3DPage = () => {
   const [designs, setDesigns] = useState(TATTOO_ARTWORKS_CATALOG);
   const [selectedDesign, setSelectedDesign] = useState(TATTOO_ARTWORKS_CATALOG[0]);
   const [loading, setLoading] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
   const bodyAreas = [
@@ -85,7 +86,7 @@ export const Interactive3DPage = () => {
     fetchDesigns();
   }, [findReferenceTattooForArea, selectedBodyArea]);
 
-  // When body area is clicked, load the admin's designated reference tattoo or preview current tattoo on that body part
+  // When body area is clicked, load reference tattoo and open mobile sidebar drawer
   const handleSelectBodyArea = (area) => {
     setSelectedBodyArea(area);
     const matchingAdminDesign = findReferenceTattooForArea(area, designs);
@@ -94,6 +95,11 @@ export const Interactive3DPage = () => {
       toast.success(`Testing "${matchingAdminDesign.name}" on ${area}!`);
     } else if (selectedDesign) {
       toast.success(`Testing "${selectedDesign.name}" on ${area}!`);
+    }
+
+    // On mobile screens (< 1024px), automatically open tattoo options drawer
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsMobileDrawerOpen(true);
     }
   };
 
@@ -108,7 +114,7 @@ export const Interactive3DPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-[#090b0e] text-left text-zinc-100">
+    <div className="min-h-screen pt-24 pb-16 bg-[#090b0e] text-left text-zinc-100 relative">
       <Helmet>
         <title>3D Tattoo Body Placement Studio — LAND OF GOD TATTOO STUDIO (Una)</title>
         <meta
@@ -172,7 +178,7 @@ export const Interactive3DPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* CENTER 3D MANNEQUIN CANVAS (8 COLS) */}
-          <div className="lg:col-span-8 flex flex-col">
+          <div className="lg:col-span-8 flex flex-col relative">
             <Interactive3DStudio
               selectedBodyArea={selectedBodyArea}
               onSelectBodyArea={handleSelectBodyArea}
@@ -180,10 +186,25 @@ export const Interactive3DPage = () => {
               onSelectDesign={setSelectedDesign}
               designs={filteredDesigns}
             />
+
+            {/* Mobile Quick Trigger Bar to Re-open Tattoo Drawer */}
+            <div className="lg:hidden mt-3 w-full flex items-center justify-between bg-zinc-900/95 border border-amber-500/30 p-2.5 rounded-xl">
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-bold text-white">{selectedBodyArea}</span>
+                <span className="text-[10px] text-zinc-400 font-mono">({filteredDesigns.length} tattoos)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileDrawerOpen(true)}
+                className="bg-amber-400 text-black font-bold text-xs px-3 py-1.5 rounded-lg shadow-md flex items-center space-x-1"
+              >
+                <span>🎨 Browse Tattoo Options</span>
+              </button>
+            </div>
           </div>
 
-          {/* RIGHT DESIGN CATALOG & ACTIONS (4 COLS) */}
-          <div className="lg:col-span-4 space-y-4">
+          {/* DESKTOP RIGHT DESIGN CATALOG & ACTIONS (4 COLS) */}
+          <div className="hidden lg:block lg:col-span-4 space-y-4">
             
             {/* Style Filters */}
             <div className="bg-zinc-900/80 p-3.5 rounded-2xl border border-white/10 space-y-2.5 shadow-lg">
@@ -309,6 +330,149 @@ export const Interactive3DPage = () => {
         </div>
 
       </div>
+
+      {/* MOBILE SLIDE-OVER TATTOO OPTIONS SIDEBAR / DRAWER */}
+      {isMobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
+          
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileDrawerOpen(false)}
+          />
+
+          {/* Slide-In Content Drawer */}
+          <div className="relative w-full max-w-sm bg-[#0d1015] border-l border-white/10 h-full flex flex-col z-10 shadow-2xl animate-in slide-in-from-right duration-200">
+            
+            {/* Drawer Header */}
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                <div>
+                  <h3 className="font-bold text-sm text-white uppercase tracking-wider">
+                    {selectedBodyArea} Tattoos
+                  </h3>
+                  <p className="text-[10px] text-zinc-400">
+                    Tap any tattoo to test on 3D body
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileDrawerOpen(false)}
+                className="p-1.5 text-zinc-400 hover:text-white bg-zinc-900 rounded-lg border border-white/10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Style Filters */}
+            <div className="p-3 border-b border-white/5 bg-zinc-950/50">
+              <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                {styles.map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setSelectedStyle(s)}
+                    className={`shrink-0 px-2.5 py-1 text-[10px] font-bold rounded-md transition-all ${
+                      selectedStyle === s
+                        ? 'bg-amber-400 text-black shadow-sm'
+                        : 'bg-zinc-900 text-zinc-400 border border-white/5'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Designs List */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-2.5 scrollbar-thin">
+              {filteredDesigns.map(design => {
+                const isSelected = selectedDesign?._id === design._id || selectedDesign?.name === design.name;
+                const isDefaultRef = Boolean(design.isDefaultReference);
+
+                return (
+                  <div
+                    key={design._id || design.name}
+                    onClick={() => {
+                      setSelectedDesign(design);
+                      toast.success(`Applied "${design.name}" to ${selectedBodyArea}!`);
+                    }}
+                    className={`flex items-center space-x-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
+                      isSelected
+                        ? 'bg-amber-500/15 border-amber-400 shadow-md ring-1 ring-amber-400'
+                        : 'bg-zinc-900/80 border-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="w-14 h-14 rounded-lg bg-black p-1 overflow-hidden border border-white/10 shrink-0 flex items-center justify-center">
+                      {design.svg ? (
+                        design.svg
+                      ) : (
+                        <img
+                          src={getFullImageUrl(design.previewImage || design.dataUri)}
+                          alt={design.name}
+                          className="w-full h-full object-contain"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-bold text-xs text-white uppercase truncate">
+                          {design.name}
+                        </h4>
+                        {isSelected && (
+                          <span className="text-[9px] bg-amber-400 text-black font-black px-1.5 py-0.2 rounded">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[10px] text-amber-400/90 font-semibold mt-0.5">
+                        {design.style}
+                      </div>
+                      <div className="text-[9px] text-zinc-500">
+                        Est: {design.estTime || '2 hrs'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Drawer Bottom Actions */}
+            <div className="p-3 border-t border-white/10 bg-black/60 space-y-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileDrawerOpen(false);
+                  handleProceedToBooking();
+                }}
+                className="w-full bg-amber-400 hover:bg-amber-300 text-black font-black py-2.5 px-4 text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center space-x-1.5"
+              >
+                <span>Book with {selectedDesign?.name || 'Selected'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const waUrl = createArtworkInquiryUrl(
+                    selectedDesign?.name || '3D Tattoo Design',
+                    'Land of God Studio',
+                    selectedBodyArea
+                  );
+                  window.open(waUrl, '_blank');
+                }}
+                className="w-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold py-2 px-3 text-[10px] uppercase rounded-xl flex items-center justify-center space-x-1.5"
+              >
+                <span>💬 WhatsApp Inquiry</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 };
