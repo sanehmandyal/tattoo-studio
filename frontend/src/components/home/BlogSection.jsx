@@ -9,20 +9,20 @@ export const getArticleCoverImage = (blog) => {
   const s = (blog?.slug || '').toLowerCase();
   const c = (blog?.category || '').toLowerCase();
 
-  // 1. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry
-  if (t.includes('mahadev') || t.includes('shiva') || t.includes('trishul') || s.includes('mahadev') || s.includes('sacred-geometry') || t.includes('geometry')) {
-    return '/images/tattoos/mahadev_trishul.jpg';
+  // 1. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry — Distinct Spiritual Sacred Mandala Photography
+  if (t.includes('mahadev') || t.includes('shiva') || t.includes('trishul') || s.includes('mahadev') || s.includes('sacred-geometry') || t.includes('geometry') || c.includes('style')) {
+    return 'https://images.unsplash.com/photo-1611590027211-b954fd027b51?auto=format&fit=crop&w=1000&q=80';
   }
-  // 2. Tattoo Preparation / Session Prep / Hydration / Skin Prep
+  // 2. Tattoo Preparation / Session Prep / Hydration / Skin Prep — Real Studio Artist Inking Session
   if (t.includes('prep') || t.includes('prepare') || s.includes('prep') || c.includes('prep') || t.includes('session')) {
-    return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80';
+    return 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
   }
-  // 3. Aftercare / Contrast / Longevity / Healing / Science
+  // 3. Aftercare / Contrast / Longevity / Healing / Science — Clean Skin Barrier Balm & Aftercare
   if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity') || s.includes('contrast') || s.includes('aftercare') || c.includes('aftercare') || t.includes('science')) {
     return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
   }
 
-  return blog?.coverImage || '/images/tattoos/mahadev_trishul.jpg';
+  return blog?.coverImage || 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
 };
 
 const DEFAULT_BLOGS = [
@@ -31,7 +31,7 @@ const DEFAULT_BLOGS = [
     title: 'How to Prepare Your Body and Skin for a Multi-Hour Tattoo Session',
     slug: 'prep-your-body-for-tattoo-session',
     excerpt: 'Hydration, nutrition, skin prep, and breathing techniques to maximize endurance and comfort in the chair.',
-    coverImage: 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80',
     category: 'Tattoo Preparation',
     readTimeMinutes: 5,
     author: 'Master Sunil',
@@ -41,7 +41,7 @@ const DEFAULT_BLOGS = [
     title: 'The Sacred Architecture of Mahadev Trishul & Devbhoomi Geometry',
     slug: 'sacred-geometry-devbhoomi-art',
     excerpt: 'Exploring the spiritual symbolism of Lord Shiva, the cosmic trident, and sacred golden-ratio yantras.',
-    coverImage: '/images/tattoos/mahadev_trishul.jpg',
+    coverImage: 'https://images.unsplash.com/photo-1611590027211-b954fd027b51?auto=format&fit=crop&w=1000&q=80',
     category: 'Sacred Devbhoomi',
     readTimeMinutes: 4,
     author: 'Master Sunil',
@@ -119,7 +119,7 @@ export const BlogSection = () => {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/images/tattoos/mahadev_trishul.jpg';
+                    e.target.src = 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
                   }}
                 />
                 <span className="absolute top-3 left-3 bg-black/85 backdrop-blur-md text-[10px] font-bold text-amber-300 uppercase tracking-wider px-2.5 py-1 rounded-md border border-amber-500/30">

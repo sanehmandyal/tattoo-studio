@@ -19,10 +19,19 @@ export const BlogDetailPage = () => {
         if (res.success && res.blog) {
           const mapImg = (b) => {
             const t = (b.title || '').toLowerCase();
-            if (t.includes('mahadev') || t.includes('geometry') || t.includes('shiva') || t.includes('trishul')) return '/images/tattoos/mahadev_trishul.jpg';
-            if (t.includes('prep') || t.includes('session')) return 'https://images.unsplash.com/photo-1590246814883-578351586a14?auto=format&fit=crop&w=1000&q=80';
-            if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity')) return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
-            return b.coverImage || '/images/tattoos/mahadev_trishul.jpg';
+            const s = (b.slug || '').toLowerCase();
+            const c = (b.category || '').toLowerCase();
+
+            if (t.includes('mahadev') || t.includes('geometry') || t.includes('shiva') || t.includes('trishul') || s.includes('geometry') || c.includes('style')) {
+              return 'https://images.unsplash.com/photo-1611590027211-b954fd027b51?auto=format&fit=crop&w=1000&q=80';
+            }
+            if (t.includes('prep') || t.includes('session')) {
+              return 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
+            }
+            if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity')) {
+              return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
+            }
+            return b.coverImage || 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
           };
 
           setBlog({
@@ -116,16 +125,14 @@ export const BlogDetailPage = () => {
         </div>
 
         {/* Featured Image */}
-        <div className="rounded-2xl overflow-hidden border border-studio-border shadow-2xl mb-10 h-80 sm:h-[420px] bg-black/90 flex items-center justify-center p-4">
+        <div className="rounded-2xl overflow-hidden border border-studio-border shadow-2xl mb-10 h-80 sm:h-[420px] bg-black flex items-center justify-center">
           <img
             src={getFullImageUrl(blog.coverImage)}
             alt={blog.title}
-            className={`w-full h-full ${
-              blog.coverImage?.includes('/tattoos/') ? 'object-contain p-4' : 'object-cover'
-            }`}
+            className="w-full h-full object-cover"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = '/images/tattoos/mahadev_trishul.png';
+              e.target.src = 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
             }}
           />
         </div>
