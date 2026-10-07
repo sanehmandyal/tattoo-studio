@@ -226,12 +226,27 @@ export const Interactive3DStudio = ({
   const [offsetNudgeY, setOffsetNudgeY] = useState(0);
   const [blendMode, setBlendMode] = useState('multiply'); // 'multiply' gives true skin ink absorption
 
+  const studioContainerRef = useRef(null);
+
   // Preload all 360 frame images into browser cache for instant rotation
   useEffect(() => {
     ANATOMY_360_FRAMES.forEach((frame) => {
       const img = new Image();
       img.src = frame.src;
     });
+  }, []);
+
+  // Non-passive wheel event listener to avoid browser console warnings
+  useEffect(() => {
+    const el = studioContainerRef.current;
+    if (!el) return;
+    const handleWheelNonPassive = (e) => {
+      e.preventDefault();
+      const zoomDelta = e.deltaY * -0.0015;
+      setZoomLevel((prev) => Math.min(Math.max(parseFloat((prev + zoomDelta).toFixed(2)), 0.8), 2.8));
+    };
+    el.addEventListener('wheel', handleWheelNonPassive, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheelNonPassive);
   }, []);
 
   // Automatically rotate toward chosen body area and adjust default tattoo size
@@ -322,13 +337,6 @@ export const Interactive3DStudio = ({
     setIsPanning(false);
   };
 
-  // Mouse wheel zoom support on viewport
-  const handleWheel = (e) => {
-    e.preventDefault();
-    const zoomDelta = e.deltaY * -0.0015;
-    setZoomLevel((prev) => Math.min(Math.max(parseFloat((prev + zoomDelta).toFixed(2)), 0.8), 2.8));
-  };
-
   // Normalized 0 to 360 angle
   const normalizedAngle = ((rotationDeg % 360) + 360) % 360;
 
@@ -410,12 +418,12 @@ export const Interactive3DStudio = ({
 
   return (
     <div
+      ref={studioContainerRef}
       className={`relative w-full ${compact ? 'h-[560px] sm:h-[620px] md:h-[680px]' : 'h-[620px] sm:h-[700px] md:h-[800px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-colors`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
-      onWheel={handleWheel}
     >
       
       {/* 1. TOP 360° CONTROL & VIEW STATUS BAR */}
@@ -512,8 +520,8 @@ export const Interactive3DStudio = ({
       </div>
 
       {/* 3. FLOATING INTERACTIVE ZOOM HUD (LEFT SIDE) */}
-      <div className="absolute left-3 top-20 z-30 flex flex-col items-center bg-black/90 backdrop-blur-md border border-amber-500/30 p-1.5 rounded-2xl shadow-2xl pointer-events-auto space-y-1.5">
-        <div className="text-[9px] font-black uppercase text-amber-400 tracking-wider">
+      <div className="absolute left-2.5 top-20 z-30 flex flex-col items-center bg-black/80 backdrop-blur-md border border-amber-500/30 p-1 rounded-xl shadow-2xl pointer-events-auto space-y-1">
+        <div className="text-[8px] font-black uppercase text-amber-400 tracking-wider">
           Zoom
         </div>
 
@@ -521,14 +529,14 @@ export const Interactive3DStudio = ({
         <button
           type="button"
           onClick={handleZoomIn}
-          className="p-1.5 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-xl transition-all border border-white/10 shadow-sm"
+          className="p-1 bg-zinc-900/90 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all border border-white/10 shadow-sm"
           title="Zoom In (Inspect Details)"
         >
-          <ZoomIn className="w-4 h-4" />
+          <ZoomIn className="w-3.5 h-3.5" />
         </button>
 
-        {/* Vertical Zoom Level Slider */}
-        <div className="relative py-1 flex items-center justify-center">
+        {/* Vertical Zoom Level Slider (hidden on extra small screens to save space) */}
+        <div className="relative py-1 hidden sm:flex items-center justify-center">
           <input
             type="range"
             min="0.8"
@@ -536,7 +544,7 @@ export const Interactive3DStudio = ({
             step="0.05"
             value={zoomLevel}
             onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
-            className="w-16 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg -rotate-90 my-6"
+            className="w-14 accent-amber-400 cursor-pointer h-1 bg-zinc-800 rounded-lg -rotate-90 my-5"
             title="Drag to zoom"
           />
         </div>
@@ -545,17 +553,17 @@ export const Interactive3DStudio = ({
         <button
           type="button"
           onClick={handleZoomOut}
-          className="p-1.5 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-xl transition-all border border-white/10 shadow-sm"
+          className="p-1 bg-zinc-900/90 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all border border-white/10 shadow-sm"
           title="Zoom Out (Full Body)"
         >
-          <ZoomOut className="w-4 h-4" />
+          <ZoomOut className="w-3.5 h-3.5" />
         </button>
 
         {/* Live Zoom Percentage Badge / Reset */}
         <button
           type="button"
           onClick={handleResetZoom}
-          className="px-1.5 py-0.5 bg-amber-500/20 hover:bg-amber-400 hover:text-black text-amber-300 font-mono text-[9px] font-bold rounded-md border border-amber-500/30 transition-all"
+          className="px-1 py-0.5 bg-amber-500/20 hover:bg-amber-400 hover:text-black text-amber-300 font-mono text-[8px] font-bold rounded border border-amber-500/30 transition-all"
           title="Click to reset zoom to 100%"
         >
           {Math.round(zoomLevel * 100)}%
