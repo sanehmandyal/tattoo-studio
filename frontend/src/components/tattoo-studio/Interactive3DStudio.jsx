@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair } from 'lucide-react';
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
@@ -32,7 +32,7 @@ const ANATOMICAL_PLACEMENTS = {
   'Upper Arm': {
     name: 'Upper Arm (Right)',
     label: 'Right Bicep / Deltoid',
-    defaultTheta: 60,
+    defaultTheta: 45,
     frames: {
       0: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: -10, opacity: 1, scaleX: 0.95, skewY: -2 },
       45: { left: 37.0, top: 37.0, width: 13.5, height: 16.5, rotate: -6, opacity: 1, scaleX: 1.0, skewY: 0 },
@@ -44,7 +44,7 @@ const ANATOMICAL_PLACEMENTS = {
   Shoulder: {
     name: 'Shoulder (Right)',
     label: 'Right Shoulder Cap',
-    defaultTheta: 70,
+    defaultTheta: 45,
     frames: {
       0: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: -12, opacity: 1, scaleX: 0.95 },
       45: { left: 39.0, top: 28.0, width: 14.5, height: 13.5, rotate: -6, opacity: 1, scaleX: 1.0 },
@@ -90,7 +90,7 @@ const ANATOMICAL_PLACEMENTS = {
   Ribs: {
     name: 'Ribs',
     label: 'Ribcage & Flank',
-    defaultTheta: 30,
+    defaultTheta: 45,
     frames: {
       0: { left: 44.0, top: 41.0, width: 17.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.95 },
       45: { left: 49.0, top: 41.5, width: 17.0, height: 16.0, rotate: -3, opacity: 1, scaleX: 1.0 },
@@ -131,7 +131,7 @@ const ANATOMICAL_PLACEMENTS = {
   Wrist: {
     name: 'Wrist',
     label: 'Wrist & Hand',
-    defaultTheta: 35,
+    defaultTheta: 45,
     frames: {
       0: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: -16, opacity: 1, scaleX: 1.0 },
       45: { left: 33.0, top: 61.0, width: 10.0, height: 10.0, rotate: -10, opacity: 1, scaleX: 1.0 },
@@ -179,11 +179,16 @@ export const Interactive3DStudio = ({
   const [dragStartX, setDragStartX] = useState(0);
   const [dragStartAngle, setDragStartAngle] = useState(0);
 
+  // Direct Tattoo Dragging State
+  const [isDraggingTattoo, setIsDraggingTattoo] = useState(false);
+  const [tattooDragStart, setTattooDragStart] = useState({ x: 0, y: 0 });
+
   const [zoomLevel, setZoomLevel] = useState(1);
   const [hoveredPart, setHoveredPart] = useState(null);
+  const [highlightPulse, setHighlightPulse] = useState(true);
   
   // Custom Fine Tuning for Tattoo Placement
-  const [tattooScale, setTattooScale] = useState(1.1);
+  const [tattooScale, setTattooScale] = useState(1.15);
   const [tattooOpacity, setTattooOpacity] = useState(0.95);
   const [tattooRotationOffset, setTattooRotationOffset] = useState(0);
   const [offsetNudgeX, setOffsetNudgeX] = useState(0);
@@ -211,9 +216,11 @@ export const Interactive3DStudio = ({
     if (matchedKey && ANATOMICAL_PLACEMENTS[matchedKey]) {
       const defaultAngle = ANATOMICAL_PLACEMENTS[matchedKey].defaultTheta;
       setRotationDeg(defaultAngle);
-      // Reset micro-nudges on area change so design centers cleanly
       setOffsetNudgeX(0);
       setOffsetNudgeY(0);
+      setHighlightPulse(true);
+      const timer = setTimeout(() => setHighlightPulse(false), 1400);
+      return () => clearTimeout(timer);
     }
   }, [selectedBodyArea]);
 
@@ -229,8 +236,9 @@ export const Interactive3DStudio = ({
     return () => cancelAnimationFrame(animId);
   }, [isAutoRotating]);
 
-  // Pointer drag to spin in 360°
+  // Pointer drag on turntable to spin in 360°
   const handlePointerDown = (e) => {
+    if (isDraggingTattoo) return;
     setIsDragging(true);
     setIsAutoRotating(false);
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
@@ -239,6 +247,17 @@ export const Interactive3DStudio = ({
   };
 
   const handlePointerMove = (e) => {
+    if (isDraggingTattoo) {
+      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+      const deltaX = (clientX - tattooDragStart.x) * 0.2;
+      const deltaY = (clientY - tattooDragStart.y) * 0.2;
+      setOffsetNudgeX((prev) => prev + deltaX);
+      setOffsetNudgeY((prev) => prev + deltaY);
+      setTattooDragStart({ x: clientX, y: clientY });
+      return;
+    }
+
     if (!isDragging) return;
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
     const deltaX = clientX - dragStartX;
@@ -248,6 +267,7 @@ export const Interactive3DStudio = ({
 
   const handlePointerUp = () => {
     setIsDragging(false);
+    setIsDraggingTattoo(false);
   };
 
   // Normalized 0 to 360 angle
@@ -298,13 +318,13 @@ export const Interactive3DStudio = ({
     setZoomLevel(1);
     setRotationDeg(placementConfig?.defaultTheta ?? 0);
     setIsAutoRotating(false);
-    setTattooScale(1.1);
+    setTattooScale(1.15);
     setTattooOpacity(0.95);
     setTattooRotationOffset(0);
     setOffsetNudgeX(0);
     setOffsetNudgeY(0);
     setBlendMode('multiply');
-    toast.info('Reset 3D mannequin to calibrated alignment');
+    toast.info(`Centered on ${placementConfig?.label || selectedBodyArea}`);
   };
 
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
@@ -330,7 +350,7 @@ export const Interactive3DStudio = ({
             title="Turn 45° clockwise"
           >
             <Compass className="w-3 h-3 text-amber-400" />
-            <span>{Math.round(normalizedAngle)}° 360°</span>
+            <span>{Math.round(normalizedAngle)}°</span>
           </button>
 
           <button
@@ -365,8 +385,8 @@ export const Interactive3DStudio = ({
         </div>
 
         {/* Anatomical Calibration Badge */}
-        <div className="bg-black/90 backdrop-blur-md border border-emerald-500/40 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-emerald-300 flex items-center space-x-1.5 shadow-lg shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+        <div className="bg-black/90 backdrop-blur-md border border-amber-400/50 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-amber-300 flex items-center space-x-1.5 shadow-lg shrink-0">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
           <span className="truncate max-w-[140px] sm:max-w-none">
             {placementConfig?.label || selectedBodyArea} • {currentFrame.label}
           </span>
@@ -383,7 +403,7 @@ export const Interactive3DStudio = ({
               type="button"
               onClick={() => setRotationDeg(f.angle)}
               className={`px-1.5 py-0.5 rounded transition-colors ${
-                isActive ? 'text-amber-300 font-bold bg-amber-500/20' : 'hover:text-white text-zinc-400'
+                isActive ? 'text-amber-300 font-bold bg-amber-500/20 shadow-sm' : 'hover:text-white text-zinc-400'
               }`}
             >
               {f.angle}°
@@ -422,10 +442,19 @@ export const Interactive3DStudio = ({
               }}
             />
 
-            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION */}
+            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION WITH DIRECT DRAG */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
-                className="absolute z-20 pointer-events-none flex items-center justify-center transform-gpu will-change-transform"
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  setIsDraggingTattoo(true);
+                  const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+                  const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+                  setTattooDragStart({ x: clientX, y: clientY });
+                }}
+                className={`absolute z-30 pointer-events-auto flex items-center justify-center transform-gpu will-change-transform cursor-move group ${
+                  highlightPulse ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-black rounded-lg animate-pulse' : ''
+                }`}
                 style={{
                   left: `calc(${frameCoords.left + offsetNudgeX}%)`,
                   top: `calc(${frameCoords.top + offsetNudgeY}%)`,
@@ -437,8 +466,9 @@ export const Interactive3DStudio = ({
                   filter: blendMode === 'multiply' 
                     ? 'contrast(1.2) brightness(0.92) drop-shadow(0 0 1px rgba(0,0,0,0.7))'
                     : 'drop-shadow(0 0 4px rgba(0,0,0,0.5))',
-                  transition: isDragging ? 'none' : 'opacity 0.15s ease-out, transform 0.08s ease-out',
+                  transition: isDragging || isDraggingTattoo ? 'none' : 'opacity 0.15s ease-out, transform 0.08s ease-out',
                 }}
+                title="Click and drag to position tattoo anywhere on body"
               >
                 {selectedDesign.svg ? (
                   <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold">
@@ -473,12 +503,13 @@ export const Interactive3DStudio = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onSelectBodyArea) onSelectBodyArea(key);
+                    toast.success(`Testing design on ${config.name}!`);
                   }}
                   onMouseEnter={() => setHoveredPart(key)}
                   onMouseLeave={() => setHoveredPart(null)}
                   className={`absolute z-25 cursor-pointer rounded-xl transition-all border pointer-events-auto ${
                     isSelected
-                      ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
+                      ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
                       : isHovered
                       ? 'bg-cyan-500/15 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
                       : 'border-transparent hover:border-white/20'
