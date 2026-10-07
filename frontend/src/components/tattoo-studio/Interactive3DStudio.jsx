@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair, X, Flame, ArrowRight, Palette } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, Layers, Compass, Move, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Crosshair, X, Flame, ArrowRight, Palette, Sun } from 'lucide-react';
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
@@ -21,169 +21,169 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Forearm (Right)',
     label: 'Right Forearm',
     defaultTheta: 0,
-    defaultScale: 1.10,
+    defaultScale: 1.15,
     sizeDescription: 'Medium / Elongated',
     frames: {
-      0: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: -26, opacity: 1, scaleX: 0.95, skewY: 1 },
-      45: { left: 29.5, top: 42.0, width: 11.5, height: 16.5, rotate: -15, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 54.0, top: 43.5, width: 11.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
-      135: { left: 33.0, top: 42.0, width: 11.0, height: 16.0, rotate: 12, opacity: 0.95, scaleX: 0.9, skewY: -1 },
-      180: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: 26, opacity: 0.95, scaleX: 0.95, skewY: -1 }
+      0: { left: 19.5, top: 38.5, width: 12.0, height: 16.0, rotate: -26, opacity: 1 },
+      45: { left: 29.5, top: 42.0, width: 12.0, height: 16.5, rotate: -15, opacity: 1 },
+      90: { left: 54.0, top: 43.5, width: 12.0, height: 16.0, rotate: 0, opacity: 1 },
+      135: { left: 33.0, top: 42.0, width: 12.0, height: 16.0, rotate: 12, opacity: 1 },
+      180: { left: 19.5, top: 38.5, width: 12.0, height: 16.0, rotate: 26, opacity: 1 }
     }
   },
   'Upper Arm': {
     name: 'Upper Arm (Right)',
     label: 'Right Bicep / Deltoid',
     defaultTheta: 0,
-    defaultScale: 1.15,
+    defaultScale: 1.20,
     sizeDescription: 'Medium / Cylindrical',
     frames: {
-      0: { left: 25.0, top: 29.5, width: 11.5, height: 14.5, rotate: -22, opacity: 1, scaleX: 0.95, skewY: 0 },
-      45: { left: 33.0, top: 31.5, width: 12.0, height: 14.5, rotate: -12, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 54.0, top: 32.5, width: 12.0, height: 15.0, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
-      135: { left: 36.5, top: 31.5, width: 12.0, height: 14.5, rotate: 10, opacity: 0.95, scaleX: 0.9, skewY: 0 },
-      180: { left: 25.0, top: 29.5, width: 11.5, height: 14.5, rotate: 22, opacity: 0.95, scaleX: 0.95, skewY: 0 }
+      0: { left: 25.0, top: 29.5, width: 12.5, height: 15.0, rotate: -22, opacity: 1 },
+      45: { left: 33.0, top: 31.5, width: 12.5, height: 15.0, rotate: -12, opacity: 1 },
+      90: { left: 54.0, top: 32.5, width: 12.5, height: 15.0, rotate: 0, opacity: 1 },
+      135: { left: 36.5, top: 31.5, width: 12.5, height: 15.0, rotate: 10, opacity: 1 },
+      180: { left: 25.0, top: 29.5, width: 12.5, height: 15.0, rotate: 22, opacity: 1 }
     }
   },
   Shoulder: {
     name: 'Shoulder (Right)',
     label: 'Right Shoulder Cap',
     defaultTheta: 0,
-    defaultScale: 1.05,
+    defaultScale: 1.10,
     sizeDescription: 'Curved / Round',
     frames: {
-      0: { left: 31.0, top: 22.5, width: 12.5, height: 12.0, rotate: -12, opacity: 1, scaleX: 0.95 },
-      45: { left: 36.5, top: 23.5, width: 13.0, height: 12.5, rotate: -8, opacity: 1, scaleX: 1.0 },
-      90: { left: 54.0, top: 23.5, width: 13.0, height: 13.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 40.0, top: 23.5, width: 13.0, height: 12.5, rotate: 8, opacity: 0.95, scaleX: 0.9 },
-      180: { left: 31.0, top: 22.5, width: 12.5, height: 12.0, rotate: 12, opacity: 0.95, scaleX: 0.95 }
+      0: { left: 31.0, top: 22.5, width: 13.0, height: 12.5, rotate: -12, opacity: 1 },
+      45: { left: 36.5, top: 23.5, width: 13.0, height: 12.5, rotate: -8, opacity: 1 },
+      90: { left: 54.0, top: 23.5, width: 13.0, height: 13.0, rotate: 0, opacity: 1 },
+      135: { left: 40.0, top: 23.5, width: 13.0, height: 12.5, rotate: 8, opacity: 1 },
+      180: { left: 31.0, top: 22.5, width: 13.0, height: 12.5, rotate: 12, opacity: 1 }
     }
   },
   Chest: {
     name: 'Chest',
     label: 'Pectoral Chest & Sternum',
     defaultTheta: 0,
-    defaultScale: 1.35,
+    defaultScale: 1.40,
     sizeDescription: 'Broad / Statement Plate',
     frames: {
-      0: { left: 50.0, top: 26.5, width: 24.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 52.0, top: 26.5, width: 20.0, height: 14.0, rotate: -4, opacity: 0.95, scaleX: 0.8 },
-      90: { left: 46.0, top: 28.0, width: 12.0, height: 13.0, rotate: -4, opacity: 0.7, scaleX: 0.5 },
-      315: { left: 48.0, top: 26.5, width: 20.0, height: 14.0, rotate: 4, opacity: 0.95, scaleX: 0.8 },
-      270: { left: 54.0, top: 28.0, width: 12.0, height: 13.0, rotate: 4, opacity: 0.7, scaleX: 0.5 }
+      0: { left: 50.0, top: 26.5, width: 24.0, height: 15.0, rotate: 0, opacity: 1 },
+      45: { left: 52.0, top: 26.5, width: 20.0, height: 15.0, rotate: -4, opacity: 1 },
+      90: { left: 46.0, top: 28.0, width: 13.0, height: 14.0, rotate: -4, opacity: 0.9 },
+      315: { left: 48.0, top: 26.5, width: 20.0, height: 15.0, rotate: 4, opacity: 1 },
+      270: { left: 54.0, top: 28.0, width: 13.0, height: 14.0, rotate: 4, opacity: 0.9 }
     }
   },
   Back: {
     name: 'Back',
     label: 'Upper Back & Lats',
     defaultTheta: 180,
-    defaultScale: 1.45,
+    defaultScale: 1.50,
     sizeDescription: 'Large / Full Canvas',
     frames: {
-      180: { left: 50.0, top: 26.5, width: 26.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      135: { left: 52.0, top: 26.5, width: 22.0, height: 16.0, rotate: 4, opacity: 0.95, scaleX: 0.85 },
-      225: { left: 48.0, top: 26.5, width: 22.0, height: 16.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 42.0, top: 28.0, width: 12.0, height: 14.0, rotate: 4, opacity: 0.4, scaleX: 0.4 },
-      270: { left: 58.0, top: 28.0, width: 12.0, height: 14.0, rotate: -4, opacity: 0.4, scaleX: 0.4 }
+      180: { left: 50.0, top: 26.5, width: 26.0, height: 18.0, rotate: 0, opacity: 1 },
+      135: { left: 52.0, top: 26.5, width: 22.0, height: 17.0, rotate: 4, opacity: 1 },
+      225: { left: 48.0, top: 26.5, width: 22.0, height: 17.0, rotate: -4, opacity: 1 },
+      90: { left: 42.0, top: 28.0, width: 13.0, height: 15.0, rotate: 4, opacity: 0.85 },
+      270: { left: 58.0, top: 28.0, width: 13.0, height: 15.0, rotate: -4, opacity: 0.85 }
     }
   },
   Spine: {
     name: 'Spine',
     label: 'Full Vertebral Spine Line',
     defaultTheta: 180,
-    defaultScale: 1.10,
+    defaultScale: 1.15,
     sizeDescription: 'Tall / Vertical Linear',
     frames: {
-      180: { left: 50.0, top: 32.0, width: 10.0, height: 30.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      135: { left: 52.0, top: 32.0, width: 9.0, height: 28.0, rotate: 2, opacity: 0.9, scaleX: 0.8 },
-      225: { left: 48.0, top: 32.0, width: 9.0, height: 28.0, rotate: -2, opacity: 0.9, scaleX: 0.8 }
+      180: { left: 50.0, top: 32.0, width: 11.0, height: 30.0, rotate: 0, opacity: 1 },
+      135: { left: 52.0, top: 32.0, width: 10.0, height: 28.0, rotate: 2, opacity: 1 },
+      225: { left: 48.0, top: 32.0, width: 10.0, height: 28.0, rotate: -2, opacity: 1 }
     }
   },
   Ribs: {
     name: 'Ribs',
     label: 'Ribcage & Flank',
     defaultTheta: 0,
-    defaultScale: 1.10,
+    defaultScale: 1.15,
     sizeDescription: 'Curved Flank / Ribs',
     frames: {
-      0: { left: 50.0, top: 36.0, width: 18.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      45: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: -4, opacity: 1, scaleX: 1.0 },
-      90: { left: 47.0, top: 36.5, width: 14.0, height: 15.0, rotate: 0, opacity: 0.85, scaleX: 0.8 },
-      315: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: 4, opacity: 1, scaleX: 1.0 }
+      0: { left: 50.0, top: 36.0, width: 18.0, height: 14.0, rotate: 0, opacity: 1 },
+      45: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: -4, opacity: 1 },
+      90: { left: 47.0, top: 36.5, width: 14.0, height: 15.0, rotate: 0, opacity: 0.95 },
+      315: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: 4, opacity: 1 }
     }
   },
   Thigh: {
     name: 'Thigh',
     label: 'Quadriceps / Thigh',
     defaultTheta: 0,
-    defaultScale: 1.35,
+    defaultScale: 1.40,
     sizeDescription: 'Large / Quad Plate',
     frames: {
-      0: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 46.0, top: 57.5, width: 15.0, height: 19.0, rotate: -2, opacity: 1, scaleX: 0.95 },
-      90: { left: 52.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 50.0, top: 58.0, width: 15.0, height: 19.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
-      180: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      225: { left: 50.0, top: 58.0, width: 15.0, height: 19.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 48.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 54.0, top: 57.5, width: 15.0, height: 19.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
+      0: { left: 42.0, top: 57.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
+      45: { left: 46.0, top: 57.5, width: 16.0, height: 19.0, rotate: -2, opacity: 1 },
+      90: { left: 52.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
+      135: { left: 50.0, top: 58.0, width: 16.0, height: 19.0, rotate: 2, opacity: 1 },
+      180: { left: 42.0, top: 57.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
+      225: { left: 50.0, top: 58.0, width: 16.0, height: 19.0, rotate: -2, opacity: 1 },
+      270: { left: 48.0, top: 58.0, width: 16.0, height: 19.0, rotate: 0, opacity: 1 },
+      315: { left: 54.0, top: 57.5, width: 16.0, height: 19.0, rotate: 2, opacity: 1 }
     }
   },
   Calf: {
     name: 'Calf',
     label: 'Calf & Shin',
     defaultTheta: 0,
-    defaultScale: 1.15,
+    defaultScale: 1.20,
     sizeDescription: 'Medium / Tapered',
     frames: {
-      0: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 43.5, top: 76.5, width: 13.0, height: 17.0, rotate: -2, opacity: 1, scaleX: 0.95 },
-      90: { left: 52.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 48.0, top: 77.0, width: 13.0, height: 17.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
-      180: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      225: { left: 52.0, top: 77.0, width: 13.0, height: 17.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 48.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 56.5, top: 76.5, width: 13.0, height: 17.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
+      0: { left: 39.5, top: 76.5, width: 13.5, height: 17.0, rotate: 0, opacity: 1 },
+      45: { left: 43.5, top: 76.5, width: 13.5, height: 17.0, rotate: -2, opacity: 1 },
+      90: { left: 52.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1 },
+      135: { left: 48.0, top: 77.0, width: 13.5, height: 17.0, rotate: 2, opacity: 1 },
+      180: { left: 39.5, top: 76.5, width: 13.5, height: 17.0, rotate: 0, opacity: 1 },
+      225: { left: 52.0, top: 77.0, width: 13.5, height: 17.0, rotate: -2, opacity: 1 },
+      270: { left: 48.0, top: 77.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1 },
+      315: { left: 56.5, top: 76.5, width: 13.5, height: 17.0, rotate: 2, opacity: 1 }
     }
   },
   Wrist: {
     name: 'Wrist',
     label: 'Wrist & Hand',
     defaultTheta: 0,
-    defaultScale: 0.75,
+    defaultScale: 0.85,
     sizeDescription: 'Compact / Minimal',
     frames: {
-      0: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: -28, opacity: 1, scaleX: 1.0 },
-      45: { left: 27.0, top: 51.5, width: 9.0, height: 9.0, rotate: -18, opacity: 1, scaleX: 1.0 },
-      90: { left: 54.0, top: 53.0, width: 9.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      135: { left: 30.5, top: 51.5, width: 9.0, height: 9.0, rotate: 14, opacity: 0.9, scaleX: 0.9 },
-      180: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: 28, opacity: 0.9, scaleX: 1.0 }
+      0: { left: 15.5, top: 48.0, width: 9.5, height: 9.5, rotate: -28, opacity: 1 },
+      45: { left: 27.0, top: 51.5, width: 9.5, height: 9.5, rotate: -18, opacity: 1 },
+      90: { left: 54.0, top: 53.0, width: 9.5, height: 9.5, rotate: 0, opacity: 1 },
+      135: { left: 30.5, top: 51.5, width: 9.5, height: 9.5, rotate: 14, opacity: 1 },
+      180: { left: 15.5, top: 48.0, width: 9.5, height: 9.5, rotate: 28, opacity: 1 }
     }
   },
   Neck: {
     name: 'Neck',
     label: 'Neck & Throat',
     defaultTheta: 0,
-    defaultScale: 0.80,
+    defaultScale: 0.85,
     sizeDescription: 'Subtle / Compact',
     frames: {
-      0: { left: 50.0, top: 17.5, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 51.0, top: 18.0, width: 11.0, height: 8.0, rotate: -3, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 50.0, top: 18.5, width: 10.0, height: 8.0, rotate: 0, opacity: 0.8, scaleX: 0.7 },
-      180: { left: 50.0, top: 17.5, width: 11.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      315: { left: 49.0, top: 18.0, width: 11.0, height: 8.0, rotate: 3, opacity: 0.95, scaleX: 0.85 }
+      0: { left: 50.0, top: 17.5, width: 11.0, height: 9.0, rotate: 0, opacity: 1 },
+      45: { left: 51.0, top: 18.0, width: 11.5, height: 9.0, rotate: -3, opacity: 1 },
+      90: { left: 50.0, top: 18.5, width: 11.0, height: 9.0, rotate: 0, opacity: 0.9 },
+      180: { left: 50.0, top: 17.5, width: 11.5, height: 9.0, rotate: 0, opacity: 1 },
+      315: { left: 49.0, top: 18.0, width: 11.5, height: 9.0, rotate: 3, opacity: 1 }
     }
   },
   Ankle: {
     name: 'Ankle',
     label: 'Ankle & Foot',
     defaultTheta: 0,
-    defaultScale: 0.70,
+    defaultScale: 0.80,
     sizeDescription: 'Small / Minimal Band',
     frames: {
-      0: { left: 39.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      90: { left: 52.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      180: { left: 39.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 }
+      0: { left: 39.0, top: 90.0, width: 10.5, height: 9.0, rotate: 0, opacity: 1 },
+      90: { left: 52.0, top: 90.0, width: 10.5, height: 9.0, rotate: 0, opacity: 1 },
+      180: { left: 39.0, top: 90.0, width: 10.5, height: 9.0, rotate: 0, opacity: 1 }
     }
   }
 };
@@ -199,7 +199,7 @@ export const Interactive3DStudio = ({
   // Interaction Mode: 'tattoo' (Move/Rotate Tattoo) vs 'body' (Orbit 3D Mannequin)
   const [interactionMode, setInteractionMode] = useState('tattoo');
 
-  // Track if user has chosen a tattoo (once chosen, switching body parts won't show popup bar again)
+  // Track if user has chosen a tattoo
   const [hasUserChosenTattoo, setHasUserChosenTattoo] = useState(false);
   const [showTattooPicker, setShowTattooPicker] = useState(false);
   const [pickerStyleFilter, setPickerStyleFilter] = useState('All');
@@ -225,13 +225,13 @@ export const Interactive3DStudio = ({
   const [hoveredPart, setHoveredPart] = useState(null);
   const [highlightPulse, setHighlightPulse] = useState(true);
 
-  // Fine Tuning for Tattoo Placement, Size & 360° Rotation
-  const [tattooScale, setTattooScale] = useState(1.10);
-  const [tattooOpacity, setTattooOpacity] = useState(0.95);
-  const [tattooRotationOffset, setTattooRotationOffset] = useState(0); // Full 0° to 360°
+  // Fine Tuning for Tattoo Placement, Size & 360° In-Place Rotation
+  const [tattooScale, setTattooScale] = useState(1.15);
+  const [tattooOpacity, setTattooOpacity] = useState(1.0); // 100% full crisp opacity by default
+  const [tattooRotationOffset, setTattooRotationOffset] = useState(0); // 0° to 360° pure in-place spin
   const [offsetNudgeX, setOffsetNudgeX] = useState(0);
   const [offsetNudgeY, setOffsetNudgeY] = useState(0);
-  const [blendMode, setBlendMode] = useState('multiply'); // 'multiply' gives true skin ink absorption
+  const [blendMode, setBlendMode] = useState('high-contrast'); // 'high-contrast' (Crisp jet black) | 'natural-skin' (Multiply) | 'direct' (Normal)
 
   // Active Control Panel Tab: 'transform' (size/rotate) | 'position' (drag/nudge)
   const [activeTab, setActiveTab] = useState('transform');
@@ -264,7 +264,6 @@ export const Interactive3DStudio = ({
     if (!selectedBodyArea) return;
     const lower = selectedBodyArea.toLowerCase();
     
-    // Find matching placement config
     const matchedKey = Object.keys(ANATOMICAL_PLACEMENTS).find(k => 
       k.toLowerCase() === lower || lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)
     );
@@ -272,7 +271,7 @@ export const Interactive3DStudio = ({
     if (matchedKey && ANATOMICAL_PLACEMENTS[matchedKey]) {
       const config = ANATOMICAL_PLACEMENTS[matchedKey];
       setRotationDeg(config.defaultTheta);
-      setTattooScale(config.defaultScale || 1.10);
+      setTattooScale(config.defaultScale || 1.15);
       setOffsetNudgeX(0);
       setOffsetNudgeY(0);
       setHighlightPulse(true);
@@ -322,7 +321,7 @@ export const Interactive3DStudio = ({
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
     const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
 
-    // 1. Interactive Rotation Handle Drag
+    // 1. In-Place Interactive Rotation Handle Drag
     if (isRotatingTattooHandle && tattooCenterRef.current) {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       animFrameRef.current = requestAnimationFrame(() => {
@@ -369,7 +368,7 @@ export const Interactive3DStudio = ({
   const handleSelectTattooArtwork = (design) => {
     if (onSelectDesign) onSelectDesign(design);
     setHasUserChosenTattoo(true);
-    setShowTattooPicker(false); // Close selector bar immediately!
+    setShowTattooPicker(false);
     toast.success(`Selected "${design.name}". Tap any body part to test!`);
   };
 
@@ -423,12 +422,12 @@ export const Interactive3DStudio = ({
     setZoomLevel(1.0);
     setRotationDeg(placementConfig?.defaultTheta ?? 0);
     setIsAutoRotating(false);
-    setTattooScale(placementConfig?.defaultScale || 1.10);
-    setTattooOpacity(0.95);
+    setTattooScale(placementConfig?.defaultScale || 1.15);
+    setTattooOpacity(1.0);
     setTattooRotationOffset(0);
     setOffsetNudgeX(0);
     setOffsetNudgeY(0);
-    setBlendMode('multiply');
+    setBlendMode('high-contrast');
     setInteractionMode('tattoo');
     toast.info(`Centered on ${placementConfig?.label || selectedBodyArea}`);
   };
@@ -444,6 +443,30 @@ export const Interactive3DStudio = ({
 
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
   const totalTattooRotation = ((frameCoords?.rotate || 0) + tattooRotationOffset) % 360;
+
+  // Calculate high visibility ink styles
+  const getInkImageStyle = () => {
+    if (blendMode === 'high-contrast') {
+      return {
+        mixBlendMode: 'multiply',
+        filter: 'contrast(2.2) brightness(0.75) saturate(1.2) drop-shadow(0 0 1px rgba(0,0,0,0.95))',
+        opacity: tattooOpacity,
+      };
+    }
+    if (blendMode === 'natural-skin') {
+      return {
+        mixBlendMode: 'multiply',
+        filter: 'contrast(1.4) brightness(0.9) drop-shadow(0 0 1px rgba(0,0,0,0.6))',
+        opacity: tattooOpacity,
+      };
+    }
+    // Direct Sharp Stencil
+    return {
+      mixBlendMode: 'normal',
+      filter: 'contrast(1.2) brightness(1.0) drop-shadow(0 0 4px rgba(0,0,0,0.7))',
+      opacity: tattooOpacity,
+    };
+  };
 
   return (
     <div
@@ -619,7 +642,7 @@ export const Interactive3DStudio = ({
               style={{ transform: currentFrame.flip ? 'scaleX(-1)' : 'none' }}
             />
 
-            {/* REALISTIC INKED-ON-SKIN TATTOO WITH 360° ROTATING BOUNDING BOX */}
+            {/* REALISTIC HIGH-CONTRAST INKED TATTOO WITH ZERO-SHIFT IN-PLACE ROTATION */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
                 ref={tattooElemRef}
@@ -636,54 +659,60 @@ export const Interactive3DStudio = ({
                 style={{
                   left: `calc(${frameCoords.left + offsetNudgeX}%)`,
                   top: `calc(${frameCoords.top + offsetNudgeY}%)`,
-                  width: `${frameCoords.width}%`,
-                  height: `${frameCoords.height}%`,
-                  transform: `translate3d(-50%, -50%, 0) scaleX(${(frameCoords.scaleX || 1) * tattooScale}) scaleY(${tattooScale}) rotate(${totalTattooRotation}deg) skewY(${frameCoords.skewY || 0}deg)`,
-                  opacity: tattooOpacity * (frameCoords.opacity || 1),
-                  mixBlendMode: blendMode === 'multiply' ? 'multiply' : 'normal',
-                  filter: blendMode === 'multiply' 
-                    ? 'contrast(1.2) brightness(0.92) drop-shadow(0 0 1px rgba(0,0,0,0.7))'
-                    : 'drop-shadow(0 0 4px rgba(0,0,0,0.5))',
+                  width: `${Math.max(frameCoords.width, frameCoords.height) * 1.30}%`,
+                  aspectRatio: '1 / 1',
+                  transform: 'translate3d(-50%, -50%, 0)',
+                  transformOrigin: '50% 50%',
                 }}
-                title="Drag anywhere to move tattoo • Drag top handle to rotate"
+                title="Drag to move tattoo • Drag top handle or use slider to rotate"
               >
-                {/* Visual Rotating Bounding Box Indicator & Direct Rotation Handle */}
-                <div className="absolute inset-[-4px] border border-dashed border-amber-400/60 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div
-                    onPointerDown={(e) => {
-                      e.stopPropagation();
-                      setIsRotatingTattooHandle(true);
-                      if (tattooElemRef.current) {
-                        const rect = tattooElemRef.current.getBoundingClientRect();
-                        tattooCenterRef.current = {
-                          x: rect.left + rect.width / 2,
-                          y: rect.top + rect.height / 2,
-                        };
-                      }
-                    }}
-                    className="absolute -top-6 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-400 text-black flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg pointer-events-auto hover:scale-110 transition-transform"
-                    title="Drag to Rotate Tattoo 360°"
-                  >
-                    <RotateCw className="w-3 h-3" />
+                {/* 360° In-Place Rotation Canvas (Rotates strictly around 50% 50% with ZERO position drift) */}
+                <div
+                  className="relative w-full h-full flex items-center justify-center transform-gpu will-change-transform"
+                  style={{
+                    transform: `rotate(${totalTattooRotation}deg) scale(${tattooScale})`,
+                    transformOrigin: '50% 50%',
+                  }}
+                >
+                  {/* Rotating Bounding Box & Top Rotate Handle */}
+                  <div className="absolute inset-[-4px] border border-dashed border-amber-400/60 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        setIsRotatingTattooHandle(true);
+                        if (tattooElemRef.current) {
+                          const rect = tattooElemRef.current.getBoundingClientRect();
+                          tattooCenterRef.current = {
+                            x: rect.left + rect.width / 2,
+                            y: rect.top + rect.height / 2,
+                          };
+                        }
+                      }}
+                      className="absolute -top-6 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-400 text-black flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg pointer-events-auto hover:scale-110 transition-transform"
+                      title="Drag to Rotate Tattoo 360°"
+                    >
+                      <RotateCw className="w-3 h-3" />
+                    </div>
                   </div>
-                </div>
 
-                {/* Tattoo Artwork Rendering */}
-                {selectedDesign.svg ? (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold pointer-events-none">
-                    {selectedDesign.svg}
-                  </div>
-                ) : imageSrc ? (
-                  <img
-                    src={imageSrc}
-                    alt={selectedDesign.name}
-                    className="w-full h-full object-contain pointer-events-none filter contrast-115"
-                  />
-                ) : (
-                  <div className="text-[10px] text-amber-300 font-bold text-center bg-black/70 px-2 py-1 rounded pointer-events-none">
-                    {selectedDesign.name}
-                  </div>
-                )}
+                  {/* High Visibility Tattoo Rendering */}
+                  {selectedDesign.svg ? (
+                    <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold pointer-events-none">
+                      {selectedDesign.svg}
+                    </div>
+                  ) : imageSrc ? (
+                    <img
+                      src={imageSrc}
+                      alt={selectedDesign.name}
+                      className="w-full h-full object-contain pointer-events-none"
+                      style={getInkImageStyle()}
+                    />
+                  ) : (
+                    <div className="text-[10px] text-amber-300 font-bold text-center bg-black/70 px-2 py-1 rounded pointer-events-none">
+                      {selectedDesign.name}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -705,7 +734,6 @@ export const Interactive3DStudio = ({
                     e.stopPropagation();
                     if (onSelectBodyArea) onSelectBodyArea(key);
                     
-                    // If user hasn't selected a tattoo yet, show the horizontal picker
                     if (!hasUserChosenTattoo && !selectedDesign) {
                       setShowTattooPicker(true);
                     }
@@ -825,7 +853,7 @@ export const Interactive3DStudio = ({
         </div>
       )}
 
-      {/* 5. CLEAN BOTTOM STUDIO DOCK (CONTROLS ONLY, NON-BLOCKING) */}
+      {/* 5. CLEAN BOTTOM STUDIO DOCK */}
       <div className="absolute bottom-2 left-2 right-2 z-30 flex flex-col gap-1.5 pointer-events-auto">
         
         {/* Navigation Tabs for Clean Organization */}
@@ -849,7 +877,7 @@ export const Interactive3DStudio = ({
                 activeTab === 'position' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
               }`}
             >
-              Fine Nudge &amp; Skin Ink
+              Fine Nudge &amp; Ink Visibility
             </button>
           </div>
 
@@ -873,7 +901,7 @@ export const Interactive3DStudio = ({
           </div>
         </div>
 
-        {/* Tab Content 1: Tattoo Size & 360° Rotation */}
+        {/* Tab Content 1: Tattoo Size & 360° In-Place Rotation */}
         {activeTab === 'transform' && (
           <div className="flex flex-wrap items-center justify-between bg-black/75 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
             
@@ -910,11 +938,11 @@ export const Interactive3DStudio = ({
               </span>
             </div>
 
-            {/* Tattoo 360° Rotation */}
+            {/* Tattoo 360° In-Place Rotation (Pure 0° to 360° center spin without changing position) */}
             <div className="flex items-center space-x-1.5">
               <span className="text-[10px] uppercase font-bold text-amber-400 flex items-center space-x-1">
                 <RotateCw className="w-3 h-3 text-amber-400 inline" />
-                <span>Tattoo Rotate:</span>
+                <span>In-Place Rotate:</span>
               </span>
               <button
                 type="button"
@@ -966,7 +994,7 @@ export const Interactive3DStudio = ({
           </div>
         )}
 
-        {/* Tab Content 2: Position Nudge & Skin Ink Blend */}
+        {/* Tab Content 2: Position Nudge & Ink Visibility Mode */}
         {activeTab === 'position' && (
           <div className="flex flex-wrap items-center justify-between bg-black/75 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
             
@@ -1007,23 +1035,57 @@ export const Interactive3DStudio = ({
               </button>
             </div>
 
-            {/* Ink Blend Mode */}
+            {/* Ink Visibility Mode */}
             <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase font-bold text-zinc-400">Ink Absorption:</span>
+              <span className="text-[10px] uppercase font-bold text-amber-400">Ink Visibility:</span>
               <button
                 type="button"
-                onClick={() => setBlendMode('multiply')}
-                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold ${blendMode === 'multiply' ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900'}`}
+                onClick={() => setBlendMode('high-contrast')}
+                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
+                  blendMode === 'high-contrast' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
+                }`}
+                title="Ultra sharp, dark and clear on skin"
               >
-                Real Skin
+                🔥 High Contrast
               </button>
               <button
                 type="button"
-                onClick={() => setBlendMode('normal')}
-                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold ${blendMode === 'normal' ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900'}`}
+                onClick={() => setBlendMode('natural-skin')}
+                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
+                  blendMode === 'natural-skin' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
+                }`}
+                title="Natural skin multiplier"
               >
-                Direct
+                ✨ Natural
               </button>
+              <button
+                type="button"
+                onClick={() => setBlendMode('direct')}
+                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
+                  blendMode === 'direct' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
+                }`}
+                title="Direct stencil view"
+              >
+                💎 Direct
+              </button>
+            </div>
+
+            {/* Opacity slider */}
+            <div className="flex items-center space-x-1">
+              <Sun className="w-3 h-3 text-zinc-400" />
+              <input
+                type="range"
+                min="0.4"
+                max="1.0"
+                step="0.05"
+                value={tattooOpacity}
+                onChange={(e) => setTattooOpacity(parseFloat(e.target.value))}
+                className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                title="Adjust ink opacity"
+              />
+              <span className="text-[9px] font-mono text-zinc-400 w-6 text-right">
+                {Math.round(tattooOpacity * 100)}%
+              </span>
             </div>
           </div>
         )}
