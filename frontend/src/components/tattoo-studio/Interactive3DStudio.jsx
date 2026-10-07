@@ -465,20 +465,24 @@ export const Interactive3DStudio = ({
 
   // Calculate clean tattoo stencil filter without square background
   const getInkImageStyle = () => {
+    const isPng = imageSrc.toLowerCase().includes('.png');
     if (blendMode === 'high-contrast') {
       return {
+        mixBlendMode: isPng ? 'normal' : 'multiply',
         filter: 'contrast(1.2) saturate(1.25) brightness(1.02) drop-shadow(0 0 2px rgba(0,0,0,0.85))',
         opacity: tattooOpacity,
       };
     }
     if (blendMode === 'natural-skin') {
       return {
+        mixBlendMode: isPng ? 'normal' : 'multiply',
         filter: 'contrast(1.1) saturate(1.15) brightness(0.98) drop-shadow(0 0 1px rgba(0,0,0,0.65))',
         opacity: tattooOpacity * 0.95,
       };
     }
     // Direct Sharp Stencil
     return {
+      mixBlendMode: isPng ? 'normal' : 'multiply',
       filter: 'saturate(1.2) drop-shadow(0 0 2px rgba(0,0,0,0.8))',
       opacity: tattooOpacity,
     };
@@ -494,66 +498,38 @@ export const Interactive3DStudio = ({
       onPointerLeave={handlePointerUp}
     >
       
-      {/* 1. TOP HEADER BAR: INTERACTION MODES, CHANGE TATTOO BUTTON & ANGLE */}
-      <div className="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
+      {/* 1. ULTRA-CLEAN UNIFIED TOP HUD (SINGLE SLEEK ROW, ZERO OVERLAPS) */}
+      <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-auto gap-2">
         
-        {/* Left Controls: Mode Switcher & Change Tattoo Button */}
-        <div className="flex items-center space-x-1.5 bg-black/60 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-xl">
-          <button
-            type="button"
-            onClick={() => {
-              setInteractionMode('tattoo');
-              toast.info('Mode: Move & Rotate Tattoo');
-            }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
-              interactionMode === 'tattoo'
-                ? 'bg-amber-400 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white'
-            }`}
-            title="Move and rotate tattoo directly"
-          >
-            <span>🎨 Adjust Tattoo</span>
-          </button>
+        {/* Left: Active Placement & Change Tattoo Button */}
+        <div className="flex items-center space-x-1.5">
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-white/15 text-xs font-bold text-white shadow-xl">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-zinc-400 hidden sm:inline">Area:</span>
+            <span className="text-amber-300">{placementConfig?.label || selectedBodyArea}</span>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              setInteractionMode('body');
-              toast.info('Mode: Orbit 3D Body');
-            }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
-              interactionMode === 'body'
-                ? 'bg-cyan-400 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white'
-            }`}
-            title="Drag anywhere to rotate 3D mannequin"
-          >
-            <span>🧍 Orbit 3D Body</span>
-          </button>
-
-          {/* Transparent Glass Button to Change Tattoo Design */}
           <button
             type="button"
             onClick={() => setShowTattooPicker(!showTattooPicker)}
-            className={`flex items-center space-x-1 px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xl ${
               showTattooPicker
-                ? 'bg-amber-400 text-black font-black'
-                : 'bg-white/10 hover:bg-white/20 text-amber-300 border border-amber-400/30'
+                ? 'bg-amber-400 text-black shadow-[0_0_15px_rgba(245,158,11,0.5)]'
+                : 'bg-zinc-900/90 hover:bg-zinc-800 text-amber-300 border border-amber-500/40 hover:border-amber-400'
             }`}
-            title="Open horizontal tattoo picker"
           >
-            <Palette className="w-3 h-3" />
-            <span>{showTattooPicker ? '✕ Close' : 'Change Tattoo'}</span>
+            <Palette className="w-3.5 h-3.5" />
+            <span>{showTattooPicker ? 'Close' : 'Change Tattoo'}</span>
           </button>
         </div>
 
-        {/* 360 Angle Controls & Focus */}
-        <div className="flex items-center space-x-1.5 bg-black/60 backdrop-blur-md border border-white/10 p-1 rounded-full shadow-lg">
+        {/* Right: Angle Indicator, 360 Spin & Reset */}
+        <div className="flex items-center space-x-1.5 bg-black/75 backdrop-blur-xl border border-white/15 p-1 rounded-full shadow-xl text-xs">
           <button
             type="button"
             onClick={() => setRotationDeg((prev) => (prev + 45) % 360)}
-            className="flex items-center space-x-1 px-2.5 py-1 text-[10px] font-bold text-amber-300 hover:text-white bg-amber-950/40 border border-amber-500/30 rounded-full transition-colors"
-            title="Turn Mannequin 45°"
+            className="flex items-center space-x-1 px-2.5 py-1 font-bold text-amber-300 hover:text-white bg-amber-950/50 border border-amber-500/30 rounded-full transition-colors"
+            title="Rotate 3D Body 45°"
           >
             <Compass className="w-3 h-3 text-amber-400" />
             <span>{Math.round(normalizedAngle)}°</span>
@@ -565,7 +541,7 @@ export const Interactive3DStudio = ({
             className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-full transition-all ${
               isAutoRotating
                 ? 'bg-amber-400 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white bg-zinc-900/80 border border-white/5'
+                : 'text-zinc-400 hover:text-white bg-zinc-900/80'
             }`}
             title="Auto 360 Turntable Orbit"
           >
@@ -574,63 +550,46 @@ export const Interactive3DStudio = ({
 
           <button
             type="button"
-            onClick={() => {
-              const nextMode = zoomFocusMode === 'tattoo' ? 'body' : 'tattoo';
-              setZoomFocusMode(nextMode);
-              setZoomLevel(nextMode === 'tattoo' ? 1.6 : 1.0);
-            }}
-            className={`px-2 py-1 text-[10px] font-bold rounded-full transition-all ${
-              zoomFocusMode === 'tattoo' && zoomLevel > 1.1
-                ? 'bg-amber-400/20 text-amber-300 border border-amber-500/40'
-                : 'text-zinc-400 hover:text-white bg-zinc-900/80 border border-white/5'
-            }`}
-            title="Toggle zoom focus"
-          >
-            {zoomFocusMode === 'tattoo' ? '🔍 Tattoo' : '🌐 Body'}
-          </button>
-
-          <button
-            type="button"
             onClick={handleReset}
             className="p-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-full transition-colors"
-            title="Reset position"
+            title="Reset All"
           >
             <RefreshCcw className="w-3 h-3" />
           </button>
         </div>
       </div>
 
-      {/* 2. COMPACT FLOATING ZOOM HUD (TOP LEFT) */}
-      <div className="absolute left-3 top-16 z-30 flex flex-col items-center bg-black/60 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg pointer-events-auto space-y-1">
+      {/* 2. SLEEK MINIMAL ZOOM PILL (BOTTOM-LEFT, NON-OBSTRUCTIVE) */}
+      <div className="absolute left-3 bottom-20 sm:bottom-16 z-20 flex items-center bg-black/75 backdrop-blur-xl border border-white/15 p-1 rounded-full shadow-xl pointer-events-auto space-x-1">
         <button
           type="button"
-          onClick={handleZoomIn}
-          className="p-1 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all"
-          title="Zoom In"
+          onClick={handleZoomOut}
+          className="w-6 h-6 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-full transition-all"
+          title="Zoom Out"
         >
-          <ZoomIn className="w-3.5 h-3.5" />
+          <ZoomOut className="w-3 h-3" />
         </button>
         <button
           type="button"
           onClick={handleResetZoom}
-          className="px-1 py-0.5 text-[8px] font-mono font-bold text-amber-300 bg-amber-950/40 rounded border border-amber-500/30"
+          className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-amber-300"
           title="Reset Zoom"
         >
           {Math.round(zoomLevel * 100)}%
         </button>
         <button
           type="button"
-          onClick={handleZoomOut}
-          className="p-1 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-lg transition-all"
-          title="Zoom Out"
+          onClick={handleZoomIn}
+          className="w-6 h-6 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-full transition-all"
+          title="Zoom In"
         >
-          <ZoomOut className="w-3.5 h-3.5" />
+          <ZoomIn className="w-3 h-3" />
         </button>
       </div>
 
       {/* 3. CENTER 3D TURNTABLE VIEWPORT */}
       <div
-        className={`relative w-full h-full flex items-center justify-center pt-10 pb-36 transform-gpu will-change-transform ${
+        className={`relative w-full h-full flex items-center justify-center pt-8 pb-20 transform-gpu will-change-transform ${
           interactionMode === 'tattoo' ? 'cursor-move' : 'cursor-grab active:cursor-grabbing'
         }`}
         style={{
@@ -914,231 +873,188 @@ export const Interactive3DStudio = ({
         </div>
       )}
 
-      {/* 5. CLEAN BOTTOM STUDIO DOCK */}
-      <div className="absolute bottom-2 left-2 right-2 z-30 flex flex-col gap-1.5 pointer-events-auto">
+      {/* 5. LUXURY MINIMALIST STUDIO DOCK (CLEAN SINGLE ROW, ZERO CLUTTER) */}
+      <div className="absolute bottom-2 left-2 right-2 sm:left-4 sm:right-4 z-30 flex flex-col pointer-events-auto pr-14 sm:pr-0">
         
-        {/* Navigation Tabs for Clean Organization */}
-        <div className="flex items-center justify-between bg-black/60 backdrop-blur-md border border-white/10 p-1.5 rounded-xl text-xs text-zinc-300 shadow-xl">
+        {/* Main Clean Control Bar */}
+        <div className="bg-zinc-950/85 backdrop-blur-2xl border border-white/15 p-2 sm:px-4 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.85)] flex flex-wrap items-center justify-between gap-2.5">
           
-          {/* Tab Switchers */}
-          <div className="flex items-center space-x-1">
+          {/* Mode Switcher */}
+          <div className="flex items-center space-x-1 bg-black/60 p-0.5 rounded-xl border border-white/5">
             <button
               type="button"
-              onClick={() => setActiveTab('transform')}
+              onClick={() => {
+                setInteractionMode('tattoo');
+                toast.info('Mode: Move Tattoo');
+              }}
               className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-lg transition-all ${
-                activeTab === 'transform' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
+                interactionMode === 'tattoo'
+                  ? 'bg-amber-400 text-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
+              title="Move & rotate tattoo directly on body"
             >
-              Tattoo 360° Rotate &amp; Size
+              🎨 Move Tattoo
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('position')}
+              onClick={() => {
+                setInteractionMode('body');
+                toast.info('Mode: Orbit 3D Body');
+              }}
               className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-lg transition-all ${
-                activeTab === 'position' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900/60'
+                interactionMode === 'body'
+                  ? 'bg-cyan-400 text-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
+              title="Drag anywhere to rotate 3D mannequin"
             >
-              Fine Nudge &amp; Ink Visibility
+              🧍 Spin Body
             </button>
           </div>
 
-          {/* Quick Body Angle Jumpers */}
-          <div className="hidden sm:flex items-center space-x-0.5 text-[9px]">
-            <span className="text-zinc-500 font-bold uppercase mr-1">Angle:</span>
-            {ANATOMY_360_FRAMES.map((f) => (
-              <button
-                key={f.angle}
-                type="button"
-                onClick={() => setRotationDeg(f.angle)}
-                className={`px-1.5 py-0.5 rounded transition-colors ${
-                  Math.abs(normalizedAngle - f.angle) < 22.5 || (f.angle === 0 && normalizedAngle >= 337.5)
-                    ? 'text-amber-300 font-bold bg-amber-500/20'
-                    : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {f.angle}°
-              </button>
-            ))}
+          {/* Size Control */}
+          <div className="flex items-center space-x-1.5">
+            <span className="text-[10px] uppercase font-bold text-zinc-400">Size:</span>
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.2))}
+              className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
+            >
+              -
+            </button>
+            <input
+              type="range"
+              min="0.2"
+              max="3.0"
+              step="0.05"
+              value={tattooScale}
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onChange={(e) => setTattooScale(parseFloat(e.target.value))}
+              className="w-16 sm:w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+            />
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 3.0))}
+              className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
+            >
+              +
+            </button>
+            <span className="text-[10px] font-mono text-amber-300 font-bold w-8 text-right">
+              {Math.round(tattooScale * 100)}%
+            </span>
           </div>
+
+          {/* In-Place Rotate Control */}
+          <div className="flex items-center space-x-1.5">
+            <span className="text-[10px] uppercase font-bold text-zinc-400 flex items-center space-x-1">
+              <RotateCw className="w-3 h-3 text-amber-400 inline" />
+              <span>Rotate:</span>
+            </span>
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => setTattooRotationOffset((prev) => (prev - 15 + 360) % 360)}
+              className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+              title="Rotate -15°"
+            >
+              ↺
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="360"
+              step="5"
+              value={tattooRotationOffset}
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
+              className="w-16 sm:w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+            />
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => setTattooRotationOffset((prev) => (prev + 15) % 360)}
+              className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
+              title="Rotate +15°"
+            >
+              ↻
+            </button>
+            <span className="text-[10px] font-mono text-amber-300 font-bold w-8 text-right">
+              {tattooRotationOffset}°
+            </span>
+          </div>
+
+          {/* Optional Nudge & Ink Mode Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setActiveTab(activeTab === 'advanced' ? 'transform' : 'advanced')}
+            className={`p-1 px-2 rounded-lg text-[10px] font-bold transition-colors ${
+              activeTab === 'advanced'
+                ? 'bg-amber-400/20 text-amber-300 border border-amber-500/40'
+                : 'text-zinc-500 hover:text-zinc-300 bg-zinc-900/60'
+            }`}
+            title="Toggle fine nudge and ink contrast"
+          >
+            ⚙️ Nudge
+          </button>
         </div>
 
-        {/* Tab Content 1: Tattoo Size & 360° In-Place Rotation */}
-        {activeTab === 'transform' && (
-          <div className="flex flex-wrap items-center justify-between bg-black/75 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
-            
-            {/* Tattoo Size */}
-            <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase font-bold text-amber-400">Size:</span>
-              <button
-                type="button"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.2))}
-                className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
-                title="Decrease Tattoo Size"
-              >
-                -
-              </button>
-              <input
-                type="range"
-                min="0.2"
-                max="3.0"
-                step="0.05"
-                value={tattooScale}
-                onPointerDown={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-                onChange={(e) => setTattooScale(parseFloat(e.target.value))}
-                className="w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-              />
-              <button
-                type="button"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 3.0))}
-                className="w-5 h-5 flex items-center justify-center bg-zinc-900 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold"
-                title="Increase Tattoo Size"
-              >
-                +
-              </button>
-              <span className="text-[10px] font-mono text-amber-300 font-bold w-10">
-                {Math.round(tattooScale * 100)}%
-              </span>
-            </div>
-
-            {/* Tattoo 360° In-Place Rotation */}
-            <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase font-bold text-amber-400 flex items-center space-x-1">
-                <RotateCw className="w-3 h-3 text-amber-400 inline" />
-                <span>In-Place Rotate:</span>
-              </span>
-              <button
-                type="button"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => setTattooRotationOffset((prev) => (prev - 15 + 360) % 360)}
-                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
-                title="Rotate -15°"
-              >
-                ↺
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="360"
-                step="5"
-                value={tattooRotationOffset}
-                onPointerDown={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-                onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
-                className="w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-              />
-              <button
-                type="button"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => setTattooRotationOffset((prev) => (prev + 15) % 360)}
-                className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
-                title="Rotate +15°"
-              >
-                ↻
-              </button>
-              <span className="text-[10px] font-mono text-amber-300 font-bold w-9 text-right">
-                {tattooRotationOffset}°
-              </span>
-            </div>
-
-            {/* Quick Tattoo Angle Buttons */}
-            <div className="flex items-center space-x-1 text-[8px] font-bold">
-              {[0, 45, 90, 180, 270].map((deg) => (
-                <button
-                  key={deg}
-                  type="button"
-                  onClick={() => setTattooRotationOffset(deg)}
-                  className={`px-1.5 py-0.5 rounded transition-colors ${
-                    tattooRotationOffset === deg 
-                      ? 'bg-amber-400 text-black' 
-                      : 'text-zinc-400 bg-zinc-900 hover:text-white'
-                  }`}
-                >
-                  {deg}°
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tab Content 2: Position Nudge & Ink Visibility Mode */}
-        {activeTab === 'position' && (
-          <div className="flex flex-wrap items-center justify-between bg-black/75 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-xl gap-2">
-            
-            {/* Nudge D-Pad */}
+        {/* Collapsible Advanced Nudge / Ink Contrast Bar (Only appears when clicked) */}
+        {activeTab === 'advanced' && (
+          <div className="mt-1.5 flex flex-wrap items-center justify-between bg-black/80 backdrop-blur-xl border border-white/10 p-2 rounded-xl text-xs text-zinc-300 shadow-xl gap-2 animate-in fade-in slide-in-from-bottom-2 duration-150">
+            {/* Fine Nudge D-Pad */}
             <div className="flex items-center space-x-1">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 mr-1">Fine Nudge:</span>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 mr-1">Nudge:</span>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev - 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
-                title="Nudge Left"
               >
-                <ChevronLeft className="w-3.5 h-3.5" />
+                <ChevronLeft className="w-3 h-3" />
               </button>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeY((prev) => prev - 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
-                title="Nudge Up"
               >
-                <ChevronUp className="w-3.5 h-3.5" />
+                <ChevronUp className="w-3 h-3" />
               </button>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeY((prev) => prev + 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
-                title="Nudge Down"
               >
-                <ChevronDown className="w-3.5 h-3.5" />
+                <ChevronDown className="w-3 h-3" />
               </button>
               <button
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev + 1)}
                 className="p-1 text-zinc-400 hover:text-amber-400 bg-zinc-900 rounded"
-                title="Nudge Right"
               >
-                <ChevronRight className="w-3.5 h-3.5" />
+                <ChevronRight className="w-3 h-3" />
               </button>
             </div>
 
             {/* Ink Visibility Mode */}
-            <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase font-bold text-amber-400">Ink Visibility:</span>
-              <button
-                type="button"
-                onClick={() => setBlendMode('high-contrast')}
-                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
-                  blendMode === 'high-contrast' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
-                }`}
-                title="Ultra sharp and clear on skin"
-              >
-                🔥 High Contrast
-              </button>
-              <button
-                type="button"
-                onClick={() => setBlendMode('natural-skin')}
-                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
-                  blendMode === 'natural-skin' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
-                }`}
-                title="Natural skin multiplier"
-              >
-                ✨ Natural
-              </button>
-              <button
-                type="button"
-                onClick={() => setBlendMode('direct')}
-                className={`px-2.5 py-0.5 rounded text-[10px] uppercase font-bold transition-all ${
-                  blendMode === 'direct' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 bg-zinc-900'
-                }`}
-                title="Direct stencil view"
-              >
-                💎 Direct
-              </button>
+            <div className="flex items-center space-x-1">
+              {['high-contrast', 'natural-skin', 'direct'].map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setBlendMode(m)}
+                  className={`px-2 py-0.5 rounded text-[9px] uppercase font-bold transition-all ${
+                    blendMode === m ? 'bg-amber-400 text-black' : 'text-zinc-400 bg-zinc-900'
+                  }`}
+                >
+                  {m === 'high-contrast' ? '🔥 Bold' : m === 'natural-skin' ? '✨ Natural' : '💎 Direct'}
+                </button>
+              ))}
             </div>
 
             {/* Opacity slider */}
@@ -1155,7 +1071,6 @@ export const Interactive3DStudio = ({
                 onMouseDown={(e) => e.stopPropagation()}
                 onChange={(e) => setTattooOpacity(parseFloat(e.target.value))}
                 className="w-14 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
-                title="Adjust ink opacity"
               />
               <span className="text-[9px] font-mono text-zinc-400 w-6 text-right">
                 {Math.round(tattooOpacity * 100)}%
