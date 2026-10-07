@@ -19,33 +19,44 @@ export const Hero = () => {
   const [loadingDesigns, setLoadingDesigns] = useState(true);
   const navigate = useNavigate();
 
-  const stylesList = ['All', 'Minimalist', 'Fine Line', 'Geometric', 'Traditional', 'Script', 'Mandala', 'Realism', 'Blackwork', 'Watercolor'];
+  const stylesList = ['All', 'Sacred Devbhoomi', 'Fine Line', 'Geometric', 'Blackwork', 'Japanese', 'Traditional', 'Mandala', 'Neo-Traditional'];
 
-  // Fetch dynamic designs from Admin database
+  // Fetch dynamic designs from Admin database and ensure 100% authentic named tattoo artworks
   useEffect(() => {
     const loadDynamicDesigns = async () => {
       try {
         const res = await designsAPI.getAll();
         if (res.success && res.designs && res.designs.length > 0) {
-          const dbList = res.designs.map((d) => ({
-            id: d._id,
-            _id: d._id,
-            name: d.name,
-            artist: d.artist || 'Master Sunil',
-            style: d.style || 'Custom',
-            description: d.description || '',
-            estTime: `${d.estTimeHours || 2} hrs`,
-            difficulty: d.difficulty || 'Custom',
-            previewImage: d.previewImage,
-            dataUri: d.previewImage || d.transparentOverlay,
-            bodyAreas: d.bodyAreas || ['Forearm'],
-            isDefaultReference: Boolean(d.isDefaultReference),
-            isFromDB: true,
-          }));
+          // Filter out legacy unsplash/stale mock items
+          const dbList = res.designs
+            .filter((d) => !d.previewImage?.includes('images.unsplash.com') && !d.previewImage?.includes('photo-'))
+            .map((d) => ({
+              id: d._id,
+              _id: d._id,
+              name: d.name,
+              artist: d.artist || 'Master Sunil',
+              style: d.style || 'Custom',
+              description: d.description || '',
+              estTime: `${d.estTimeHours || 2} hrs`,
+              difficulty: d.difficulty || 'Custom',
+              previewImage: d.previewImage,
+              dataUri: d.previewImage || d.transparentOverlay,
+              bodyAreas: d.bodyAreas || ['Forearm'],
+              isDefaultReference: Boolean(d.isDefaultReference),
+              isFromDB: true,
+            }));
 
-          setDesigns(dbList);
-          if (!selectedDesign && dbList.length > 0) {
-            setSelectedDesign(dbList[0]);
+          // Merge with TATTOO_ARTWORKS_CATALOG so all 15 authentic named tattoos are available
+          const combined = [...dbList];
+          TATTOO_ARTWORKS_CATALOG.forEach((catalogItem) => {
+            if (!combined.some((d) => d.name.toLowerCase() === catalogItem.name.toLowerCase())) {
+              combined.push(catalogItem);
+            }
+          });
+
+          setDesigns(combined.length > 0 ? combined : TATTOO_ARTWORKS_CATALOG);
+          if (!selectedDesign && combined.length > 0) {
+            setSelectedDesign(combined[0]);
           }
         } else {
           setDesigns(TATTOO_ARTWORKS_CATALOG);

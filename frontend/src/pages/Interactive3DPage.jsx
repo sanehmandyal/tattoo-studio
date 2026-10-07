@@ -50,21 +50,23 @@ export const Interactive3DPage = () => {
       try {
         const res = await designsAPI.getAll();
         if (res.success && res.designs && res.designs.length > 0) {
-          const dbList = res.designs.map((d) => ({
-            id: d._id,
-            _id: d._id,
-            name: d.name,
-            artist: d.artist || 'Master Sunil',
-            style: d.style || 'Custom',
-            description: d.description || '',
-            estTime: `${d.estTimeHours || 2} hrs`,
-            difficulty: d.difficulty || 'Custom',
-            previewImage: d.previewImage,
-            dataUri: d.previewImage || d.transparentOverlay,
-            bodyAreas: d.bodyAreas || ['Forearm'],
-            isDefaultReference: Boolean(d.isDefaultReference),
-            isFromDB: true,
-          }));
+          const dbList = res.designs
+            .filter((d) => !d.previewImage?.includes('images.unsplash.com') && !d.previewImage?.includes('photo-'))
+            .map((d) => ({
+              id: d._id,
+              _id: d._id,
+              name: d.name,
+              artist: d.artist || 'Master Sunil',
+              style: d.style || 'Custom',
+              description: d.description || '',
+              estTime: `${d.estTimeHours || 2} hrs`,
+              difficulty: d.difficulty || 'Custom',
+              previewImage: d.previewImage,
+              dataUri: d.previewImage || d.transparentOverlay,
+              bodyAreas: d.bodyAreas || ['Forearm'],
+              isDefaultReference: Boolean(d.isDefaultReference),
+              isFromDB: true,
+            }));
 
           const combined = [...dbList];
           TATTOO_ARTWORKS_CATALOG.forEach(catalogItem => {
@@ -73,7 +75,7 @@ export const Interactive3DPage = () => {
             }
           });
 
-          setDesigns(combined);
+          setDesigns(combined.length > 0 ? combined : TATTOO_ARTWORKS_CATALOG);
 
           const initialDesign = findReferenceTattooForArea(selectedBodyArea, combined) || combined[0];
           setSelectedDesign(initialDesign);
