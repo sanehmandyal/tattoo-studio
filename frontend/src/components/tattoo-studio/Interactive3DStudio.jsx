@@ -21,6 +21,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Forearm (Right)',
     label: 'Right Forearm',
     defaultTheta: 0,
+    defaultScale: 1.10,
+    sizeDescription: 'Medium / Elongated',
     frames: {
       0: { left: 19.5, top: 38.5, width: 11.0, height: 16.0, rotate: -26, opacity: 1, scaleX: 0.95, skewY: 1 },
       45: { left: 29.5, top: 42.0, width: 11.5, height: 16.5, rotate: -15, opacity: 1, scaleX: 1.0, skewY: 0 },
@@ -33,6 +35,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Upper Arm (Right)',
     label: 'Right Bicep / Deltoid',
     defaultTheta: 0,
+    defaultScale: 1.15,
+    sizeDescription: 'Medium / Cylindrical',
     frames: {
       0: { left: 25.0, top: 29.5, width: 11.5, height: 14.5, rotate: -22, opacity: 1, scaleX: 0.95, skewY: 0 },
       45: { left: 33.0, top: 31.5, width: 12.0, height: 14.5, rotate: -12, opacity: 1, scaleX: 1.0, skewY: 0 },
@@ -45,6 +49,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Shoulder (Right)',
     label: 'Right Shoulder Cap',
     defaultTheta: 0,
+    defaultScale: 1.05,
+    sizeDescription: 'Curved / Round',
     frames: {
       0: { left: 31.0, top: 22.5, width: 12.5, height: 12.0, rotate: -12, opacity: 1, scaleX: 0.95 },
       45: { left: 36.5, top: 23.5, width: 13.0, height: 12.5, rotate: -8, opacity: 1, scaleX: 1.0 },
@@ -57,6 +63,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Chest',
     label: 'Pectoral Chest & Sternum',
     defaultTheta: 0,
+    defaultScale: 1.35,
+    sizeDescription: 'Broad / Statement Plate',
     frames: {
       0: { left: 50.0, top: 26.5, width: 24.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       45: { left: 52.0, top: 26.5, width: 20.0, height: 14.0, rotate: -4, opacity: 0.95, scaleX: 0.8 },
@@ -69,6 +77,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Back',
     label: 'Upper Back & Lats',
     defaultTheta: 180,
+    defaultScale: 1.45,
+    sizeDescription: 'Large / Full Canvas',
     frames: {
       180: { left: 50.0, top: 26.5, width: 26.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       135: { left: 52.0, top: 26.5, width: 22.0, height: 16.0, rotate: 4, opacity: 0.95, scaleX: 0.85 },
@@ -81,6 +91,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Spine',
     label: 'Full Vertebral Spine Line',
     defaultTheta: 180,
+    defaultScale: 1.10,
+    sizeDescription: 'Tall / Vertical Linear',
     frames: {
       180: { left: 50.0, top: 32.0, width: 10.0, height: 30.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       135: { left: 52.0, top: 32.0, width: 9.0, height: 28.0, rotate: 2, opacity: 0.9, scaleX: 0.8 },
@@ -91,6 +103,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Ribs',
     label: 'Ribcage & Flank',
     defaultTheta: 0,
+    defaultScale: 1.10,
+    sizeDescription: 'Curved Flank / Ribs',
     frames: {
       0: { left: 50.0, top: 36.0, width: 18.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 0.95 },
       45: { left: 50.0, top: 36.0, width: 16.0, height: 14.0, rotate: -4, opacity: 1, scaleX: 1.0 },
@@ -102,6 +116,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Thigh',
     label: 'Quadriceps / Thigh',
     defaultTheta: 0,
+    defaultScale: 1.35,
+    sizeDescription: 'Large / Quad Plate',
     frames: {
       0: { left: 42.0, top: 57.0, width: 15.0, height: 19.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       45: { left: 46.0, top: 57.5, width: 15.0, height: 19.0, rotate: -2, opacity: 1, scaleX: 0.95 },
@@ -117,6 +133,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Calf',
     label: 'Calf & Shin',
     defaultTheta: 0,
+    defaultScale: 1.15,
+    sizeDescription: 'Medium / Tapered',
     frames: {
       0: { left: 39.5, top: 76.5, width: 13.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       45: { left: 43.5, top: 76.5, width: 13.0, height: 17.0, rotate: -2, opacity: 1, scaleX: 0.95 },
@@ -132,6 +150,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Wrist',
     label: 'Wrist & Hand',
     defaultTheta: 0,
+    defaultScale: 0.75,
+    sizeDescription: 'Compact / Minimal',
     frames: {
       0: { left: 15.5, top: 48.0, width: 9.0, height: 9.0, rotate: -28, opacity: 1, scaleX: 1.0 },
       45: { left: 27.0, top: 51.5, width: 9.0, height: 9.0, rotate: -18, opacity: 1, scaleX: 1.0 },
@@ -144,6 +164,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Neck',
     label: 'Neck & Throat',
     defaultTheta: 0,
+    defaultScale: 0.80,
+    sizeDescription: 'Subtle / Compact',
     frames: {
       0: { left: 50.0, top: 17.5, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       45: { left: 51.0, top: 18.0, width: 11.0, height: 8.0, rotate: -3, opacity: 0.95, scaleX: 0.85 },
@@ -156,6 +178,8 @@ const ANATOMICAL_PLACEMENTS = {
     name: 'Ankle',
     label: 'Ankle & Foot',
     defaultTheta: 0,
+    defaultScale: 0.70,
+    sizeDescription: 'Small / Minimal Band',
     frames: {
       0: { left: 39.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       90: { left: 52.0, top: 90.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
@@ -173,7 +197,7 @@ export const Interactive3DStudio = ({
   compact = false,
 }) => {
   // Continuous 360-degree rotation state (0° to 360°)
-  const [rotationDeg, setRotationDeg] = useState(45);
+  const [rotationDeg, setRotationDeg] = useState(0);
   const [isAutoRotating, setIsAutoRotating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
@@ -183,12 +207,17 @@ export const Interactive3DStudio = ({
   const [isDraggingTattoo, setIsDraggingTattoo] = useState(false);
   const [tattooDragStart, setTattooDragStart] = useState({ x: 0, y: 0 });
 
-  const [zoomLevel, setZoomLevel] = useState(1);
+  // Powerful Interactive Zoom State (0.8x to 2.5x)
+  const [zoomLevel, setZoomLevel] = useState(1.0);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+
   const [hoveredPart, setHoveredPart] = useState(null);
   const [highlightPulse, setHighlightPulse] = useState(true);
   
-  // Custom Fine Tuning for Tattoo Placement
-  const [tattooScale, setTattooScale] = useState(1.15);
+  // Custom Fine Tuning for Tattoo Placement & Size
+  const [tattooScale, setTattooScale] = useState(1.10);
   const [tattooOpacity, setTattooOpacity] = useState(0.95);
   const [tattooRotationOffset, setTattooRotationOffset] = useState(0);
   const [offsetNudgeX, setOffsetNudgeX] = useState(0);
@@ -203,7 +232,7 @@ export const Interactive3DStudio = ({
     });
   }, []);
 
-  // Automatically rotate toward chosen body area when clicked
+  // Automatically rotate toward chosen body area and adjust default tattoo size
   useEffect(() => {
     if (!selectedBodyArea) return;
     const lower = selectedBodyArea.toLowerCase();
@@ -214,8 +243,9 @@ export const Interactive3DStudio = ({
     );
     
     if (matchedKey && ANATOMICAL_PLACEMENTS[matchedKey]) {
-      const defaultAngle = ANATOMICAL_PLACEMENTS[matchedKey].defaultTheta;
-      setRotationDeg(defaultAngle);
+      const config = ANATOMICAL_PLACEMENTS[matchedKey];
+      setRotationDeg(config.defaultTheta);
+      setTattooScale(config.defaultScale || 1.10);
       setOffsetNudgeX(0);
       setOffsetNudgeY(0);
       setHighlightPulse(true);
@@ -230,15 +260,24 @@ export const Interactive3DStudio = ({
     let animId;
     const animate = () => {
       setRotationDeg((prev) => (prev + 0.6) % 360);
-      animId = requestAnimationFrame(animate);
     };
     animId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animId);
   }, [isAutoRotating]);
 
-  // Pointer drag on turntable to spin in 360°
+  // Pointer drag on turntable to spin in 360° or pan when zoomed in
   const handlePointerDown = (e) => {
     if (isDraggingTattoo) return;
+    
+    // If zoomed in significantly (> 1.2x) and right click or space/shift held, enable pan
+    if (zoomLevel > 1.2 && (e.button === 2 || e.shiftKey)) {
+      setIsPanning(true);
+      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+      setPanStart({ x: clientX - panOffset.x, y: clientY - panOffset.y });
+      return;
+    }
+
     setIsDragging(true);
     setIsAutoRotating(false);
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
@@ -250,11 +289,21 @@ export const Interactive3DStudio = ({
     if (isDraggingTattoo) {
       const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
       const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-      const deltaX = (clientX - tattooDragStart.x) * 0.2;
-      const deltaY = (clientY - tattooDragStart.y) * 0.2;
+      const deltaX = (clientX - tattooDragStart.x) * (0.2 / zoomLevel);
+      const deltaY = (clientY - tattooDragStart.y) * (0.2 / zoomLevel);
       setOffsetNudgeX((prev) => prev + deltaX);
       setOffsetNudgeY((prev) => prev + deltaY);
       setTattooDragStart({ x: clientX, y: clientY });
+      return;
+    }
+
+    if (isPanning) {
+      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+      setPanOffset({
+        x: clientX - panStart.x,
+        y: clientY - panStart.y,
+      });
       return;
     }
 
@@ -268,6 +317,14 @@ export const Interactive3DStudio = ({
   const handlePointerUp = () => {
     setIsDragging(false);
     setIsDraggingTattoo(false);
+    setIsPanning(false);
+  };
+
+  // Mouse wheel zoom support on viewport
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const zoomDelta = e.deltaY * -0.0015;
+    setZoomLevel((prev) => Math.min(Math.max(parseFloat((prev + zoomDelta).toFixed(2)), 0.8), 2.5));
   };
 
   // Normalized 0 to 360 angle
@@ -312,30 +369,47 @@ export const Interactive3DStudio = ({
   // Calculate visibility based on whether frame coordinates exist for this view
   const isTattooVisibleInAngle = Boolean(frameCoords && (frameCoords.opacity ?? 1) > 0.2);
 
-  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.2, 1.6));
-  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.85));
+  // Zoom handlers
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(parseFloat((prev + 0.25).toFixed(2)), 2.5));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(parseFloat((prev - 0.25).toFixed(2)), 0.8));
+  const handleResetZoom = () => {
+    setZoomLevel(1.0);
+    setPanOffset({ x: 0, y: 0 });
+    toast.info('Zoom reset to 100%');
+  };
+
+  // Body Part Specific Sizing Helper
+  const handleApplyBodyPartPresetSize = (multiplier = 1.0) => {
+    const base = placementConfig?.defaultScale || 1.10;
+    const newScale = parseFloat((base * multiplier).toFixed(2));
+    setTattooScale(newScale);
+    toast.success(`Size adjusted for ${placementConfig?.name}: ${(multiplier * 100).toFixed(0)}% fit`);
+  };
+
   const handleReset = () => {
-    setZoomLevel(1);
+    setZoomLevel(1.0);
+    setPanOffset({ x: 0, y: 0 });
     setRotationDeg(placementConfig?.defaultTheta ?? 0);
     setIsAutoRotating(false);
-    setTattooScale(1.15);
+    setTattooScale(placementConfig?.defaultScale || 1.10);
     setTattooOpacity(0.95);
     setTattooRotationOffset(0);
     setOffsetNudgeX(0);
     setOffsetNudgeY(0);
     setBlendMode('multiply');
-    toast.info(`Centered on ${placementConfig?.label || selectedBodyArea}`);
+    toast.info(`Centered and reset on ${placementConfig?.label || selectedBodyArea}`);
   };
 
   const imageSrc = selectedDesign ? getFullImageUrl(selectedDesign.dataUri || selectedDesign.previewImage || selectedDesign.image) : '';
 
   return (
     <div
-      className={`relative w-full ${compact ? 'h-[520px] sm:h-[580px] md:h-[640px]' : 'h-[580px] sm:h-[640px] md:h-[740px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-colors`}
+      className={`relative w-full ${compact ? 'h-[540px] sm:h-[600px] md:h-[660px]' : 'h-[600px] sm:h-[680px] md:h-[780px]'} flex flex-col items-center justify-between select-none overflow-hidden rounded-2xl bg-[#090b0e] border border-white/10 shadow-2xl transition-colors`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
+      onWheel={handleWheel}
     >
       
       {/* 1. TOP 360° CONTROL & VIEW STATUS BAR */}
@@ -366,22 +440,33 @@ export const Interactive3DStudio = ({
             {isAutoRotating ? '⏸ Stop Orbit' : '▶ 360° Spin'}
           </button>
 
-          <button
-            type="button"
-            onClick={handleZoomIn}
-            className="p-1 text-zinc-400 hover:text-white rounded-full transition-colors hidden sm:inline-block"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={handleZoomOut}
-            className="p-1 text-zinc-400 hover:text-white rounded-full transition-colors hidden sm:inline-block"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-3.5 h-3.5" />
-          </button>
+          {/* Quick Zoom Presets */}
+          <div className="hidden md:flex items-center space-x-1 border-l border-white/10 pl-1.5 ml-1">
+            <button
+              type="button"
+              onClick={() => { setZoomLevel(1.0); setPanOffset({ x: 0, y: 0 }); }}
+              className={`px-2 py-0.5 text-[9px] font-bold rounded ${zoomLevel === 1.0 ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white'}`}
+              title="Full Body View"
+            >
+              1x Body
+            </button>
+            <button
+              type="button"
+              onClick={() => { setZoomLevel(1.6); setPanOffset({ x: 0, y: 0 }); }}
+              className={`px-2 py-0.5 text-[9px] font-bold rounded ${zoomLevel === 1.6 ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white'}`}
+              title="Close-Up Tattoo Inspection"
+            >
+              1.6x Close-Up
+            </button>
+            <button
+              type="button"
+              onClick={() => { setZoomLevel(2.2); setPanOffset({ x: 0, y: 0 }); }}
+              className={`px-2 py-0.5 text-[9px] font-bold rounded ${zoomLevel === 2.2 ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white'}`}
+              title="Macro Skin Detail Inspection"
+            >
+              2.2x Macro
+            </button>
+          </div>
         </div>
 
         {/* Anatomical Calibration Badge */}
@@ -412,10 +497,63 @@ export const Interactive3DStudio = ({
         })}
       </div>
 
-      {/* 3. CENTER STAGE: 360° ANATOMICAL HUMAN BODY TURNTABLE */}
+      {/* 3. FLOATING INTERACTIVE ZOOM HUD (LEFT SIDE) */}
+      <div className="absolute left-3 top-20 z-30 flex flex-col items-center bg-black/90 backdrop-blur-md border border-amber-500/30 p-1.5 rounded-2xl shadow-2xl pointer-events-auto space-y-1.5">
+        <div className="text-[9px] font-black uppercase text-amber-400 tracking-wider">
+          Zoom
+        </div>
+
+        {/* Zoom In Button */}
+        <button
+          type="button"
+          onClick={handleZoomIn}
+          className="p-1.5 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-xl transition-all border border-white/10 shadow-sm"
+          title="Zoom In (Inspect Details)"
+        >
+          <ZoomIn className="w-4 h-4" />
+        </button>
+
+        {/* Vertical Zoom Level Slider */}
+        <div className="relative py-1 flex items-center justify-center">
+          <input
+            type="range"
+            min="0.8"
+            max="2.5"
+            step="0.05"
+            value={zoomLevel}
+            onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
+            className="w-16 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg -rotate-90 my-6"
+            title="Drag to zoom"
+          />
+        </div>
+
+        {/* Zoom Out Button */}
+        <button
+          type="button"
+          onClick={handleZoomOut}
+          className="p-1.5 bg-zinc-900 hover:bg-amber-400 hover:text-black text-zinc-300 rounded-xl transition-all border border-white/10 shadow-sm"
+          title="Zoom Out (Full Body)"
+        >
+          <ZoomOut className="w-4 h-4" />
+        </button>
+
+        {/* Live Zoom Percentage Badge / Reset */}
+        <button
+          type="button"
+          onClick={handleResetZoom}
+          className="px-1.5 py-0.5 bg-amber-500/20 hover:bg-amber-400 hover:text-black text-amber-300 font-mono text-[9px] font-bold rounded-md border border-amber-500/30 transition-all"
+          title="Click to reset zoom to 100%"
+        >
+          {Math.round(zoomLevel * 100)}%
+        </button>
+      </div>
+
+      {/* 4. CENTER STAGE: 360° ANATOMICAL HUMAN BODY TURNTABLE */}
       <div
-        className="relative w-full h-full flex items-center justify-center transition-transform duration-200 ease-out transform-gpu will-change-transform pt-10 pb-28 cursor-grab active:cursor-grabbing"
-        style={{ transform: `scale(${zoomLevel})` }}
+        className="relative w-full h-full flex items-center justify-center transition-transform duration-150 ease-out transform-gpu will-change-transform pt-10 pb-36 cursor-grab active:cursor-grabbing"
+        style={{
+          transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
+        }}
       >
         {/* Soft studio vignette glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.05)_0%,transparent_75%)] pointer-events-none" />
@@ -442,7 +580,7 @@ export const Interactive3DStudio = ({
               }}
             />
 
-            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION WITH DIRECT DRAG */}
+            {/* REALISTIC INKED-ON-SKIN TATTOO PROJECTION WITH DIRECT DRAG & RESIZING */}
             {selectedDesign && frameCoords && isTattooVisibleInAngle && (
               <div
                 onPointerDown={(e) => {
@@ -468,7 +606,7 @@ export const Interactive3DStudio = ({
                     : 'drop-shadow(0 0 4px rgba(0,0,0,0.5))',
                   transition: isDragging || isDraggingTattoo ? 'none' : 'opacity 0.15s ease-out, transform 0.08s ease-out',
                 }}
-                title="Click and drag to position tattoo anywhere on body"
+                title="Click and drag tattoo to adjust placement on skin"
               >
                 {selectedDesign.svg ? (
                   <div className="w-full h-full flex items-center justify-center text-zinc-950 font-bold">
@@ -537,27 +675,76 @@ export const Interactive3DStudio = ({
 
       </div>
 
-      {/* 4. BOTTOM FINE-TUNING CONTROLS & TATTOO SELECTION DOCK */}
+      {/* 5. BOTTOM FINE-TUNING CONTROLS & TATTOO SELECTION DOCK */}
       <div className="absolute bottom-2.5 left-2.5 right-2.5 z-30 flex flex-col gap-2 pointer-events-auto">
         
-        {/* Interactive Alignment Adjustment Dock */}
-        <div className="flex flex-wrap items-center justify-between bg-black/90 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-2xl gap-2">
+        {/* Interactive Alignment & Size Adjustment Dock */}
+        <div className="flex flex-wrap items-center justify-between bg-black/95 backdrop-blur-md border border-white/10 p-2 sm:px-3 rounded-xl text-xs text-zinc-300 shadow-2xl gap-2">
           
           <div className="flex flex-wrap items-center gap-3">
             
-            {/* Scale Slider */}
-            <div className="flex items-center space-x-1.5">
-              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">Size:</span>
+            {/* Body-Part Tailored Tattoo Size Control */}
+            <div className="flex items-center space-x-1.5 bg-zinc-900/90 border border-white/10 px-2 py-1 rounded-lg">
+              <span className="text-[10px] uppercase tracking-wider font-bold text-amber-400">
+                Tattoo Size:
+              </span>
+              <button
+                type="button"
+                onClick={() => setTattooScale((prev) => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.3))}
+                className="w-5 h-5 flex items-center justify-center bg-black/60 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold transition-all text-xs"
+                title="Decrease Tattoo Size (-10%)"
+              >
+                -
+              </button>
               <input
                 type="range"
-                min="0.5"
-                max="2.2"
+                min="0.3"
+                max="2.5"
                 step="0.05"
                 value={tattooScale}
                 onChange={(e) => setTattooScale(parseFloat(e.target.value))}
-                className="w-16 sm:w-20 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                className="w-16 sm:w-24 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                title="Adjust tattoo scale"
               />
-              <span className="text-[10px] font-mono text-zinc-400">{tattooScale.toFixed(2)}x</span>
+              <button
+                type="button"
+                onClick={() => setTattooScale((prev) => Math.min(parseFloat((prev + 0.1).toFixed(2)), 2.5))}
+                className="w-5 h-5 flex items-center justify-center bg-black/60 hover:bg-amber-400 hover:text-black rounded text-zinc-300 font-bold transition-all text-xs"
+                title="Increase Tattoo Size (+10%)"
+              >
+                +
+              </button>
+              <span className="text-[10px] font-mono text-amber-300 font-bold">
+                {Math.round(tattooScale * 100)}%
+              </span>
+            </div>
+
+            {/* Quick Size Presets for Current Body Part */}
+            <div className="hidden sm:flex items-center space-x-1 bg-zinc-900/70 border border-white/10 rounded-lg p-0.5 text-[9px] font-bold">
+              <button
+                type="button"
+                onClick={() => handleApplyBodyPartPresetSize(0.7)}
+                className="px-1.5 py-0.5 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                title="Small / Minimal Size Fit"
+              >
+                Small
+              </button>
+              <button
+                type="button"
+                onClick={() => handleApplyBodyPartPresetSize(1.0)}
+                className="px-1.5 py-0.5 rounded text-amber-300 bg-amber-950/60 border border-amber-500/30 hover:bg-amber-500/30 transition-colors"
+                title="Standard Muscle Proportion Fit"
+              >
+                Standard
+              </button>
+              <button
+                type="button"
+                onClick={() => handleApplyBodyPartPresetSize(1.35)}
+                className="px-1.5 py-0.5 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                title="Large / Full Muscle Coverage Fit"
+              >
+                Large
+              </button>
             </div>
 
             {/* Rotate Slider */}
@@ -570,13 +757,13 @@ export const Interactive3DStudio = ({
                 step="1"
                 value={tattooRotationOffset}
                 onChange={(e) => setTattooRotationOffset(parseInt(e.target.value))}
-                className="w-14 sm:w-16 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                className="w-12 sm:w-16 accent-amber-400 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
               />
               <span className="text-[10px] font-mono text-zinc-400">{tattooRotationOffset}°</span>
             </div>
 
             {/* Nudge D-Pad Controls */}
-            <div className="flex items-center space-x-1 bg-zinc-900 border border-white/10 rounded-lg p-0.5">
+            <div className="flex items-center space-x-0.5 bg-zinc-900 border border-white/10 rounded-lg p-0.5">
               <button
                 type="button"
                 onClick={() => setOffsetNudgeX((prev) => prev - 1)}
@@ -617,14 +804,14 @@ export const Interactive3DStudio = ({
               <button
                 type="button"
                 onClick={() => setBlendMode('multiply')}
-                className={`px-2 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'multiply' ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white bg-zinc-900'}`}
+                className={`px-2 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'multiply' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900'}`}
               >
                 Real Skin
               </button>
               <button
                 type="button"
                 onClick={() => setBlendMode('normal')}
-                className={`px-2 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'normal' ? 'bg-amber-400 text-black' : 'text-zinc-400 hover:text-white bg-zinc-900'}`}
+                className={`px-2 py-0.5 rounded uppercase font-bold transition-all ${blendMode === 'normal' ? 'bg-amber-400 text-black shadow-sm' : 'text-zinc-400 hover:text-white bg-zinc-900'}`}
               >
                 Direct
               </button>
