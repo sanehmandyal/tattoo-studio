@@ -3,7 +3,7 @@ import { RotateCw, ZoomIn, ZoomOut, Sparkles, Sliders, Check, RefreshCcw, Eye, L
 import { toast } from 'sonner';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
-// 8 Anatomical Perspectives for Full 360° Volumetric Rotation
+// 8 Anatomical Perspectives for Full 360° Volumetric Rotation (No glitches, all clean 3D renders)
 const ANATOMY_360_FRAMES = [
   { angle: 0, label: 'Front View (0°)', src: '/images/masculine_front.jpg', flip: false },
   { angle: 45, label: 'Front-Right 3/4 (45°)', src: '/images/masculine_front_right.jpg', flip: false },
@@ -16,7 +16,6 @@ const ANATOMY_360_FRAMES = [
 ];
 
 // Pixel-perfect anatomical coordinate mapping per viewing angle frame
-// Every body zone is positioned exactly over its real anatomical location in each photo
 const ANATOMICAL_PLACEMENTS = {
   Forearm: {
     name: 'Forearm (Right)',
@@ -24,11 +23,10 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 45,
     frames: {
       0: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: -14, opacity: 1, scaleX: 0.95, skewY: 2 },
-      45: { left: 36.0, top: 50.0, width: 12.5, height: 18.5, rotate: -8, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 51.0, top: 56.5, width: 12.5, height: 18.5, rotate: -3, opacity: 1, scaleX: 0.95, skewY: -1 },
+      45: { left: 35.0, top: 49.5, width: 12.5, height: 18.5, rotate: -8, opacity: 1, scaleX: 1.0, skewY: 0 },
+      90: { left: 65.5, top: 47.0, width: 12.0, height: 18.0, rotate: 6, opacity: 1, scaleX: 0.95, skewY: 1 },
       135: { left: 39.0, top: 50.0, width: 12.0, height: 18.0, rotate: 8, opacity: 0.95, scaleX: 0.85, skewY: -2 },
-      180: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: 14, opacity: 0.9, scaleX: 0.95, skewY: -2 },
-      315: { left: 18.0, top: 46.0, width: 9.0, height: 15.0, rotate: -18, opacity: 0.45, scaleX: 0.65, skewY: 3 }
+      180: { left: 23.5, top: 48.0, width: 12.0, height: 18.0, rotate: 14, opacity: 0.9, scaleX: 0.95, skewY: -2 }
     }
   },
   'Upper Arm': {
@@ -37,11 +35,10 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 60,
     frames: {
       0: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: -10, opacity: 1, scaleX: 0.95, skewY: -2 },
-      45: { left: 38.0, top: 37.0, width: 13.5, height: 16.5, rotate: -6, opacity: 1, scaleX: 1.0, skewY: 0 },
-      90: { left: 50.5, top: 43.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95, skewY: 0 },
+      45: { left: 37.0, top: 37.0, width: 13.5, height: 16.5, rotate: -6, opacity: 1, scaleX: 1.0, skewY: 0 },
+      90: { left: 63.5, top: 37.0, width: 13.5, height: 16.5, rotate: 4, opacity: 1, scaleX: 0.95, skewY: 0 },
       135: { left: 41.0, top: 38.0, width: 13.0, height: 16.0, rotate: 6, opacity: 0.95, scaleX: 0.85, skewY: 2 },
-      180: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: 10, opacity: 0.9, scaleX: 0.95, skewY: 2 },
-      315: { left: 21.0, top: 35.0, width: 10.0, height: 14.0, rotate: -14, opacity: 0.45, scaleX: 0.7, skewY: -3 }
+      180: { left: 28.0, top: 36.5, width: 13.0, height: 16.0, rotate: 10, opacity: 0.9, scaleX: 0.95, skewY: 2 }
     }
   },
   Shoulder: {
@@ -50,11 +47,10 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 70,
     frames: {
       0: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: -12, opacity: 1, scaleX: 0.95 },
-      45: { left: 40.0, top: 28.0, width: 14.5, height: 13.5, rotate: -6, opacity: 1, scaleX: 1.0 },
-      90: { left: 52.0, top: 34.0, width: 15.0, height: 14.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      45: { left: 39.0, top: 28.0, width: 14.5, height: 13.5, rotate: -6, opacity: 1, scaleX: 1.0 },
+      90: { left: 62.0, top: 29.0, width: 14.5, height: 13.5, rotate: 0, opacity: 1, scaleX: 0.95 },
       135: { left: 43.0, top: 29.0, width: 14.0, height: 13.0, rotate: 8, opacity: 0.95, scaleX: 0.9 },
-      180: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: 12, opacity: 0.9, scaleX: 0.95 },
-      315: { left: 26.0, top: 27.0, width: 10.0, height: 11.0, rotate: -16, opacity: 0.5, scaleX: 0.75 }
+      180: { left: 33.0, top: 27.5, width: 14.0, height: 13.0, rotate: 12, opacity: 0.9, scaleX: 0.95 }
     }
   },
   Chest: {
@@ -64,9 +60,9 @@ const ANATOMICAL_PLACEMENTS = {
     frames: {
       0: { left: 50.0, top: 31.0, width: 26.0, height: 15.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       45: { left: 52.0, top: 30.0, width: 22.0, height: 14.0, rotate: -4, opacity: 0.95, scaleX: 0.8 },
-      90: { left: 64.0, top: 36.0, width: 14.0, height: 13.0, rotate: -6, opacity: 0.5, scaleX: 0.45 },
+      90: { left: 46.0, top: 34.0, width: 14.0, height: 13.0, rotate: -4, opacity: 0.7, scaleX: 0.5 },
       315: { left: 48.0, top: 30.0, width: 22.0, height: 14.0, rotate: 4, opacity: 0.95, scaleX: 0.8 },
-      270: { left: 36.0, top: 36.0, width: 14.0, height: 13.0, rotate: 6, opacity: 0.5, scaleX: 0.45 }
+      270: { left: 54.0, top: 34.0, width: 14.0, height: 13.0, rotate: 4, opacity: 0.7, scaleX: 0.5 }
     }
   },
   Back: {
@@ -77,8 +73,8 @@ const ANATOMICAL_PLACEMENTS = {
       180: { left: 50.0, top: 31.0, width: 28.0, height: 18.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       135: { left: 52.0, top: 31.0, width: 24.0, height: 17.0, rotate: 4, opacity: 0.95, scaleX: 0.85 },
       225: { left: 48.0, top: 31.0, width: 24.0, height: 17.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 42.0, top: 36.0, width: 14.0, height: 15.0, rotate: 6, opacity: 0.4, scaleX: 0.4 },
-      270: { left: 58.0, top: 36.0, width: 14.0, height: 15.0, rotate: -6, opacity: 0.4, scaleX: 0.4 }
+      90: { left: 42.0, top: 34.0, width: 14.0, height: 15.0, rotate: 4, opacity: 0.4, scaleX: 0.4 },
+      270: { left: 58.0, top: 34.0, width: 14.0, height: 15.0, rotate: -4, opacity: 0.4, scaleX: 0.4 }
     }
   },
   Spine: {
@@ -98,7 +94,7 @@ const ANATOMICAL_PLACEMENTS = {
     frames: {
       0: { left: 44.0, top: 41.0, width: 17.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.95 },
       45: { left: 49.0, top: 41.5, width: 17.0, height: 16.0, rotate: -3, opacity: 1, scaleX: 1.0 },
-      90: { left: 58.0, top: 45.0, width: 16.0, height: 16.0, rotate: 0, opacity: 1, scaleX: 0.9 },
+      90: { left: 48.0, top: 43.0, width: 16.0, height: 16.0, rotate: 0, opacity: 0.8, scaleX: 0.8 },
       315: { left: 51.0, top: 41.0, width: 14.0, height: 15.0, rotate: 4, opacity: 0.8, scaleX: 0.8 }
     }
   },
@@ -108,13 +104,13 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 0,
     frames: {
       0: { left: 42.0, top: 60.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 47.0, top: 61.0, width: 16.0, height: 20.0, rotate: -2, opacity: 1, scaleX: 0.95 },
-      90: { left: 63.0, top: 64.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      45: { left: 46.0, top: 60.5, width: 16.0, height: 20.0, rotate: -2, opacity: 1, scaleX: 0.95 },
+      90: { left: 56.0, top: 61.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
       135: { left: 52.0, top: 61.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 },
       180: { left: 42.0, top: 62.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       225: { left: 48.0, top: 61.0, width: 16.0, height: 20.0, rotate: -2, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 37.0, top: 64.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 53.0, top: 61.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
+      270: { left: 44.0, top: 61.0, width: 16.0, height: 20.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      315: { left: 54.0, top: 60.0, width: 16.0, height: 20.0, rotate: 2, opacity: 0.95, scaleX: 0.95 }
     }
   },
   Calf: {
@@ -123,13 +119,13 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 0,
     frames: {
       0: { left: 40.0, top: 79.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      45: { left: 45.0, top: 79.5, width: 14.0, height: 17.0, rotate: -1, opacity: 1, scaleX: 0.95 },
-      90: { left: 62.0, top: 82.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      45: { left: 44.0, top: 79.0, width: 14.0, height: 17.0, rotate: -1, opacity: 1, scaleX: 0.95 },
+      90: { left: 58.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
       135: { left: 51.0, top: 79.5, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 },
       180: { left: 40.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       225: { left: 49.0, top: 79.5, width: 14.0, height: 17.0, rotate: -1, opacity: 0.95, scaleX: 0.95 },
-      270: { left: 38.0, top: 82.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
-      315: { left: 55.0, top: 79.5, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 }
+      270: { left: 42.0, top: 80.0, width: 14.0, height: 17.0, rotate: 0, opacity: 1, scaleX: 0.95 },
+      315: { left: 56.0, top: 79.0, width: 14.0, height: 17.0, rotate: 1, opacity: 0.95, scaleX: 0.95 }
     }
   },
   Wrist: {
@@ -138,8 +134,8 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 35,
     frames: {
       0: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: -16, opacity: 1, scaleX: 1.0 },
-      45: { left: 34.0, top: 62.0, width: 10.0, height: 10.0, rotate: -10, opacity: 1, scaleX: 1.0 },
-      90: { left: 51.0, top: 68.0, width: 10.0, height: 10.0, rotate: -4, opacity: 1, scaleX: 0.95 },
+      45: { left: 33.0, top: 61.0, width: 10.0, height: 10.0, rotate: -10, opacity: 1, scaleX: 1.0 },
+      90: { left: 67.0, top: 57.0, width: 10.0, height: 10.0, rotate: 6, opacity: 1, scaleX: 0.95 },
       135: { left: 36.0, top: 62.0, width: 10.0, height: 10.0, rotate: 8, opacity: 0.9, scaleX: 0.9 },
       180: { left: 19.0, top: 59.0, width: 10.0, height: 10.0, rotate: 16, opacity: 0.9, scaleX: 1.0 }
     }
@@ -151,7 +147,7 @@ const ANATOMICAL_PLACEMENTS = {
     frames: {
       0: { left: 50.0, top: 22.5, width: 12.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       45: { left: 51.0, top: 23.0, width: 11.0, height: 9.0, rotate: -4, opacity: 0.95, scaleX: 0.85 },
-      90: { left: 55.0, top: 28.0, width: 10.0, height: 9.0, rotate: 0, opacity: 0.8, scaleX: 0.7 },
+      90: { left: 50.0, top: 24.0, width: 10.0, height: 9.0, rotate: 0, opacity: 0.8, scaleX: 0.7 },
       180: { left: 50.0, top: 22.5, width: 12.0, height: 9.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       315: { left: 49.0, top: 23.0, width: 11.0, height: 9.0, rotate: 4, opacity: 0.95, scaleX: 0.85 }
     }
@@ -162,7 +158,7 @@ const ANATOMICAL_PLACEMENTS = {
     defaultTheta: 0,
     frames: {
       0: { left: 39.0, top: 92.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
-      90: { left: 62.0, top: 92.0, width: 11.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
+      90: { left: 54.0, top: 92.0, width: 11.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 },
       180: { left: 40.0, top: 92.0, width: 10.0, height: 8.0, rotate: 0, opacity: 1, scaleX: 1.0 }
     }
   }
