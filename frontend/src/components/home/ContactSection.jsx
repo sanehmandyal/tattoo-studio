@@ -14,6 +14,19 @@ export const ContactSection = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  const studioName = settings?.studioName || 'Land of God Tattoo Studio';
+  const phoneDisplay = settings?.phone || '+91 78079 66080';
+  const whatsappNumber = (settings?.whatsapp || '917807966080').replace(/[^0-9]/g, '');
+  const emailDisplay = settings?.email || 'contact@landofgodtattoos.com';
+  const street = settings?.address?.street || 'Friends Colony';
+  const city = settings?.address?.city || 'Una';
+  const state = settings?.address?.state || 'Himachal Pradesh';
+  const zip = settings?.address?.zip || '174303';
+  const monFriHours = settings?.businessHours?.mon_fri || '10:30 AM – 8:30 PM';
+  const satHours = settings?.businessHours?.saturday || '10:30 AM – 9:00 PM';
+  const sunHours = settings?.businessHours?.sunday || '11:00 AM – 7:00 PM (By Appt)';
+  const mapEmbedUrl = settings?.googleMapsEmbedUrl || 'https://maps.google.com/maps?q=Friends%20Colony,%20Una,%20Himachal%20Pradesh%20174303&t=&z=15&ie=UTF8&iwloc=&output=embed';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !email || !message) {
@@ -52,7 +65,7 @@ export const ContactSection = () => {
             Studio Location &amp; Inquiries
           </h2>
           <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-            Visit our studio in Friends Colony, Una or send a consultation message
+            Visit our studio in {street}, {city} or send a consultation message
           </p>
         </div>
 
@@ -61,8 +74,8 @@ export const ContactSection = () => {
           {/* LEFT: GOOGLE MAP */}
           <div className="lg:col-span-6 rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative bg-zinc-950 h-[380px] lg:h-[460px]">
             <iframe
-              title="Land of God Tattoo Studio Location Map"
-              src="https://maps.google.com/maps?q=Friends%20Colony,%20Una,%20Himachal%20Pradesh%20174303&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              title={`${studioName} Location Map`}
+              src={mapEmbedUrl}
               className="w-full h-full opacity-90"
               style={{ border: 0 }}
               allowFullScreen=""
@@ -72,14 +85,14 @@ export const ContactSection = () => {
             {/* Overlay Tag */}
             <div className="absolute top-4 left-4 bg-zinc-900/95 backdrop-blur-md p-3.5 rounded-xl shadow-2xl text-left flex items-center space-x-3 border border-white/10">
               <div className="w-10 h-10 rounded-full bg-black p-1 border border-amber-400/40 shrink-0 flex items-center justify-center">
-                <img src="/logo.png" alt="Land of God Logo" className="w-full h-full object-contain rounded-full" />
+                <img src="/logo.png" alt={`${studioName} Logo`} className="w-full h-full object-contain rounded-full" />
               </div>
               <div>
                 <div className="text-xs font-bold text-white uppercase tracking-wider">
-                  Land of God Tattoo Studio
+                  {studioName}
                 </div>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  Friends Colony, Una, Himachal Pradesh 174303
+                  {street}, {city}, {state} {zip}
                 </p>
               </div>
             </div>
@@ -94,7 +107,7 @@ export const ContactSection = () => {
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-white uppercase text-[11px]">Studio Address</h4>
-                  <p className="text-zinc-400 mt-0.5">Friends Colony, Una<br />Himachal Pradesh 174303</p>
+                  <p className="text-zinc-400 mt-0.5">{street}, {city}<br />{state} {zip}</p>
                 </div>
               </div>
 
@@ -102,8 +115,8 @@ export const ContactSection = () => {
                 <Phone className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-white uppercase text-[11px]">Direct Phone</h4>
-                  <a href="tel:+917807966080" className="text-zinc-300 hover:text-amber-400 font-semibold block mt-0.5">
-                    +91 78079 66080
+                  <a href={`tel:${phoneDisplay.replace(/\s+/g, '')}`} className="text-zinc-300 hover:text-amber-400 font-semibold block mt-0.5">
+                    {phoneDisplay}
                   </a>
                 </div>
               </div>
@@ -112,7 +125,7 @@ export const ContactSection = () => {
                 <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-white uppercase text-[11px]">Email</h4>
-                  <span className="text-zinc-400 mt-0.5 block">contact@landofgodtattoos.com</span>
+                  <span className="text-zinc-400 mt-0.5 block">{emailDisplay}</span>
                 </div>
               </div>
 
@@ -120,20 +133,20 @@ export const ContactSection = () => {
                 <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-white uppercase text-[11px]">Studio Hours</h4>
-                  <p className="text-zinc-400 mt-0.5">Mon–Sat: 10:30 AM – 8:30 PM</p>
+                  <p className="text-zinc-400 mt-0.5">Mon–Fri: {monFriHours}<br />Sat: {satHours}</p>
                 </div>
               </div>
             </div>
 
             {/* Direct WhatsApp CTA Button */}
             <a
-              href="https://wa.me/917807966080"
+              href={`https://wa.me/${whatsappNumber}`}
               target="_blank"
               rel="noreferrer"
               className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 text-xs uppercase tracking-wider rounded-lg flex items-center justify-center space-x-2 transition-all shadow-md"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Direct WhatsApp Chat (+91 78079 66080)</span>
+              <span>Direct WhatsApp Chat ({phoneDisplay})</span>
             </a>
 
             {/* Message Form */}

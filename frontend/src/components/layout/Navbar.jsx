@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useSettings } from '../../context/SettingsContext';
 import { Menu, X, User as UserIcon, Shield, Calendar, LogOut, Compass } from 'lucide-react';
 
 export const Navbar = () => {
@@ -8,8 +9,13 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout, isAdmin } = useAuth();
+  const { settings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const phoneDisplay = settings?.phone || '+91 78079 66080';
+  const whatsappNumber = (settings?.whatsapp || '917807966080').replace(/[^0-9]/g, '');
+  const studioName = settings?.studioName || 'LAND OF GOD';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -177,13 +183,13 @@ export const Navbar = () => {
 
           {/* Direct WhatsApp Action */}
           <a
-            href="https://wa.me/917807966080"
+            href={`https://wa.me/${whatsappNumber}`}
             target="_blank"
             rel="noreferrer"
             className="h-9 px-3.5 rounded-full flex items-center gap-2 text-xs font-bold tracking-wide text-emerald-400 bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-500/40 hover:border-emerald-400 shadow-sm transition-all"
           >
             <span className="text-sm leading-none">💬</span>
-            <span>7807966080</span>
+            <span>{phoneDisplay.replace(/^\+91\s*/, '')}</span>
           </a>
 
           {/* BOOK NOW Primary CTA */}
@@ -198,7 +204,7 @@ export const Navbar = () => {
         {/* Mobile Hamburger Toggle */}
         <div className="xl:hidden flex items-center space-x-2">
           <a
-            href="https://wa.me/917807966080"
+            href={`https://wa.me/${whatsappNumber}`}
             target="_blank"
             rel="noreferrer"
             className="bg-emerald-950/80 border border-emerald-500/50 text-emerald-400 px-2.5 py-1.5 text-[11px] font-bold uppercase rounded flex items-center space-x-1"

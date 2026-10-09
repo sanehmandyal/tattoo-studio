@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { MessageCircle, X, Send, Sparkles, PhoneCall, ShieldCheck, MapPin, Calendar } from 'lucide-react';
+import { useSettings } from '../../context/SettingsContext';
 import { STUDIO_WHATSAPP_NUMBER, getStudioWhatsAppUrl, createBookingWhatsAppUrl } from '../../utils/whatsapp';
 
 export const FloatingWhatsAppButton = () => {
+  const { settings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [customMsg, setCustomMsg] = useState('');
+
+  const phone = settings?.phone || '+91 78079 66080';
+  const whatsappNumber = (settings?.whatsapp || '917807966080').replace(/[^0-9]/g, '');
+  const studioName = settings?.studioName || 'Land of God Tattoo Studio';
+  const street = settings?.address?.street || 'Friends Colony';
+  const city = settings?.address?.city || 'Una';
 
   const quickPrompts = [
     {
       title: '🔱 Mahadev / Sacred Tattoo Consultation',
-      text: 'Hello Master Sunil! I want to get a custom Lord Shiva / Mahadev Trishul sacred geometry tattoo done. Can we discuss ideas and pricing?',
+      text: `Hello Master Sunil! I want to get a custom Lord Shiva / Mahadev Trishul sacred geometry tattoo done at ${studioName}. Can we discuss ideas and pricing?`,
     },
     {
       title: '📅 Book Tattoo Session',
-      text: 'Hi Land of God team! I would like to book a tattoo appointment at your Friends Colony, Una studio. What dates are available this week?',
+      text: `Hi ${studioName} team! I would like to book a tattoo appointment at your ${street}, ${city} studio. What dates are available this week?`,
     },
     {
       title: '📍 Studio Location & Timing',
-      text: 'Hello! Could you please send me the exact studio location in Friends Colony, Una and your visiting hours?',
+      text: `Hello! Could you please send me the exact studio location in ${street}, ${city} and your visiting hours?`,
     },
     {
       title: '🛡️ Aftercare Question',
@@ -28,13 +36,15 @@ export const FloatingWhatsAppButton = () => {
   const handleSendCustom = (e) => {
     e.preventDefault();
     if (!customMsg.trim()) return;
-    window.open(getStudioWhatsAppUrl(customMsg), '_blank');
+    const base = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(customMsg)}`;
+    window.open(base, '_blank');
     setCustomMsg('');
     setIsOpen(false);
   };
 
   const handleSelectPrompt = (text) => {
-    window.open(getStudioWhatsAppUrl(text), '_blank');
+    const base = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+    window.open(base, '_blank');
     setIsOpen(false);
   };
 
@@ -54,9 +64,9 @@ export const FloatingWhatsAppButton = () => {
               </div>
               <div>
                 <h4 className="font-display font-bold text-sm text-white flex items-center space-x-1.5">
-                  <span>Land of God Tattoo Studio</span>
+                  <span>{studioName}</span>
                 </h4>
-                <p className="text-[11px] text-emerald-300 font-serif">Online • Master Sunil (+91 78079 66080)</p>
+                <p className="text-[11px] text-emerald-300 font-serif">Online • Master Sunil ({phone})</p>
               </div>
             </div>
             <button
@@ -70,7 +80,7 @@ export const FloatingWhatsAppButton = () => {
           {/* Body with Quick Actions */}
           <div className="p-4 space-y-3 bg-[#111517]">
             <p className="text-xs text-studio-textMuted font-serif">
-              Welcome to <span className="text-studio-gold font-bold">Land of God Tattoo Studio</span> (Friends Colony, Una). Tap a topic or type a message to start chatting instantly on WhatsApp:
+              Welcome to <span className="text-studio-gold font-bold">{studioName}</span> ({street}, {city}). Tap a topic or type a message to start chatting instantly on WhatsApp:
             </p>
 
             {/* Quick Prompts List */}

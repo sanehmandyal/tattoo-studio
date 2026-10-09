@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { availabilityAPI } from '../services/api';
+import { useSettings } from '../context/SettingsContext';
 import { Calendar as CalendarIcon, Clock, Check, Sparkles, MessageSquare, ChevronLeft, ChevronRight, ShieldCheck, MapPin } from 'lucide-react';
 import { format, addDays, isSameDay, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
 import { createBookingInquiryUrl } from '../utils/whatsapp';
 
 export const CalendarPage = () => {
+  const { settings } = useSettings();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedSlot, setSelectedSlot] = useState('02:00 PM');
   const [selectedStyle, setSelectedStyle] = useState('Mahadev Sacred Geometry');
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [loading, setLoading] = useState(false);
+
+  const phone = settings?.phone || '+91 78079 66080';
+  const whatsappNumber = (settings?.whatsapp || '917807966080').replace(/[^0-9]/g, '');
+  const studioName = settings?.studioName || 'Land of God Tattoo Studio';
+  const street = settings?.address?.street || 'Friends Colony';
+  const city = settings?.address?.city || 'Una';
 
   const defaultSlots = [
     '11:00 AM',
@@ -30,12 +38,8 @@ export const CalendarPage = () => {
 
   const handleWhatsAppBooking = () => {
     const formattedDate = format(selectedDate, 'EEEE, MMMM do, yyyy');
-    const waUrl = createBookingInquiryUrl(
-      selectedStyle,
-      'Consultation & Tattoo Session',
-      formattedDate,
-      selectedSlot
-    );
+    const message = `🔱 *${studioName.toUpperCase()} — CALENDAR RESERVATION*\n━━━━━━━━━━━━━━━━━━━━\n📍 *Studio:* ${street}, ${city}\n🎨 *Preferred Style:* ${selectedStyle}\n📅 *Date:* ${formattedDate}\n⏰ *Time Slot:* ${selectedSlot}\n\nPlease confirm appointment availability. Thank you!`;
+    const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
   };
 
@@ -173,7 +177,7 @@ export const CalendarPage = () => {
               </div>
               <div className="ancient-stone-card p-4 rounded-xl flex items-center space-x-3 text-xs">
                 <MapPin className="w-6 h-6 text-studio-gold shrink-0" />
-                <span>Friends Colony, Una (HP)</span>
+                <span>{street}, {city}</span>
               </div>
             </div>
           </div>
@@ -203,7 +207,7 @@ export const CalendarPage = () => {
 
                 <div className="flex justify-between items-center py-1.5 border-b border-studio-border/30">
                   <span className="text-studio-textMuted">Lead Artist:</span>
-                  <span className="font-bold text-studio-textMain">Master Sunil (Una)</span>
+                  <span className="font-bold text-studio-textMain">Master Sunil ({city})</span>
                 </div>
 
                 <div className="space-y-1.5 pt-2">
@@ -232,7 +236,7 @@ export const CalendarPage = () => {
                   className="w-full bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/60 hover:border-emerald-400 text-emerald-300 font-bold py-3.5 px-4 text-xs tracking-wider uppercase text-center rounded-xl flex items-center justify-center space-x-2 shadow-lg transition-all"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>Reserve via WhatsApp (+91 78079 66080)</span>
+                  <span>Reserve via WhatsApp ({phone})</span>
                 </button>
 
                 <Link

@@ -1,11 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../../context/SettingsContext';
 import { Instagram, Facebook, MapPin, Phone, Mail, Clock, ArrowUp, Star, MessageCircle, ExternalLink } from 'lucide-react';
 
 export const Footer = () => {
+  const { settings } = useSettings();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const phone = settings?.phone || '+91 78079 66080';
+  const whatsappNumber = (settings?.whatsapp || '917807966080').replace(/[^0-9]/g, '');
+  const email = settings?.email || 'contact@landofgodtattoos.com';
+  const street = settings?.address?.street || 'Friends Colony';
+  const city = settings?.address?.city || 'Una';
+  const state = settings?.address?.state || 'Himachal Pradesh';
+  const zip = settings?.address?.zip || '174303';
+  const monFriHours = settings?.businessHours?.mon_fri || '10:30 AM – 8:30 PM';
+  const satHours = settings?.businessHours?.saturday || '10:30 AM – 9:00 PM';
+  const sunHours = settings?.businessHours?.sunday || '11:00 AM – 7:00 PM (By Appt)';
+  const instagram = settings?.socialLinks?.instagram || 'https://instagram.com/landofgodtattoo';
+  const facebook = settings?.socialLinks?.facebook || 'https://facebook.com/landofgodtattoostudio';
 
   return (
     <footer className="bg-[#08090c] border-t border-white/10 text-zinc-400 pt-16 pb-12 transition-colors relative z-20">
@@ -23,20 +38,20 @@ export const Footer = () => {
                   LAND OF <span className="text-amber-400">GOD</span>
                 </span>
                 <span className="text-[9px] tracking-[0.22em] text-amber-300/80 uppercase font-bold">
-                  TATTOO STUDIO • FRIENDS COLONY, UNA
+                  TATTOO STUDIO • {street.toUpperCase()}, {city.toUpperCase()}
                 </span>
               </div>
             </div>
             
             <p className="text-xs leading-relaxed text-zinc-400">
-              Devbhoomi's premier custom tattoo studio in Friends Colony, Una, Himachal Pradesh. Master artistry in sacred Mahadev motifs, realism portraits, fine-line mantras, and sterile hospital-grade procedures.
+              {settings?.aboutContent?.mainStory || "Devbhoomi's premier custom tattoo studio in Friends Colony, Una, Himachal Pradesh. Master artistry in sacred Mahadev motifs, realism portraits, fine-line mantras, and sterile hospital-grade procedures."}
             </p>
 
             {/* Social & Direct Connect Badges */}
             <div className="space-y-2.5 pt-2">
               <div className="flex items-center space-x-2">
                 <a
-                  href="https://instagram.com"
+                  href={instagram}
                   target="_blank"
                   rel="noreferrer"
                   className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-amber-400 hover:text-black border border-white/10 flex items-center justify-center text-zinc-300 transition-all shadow-sm"
@@ -45,7 +60,7 @@ export const Footer = () => {
                   <Instagram className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://facebook.com"
+                  href={facebook}
                   target="_blank"
                   rel="noreferrer"
                   className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-amber-400 hover:text-black border border-white/10 flex items-center justify-center text-zinc-300 transition-all shadow-sm"
@@ -54,7 +69,7 @@ export const Footer = () => {
                   <Facebook className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://wa.me/917807966080"
+                  href={`https://wa.me/${whatsappNumber}`}
                   target="_blank"
                   rel="noreferrer"
                   className="px-3 py-1.5 text-xs rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 text-emerald-300 flex items-center space-x-1.5 font-semibold transition-all shadow-sm"
@@ -117,27 +132,28 @@ export const Footer = () => {
           <div className="space-y-3">
             <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400 mb-4 font-display flex items-center space-x-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              <span>Una Atelier &amp; Hours</span>
+              <span>{city} Atelier &amp; Hours</span>
             </h4>
             <div className="flex items-start space-x-2.5 text-xs">
               <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <span className="text-zinc-300 leading-relaxed">Friends Colony, Una, Himachal Pradesh 174303, India</span>
+              <span className="text-zinc-300 leading-relaxed">{street}, {city}, {state} {zip}, India</span>
             </div>
             <div className="flex items-center space-x-2.5 text-xs">
               <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-              <a href="tel:+917807966080" className="text-amber-300 hover:text-white font-bold transition-colors">
-                +91 78079 66080
+              <a href={`tel:${phone.replace(/\s+/g, '')}`} className="text-amber-300 hover:text-white font-bold transition-colors">
+                {phone}
               </a>
             </div>
             <div className="flex items-center space-x-2.5 text-xs">
               <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="text-zinc-300">contact@landofgodtattoos.com</span>
+              <span className="text-zinc-300">{email}</span>
             </div>
             <div className="flex items-start space-x-2.5 text-xs pt-1.5 border-t border-white/5">
               <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div className="space-y-0.5 text-zinc-400">
-                <p><span className="text-zinc-200 font-medium">Mon - Sat:</span> 10:30 AM – 8:30 PM</p>
-                <p><span className="text-zinc-200 font-medium">Sun:</span> 11:00 AM – 7:00 PM (By Appt)</p>
+                <p><span className="text-zinc-200 font-medium">Mon - Fri:</span> {monFriHours}</p>
+                <p><span className="text-zinc-200 font-medium">Sat:</span> {satHours}</p>
+                <p><span className="text-zinc-200 font-medium">Sun:</span> {sunHours}</p>
               </div>
             </div>
           </div>

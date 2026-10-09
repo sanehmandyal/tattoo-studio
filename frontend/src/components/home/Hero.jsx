@@ -4,6 +4,7 @@ import { Interactive3DStudio } from '../tattoo-studio/Interactive3DStudio';
 import { TATTOO_ARTWORKS_CATALOG } from '../tattoo-studio/TattooArtworks';
 import { designsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useSettings } from '../../context/SettingsContext';
 import { Sparkles, Heart, ArrowRight, Check, Shield, Settings, MessageSquare, Star, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { createArtworkInquiryUrl } from '../../utils/whatsapp';
@@ -11,6 +12,7 @@ import { getFullImageUrl } from '../../utils/imageHelper';
 
 export const Hero = () => {
   const { isAdmin } = useAuth();
+  const { settings } = useSettings();
   const [selectedBodyArea, setSelectedBodyArea] = useState('Forearm');
   const [selectedStyleFilter, setSelectedStyleFilter] = useState('All');
   const [designs, setDesigns] = useState(TATTOO_ARTWORKS_CATALOG);
@@ -18,6 +20,11 @@ export const Hero = () => {
   const [savedFavorites, setSavedFavorites] = useState([]);
   const [loadingDesigns, setLoadingDesigns] = useState(true);
   const navigate = useNavigate();
+
+  const heroHeadline = settings?.heroHeadline || 'Bespoke Tattoo\nArtistry & Precision.';
+  const heroSubtitle = settings?.heroSubtitle || 'Master Sunil and resident artists specialize in fine-line realism, sacred geometry, and bespoke custom tattoos with hospital-grade sterile hygiene.';
+  const street = settings?.address?.street || 'Friends Colony';
+  const city = settings?.address?.city || 'Una';
 
   const stylesList = ['All', 'Sacred Devbhoomi', 'Fine Line', 'Geometric', 'Blackwork', 'Japanese', 'Traditional', 'Mandala', 'Neo-Traditional'];
 
@@ -121,17 +128,16 @@ export const Hero = () => {
             {/* Top Badge */}
             <div className="inline-flex items-center space-x-2 px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span>Premier Tattoo Studio • Friends Colony, Una</span>
+              <span>Premier Tattoo Studio • {street}, {city}</span>
             </div>
 
             {/* Main Headline */}
             <div className="space-y-3">
-              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
-                Bespoke Tattoo <br />
-                <span className="text-amber-400">Artistry &amp; Precision.</span>
+              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight text-white leading-[1.1] whitespace-pre-line">
+                {heroHeadline}
               </h1>
               <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-md">
-                Master Sunil and resident artists specialize in fine-line realism, sacred geometry, and bespoke custom tattoos with hospital-grade sterile hygiene.
+                {heroSubtitle}
               </p>
             </div>
 

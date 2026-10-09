@@ -1,8 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../../context/SettingsContext';
 import { ShieldCheck, Award, HeartHandshake, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const AboutSection = () => {
+  const { settings } = useSettings();
+  const studioName = settings?.studioName || 'Land of God Tattoo Studio';
+  const street = settings?.address?.street || 'Friends Colony';
+  const city = settings?.address?.city || 'Una';
+  const state = settings?.address?.state || 'Himachal Pradesh';
+  const mainStory = settings?.aboutContent?.mainStory || `${studioName} is Northern India's premier bespoke tattoo atelier, led by certified master artist Sunil. Located in ${street}, ${city}, we specialize in hyper-realistic portraits, sacred geometry, fine-line mantras, and custom body art.`;
+  const mission = settings?.aboutContent?.mission || 'We prioritize client safety with hospital-grade sterilization, 100% single-use membrane needle cartridges, and premium vegan, hypoallergenic organic pigments.';
+
   return (
     <section id="about" className="py-20 bg-studio-secondary/50 border-t border-b border-white/5 relative">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
@@ -18,16 +27,16 @@ export const AboutSection = () => {
                 Precision Tattooing with Medical-Grade Hygiene
               </h2>
               <p className="text-zinc-400 text-sm mt-2">
-                Land of God Tattoo Studio • Friends Colony, Una, Himachal Pradesh
+                {studioName} • {street}, {city}, {state}
               </p>
             </div>
 
             <div className="space-y-4 text-sm text-zinc-300 leading-relaxed">
               <p>
-                <strong className="text-white">Land of God Tattoo Studio</strong> is Northern India's premier bespoke tattoo atelier, led by certified master artist Sunil. Located in Friends Colony, Una, we specialize in hyper-realistic portraits, sacred geometry, fine-line mantras, and custom body art.
+                {mainStory}
               </p>
               <p>
-                We prioritize client safety with hospital-grade sterilization, 100% single-use membrane needle cartridges, and premium vegan, hypoallergenic organic pigments.
+                {mission}
               </p>
             </div>
 
@@ -72,7 +81,7 @@ export const AboutSection = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6 pointer-events-none">
                 <div className="text-left space-y-1">
                   <span className="text-[11px] font-semibold text-amber-300 bg-black/80 px-2.5 py-1 rounded-md border border-white/10">
-                    Friends Colony, Una (HP)
+                    {street}, {city} ({state === 'Himachal Pradesh' ? 'HP' : state})
                   </span>
                   <h4 className="text-sm font-bold text-white">
                     Private Tattoo Atelier &amp; Sterile Procedure Suite

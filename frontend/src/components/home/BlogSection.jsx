@@ -5,19 +5,31 @@ import { Clock, User, ArrowRight, BookOpen } from 'lucide-react';
 import { getFullImageUrl } from '../../utils/imageHelper';
 
 export const getArticleCoverImage = (blog) => {
+  if (!blog) return 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
+
+  // 1. If admin uploaded or custom photo was provided (Data URL, /uploads/, Imgur, Drive, etc.)
+  if (blog?.coverImage && typeof blog.coverImage === 'string' && blog.coverImage.trim() !== '') {
+    const img = blog.coverImage.trim();
+    if (img.startsWith('data:') || img.startsWith('/uploads/') || (!img.includes('placeholder') && !img.includes('example.com'))) {
+      if (img.startsWith('data:') || img.startsWith('/uploads/') || img.includes('googleusercontent.com') || img.includes('imgur.com') || img.includes('dropbox.com')) {
+        return img;
+      }
+    }
+  }
+
   const t = (blog?.title || '').toLowerCase();
   const s = (blog?.slug || '').toLowerCase();
   const c = (blog?.category || '').toLowerCase();
 
-  // 1. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry — Distinct Spiritual Sacred Mandala Photography
+  // 2. Mahadev / Shiva / Sacred Devbhoomi / Sacred Geometry
   if (t.includes('mahadev') || t.includes('shiva') || t.includes('trishul') || s.includes('mahadev') || s.includes('sacred-geometry') || t.includes('geometry') || c.includes('style')) {
     return 'https://images.unsplash.com/photo-1611590027211-b954fd027b51?auto=format&fit=crop&w=1000&q=80';
   }
-  // 2. Tattoo Preparation / Session Prep / Hydration / Skin Prep — Real Studio Artist Inking Session
+  // 3. Tattoo Preparation / Session Prep / Hydration / Skin Prep
   if (t.includes('prep') || t.includes('prepare') || s.includes('prep') || c.includes('prep') || t.includes('session')) {
     return 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
   }
-  // 3. Aftercare / Contrast / Longevity / Healing / Science — Clean Skin Barrier Balm & Aftercare
+  // 4. Aftercare / Contrast / Longevity / Healing / Science
   if (t.includes('aftercare') || t.includes('contrast') || t.includes('longevity') || s.includes('contrast') || s.includes('aftercare') || c.includes('aftercare') || t.includes('science')) {
     return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=80';
   }

@@ -18,6 +18,16 @@ export const BlogDetailPage = () => {
         const res = await blogsAPI.getBySlug(slugOrId);
         if (res.success && res.blog) {
           const mapImg = (b) => {
+            if (!b) return 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1000&q=80';
+            if (b.coverImage && typeof b.coverImage === 'string' && b.coverImage.trim() !== '') {
+              const img = b.coverImage.trim();
+              if (img.startsWith('data:') || img.startsWith('/uploads/') || (!img.includes('placeholder') && !img.includes('example.com'))) {
+                if (img.startsWith('data:') || img.startsWith('/uploads/') || img.includes('googleusercontent.com') || img.includes('imgur.com') || img.includes('dropbox.com')) {
+                  return img;
+                }
+              }
+            }
+
             const t = (b.title || '').toLowerCase();
             const s = (b.slug || '').toLowerCase();
             const c = (b.category || '').toLowerCase();
